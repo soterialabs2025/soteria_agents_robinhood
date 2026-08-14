@@ -1,0 +1,50 @@
+# See https://docs.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+.yarn/install-state.gz
+
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# local env files
+.env*
+
+.demeter-stop
+
+
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+/logs
+logs/demeter-defensive-offensive-strategy.jsonl
+*.jsonl
+/logs
+logs/demeter-defensive-offensive-strategy.jsonl
+
+# runtime/auto-tuned overrides (written by calibration + chat updateConfig; per-server, never committed)
+app/config/config.overrides.json
+app/config/triton.overrides.json

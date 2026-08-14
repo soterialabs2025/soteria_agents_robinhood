@@ -1,0 +1,134 @@
+{
+  "lastRunAtUtc": "2026-06-29T07:52:38.070Z",
+  "lastReport": {
+    "runAtUtc": "2026-06-29T07:52:38.070Z",
+    "windowMs": 259200000,
+    "totalSamples": 113,
+    "applied": false,
+    "autoApplyEnabled": false,
+    "floatV3": {
+      "sampleCount": 2,
+      "chosenMatchedWinnerCount": 0,
+      "avgWinnerForwardReturnPct": 0.8082,
+      "metricAdvantage": {
+        "volume_h6": -0.4415,
+        "volume_h1": -0.4787,
+        "volume_h12": -0.5735,
+        "volume_m5": 0,
+        "volume_m15": 0,
+        "volume_m30": -0.2502,
+        "buy_sell_ratio_h6": 0.4865,
+        "buy_sell_ratio_h24": 0.0415,
+        "price_change_h6": 0.019,
+        "price_change_h1": -0.3078,
+        "price_change_h12": -0.6627,
+        "price_change_m5_pct": 0,
+        "price_change_m15_pct": 0,
+        "price_change_m30_pct": -0.25,
+        "price_stability_h24": -0.6902,
+        "volume_to_liquidity_ratio": 0.3783
+      },
+      "winnerMomentumP10": {
+        "m5": 0,
+        "m15": 0,
+        "m30": 0
+      },
+      "winnerMomentumP90": {
+        "m5": 0,
+        "m15": 0,
+        "m30": 0
+      },
+      "winnerCompositeP25": 0.261,
+      "winnerVolumeH12P5": 10397.36658243929,
+      "winnerLiquidityP5": 253159.84558497852
+    },
+    "floatV4": {
+      "sampleCount": 111,
+      "chosenMatchedWinnerCount": 34,
+      "avgWinnerForwardReturnPct": 3.5242,
+      "metricAdvantage": {
+        "volume_h6": 0.2119,
+        "volume_h1": 0.0643,
+        "volume_h12": -0.0063,
+        "volume_m5": -0.0275,
+        "volume_m15": -0.0679,
+        "volume_m30": -0.0149,
+        "buy_sell_ratio_h6": 0.0143,
+        "buy_sell_ratio_h24": 0.0334,
+        "price_change_h6": -0.1311,
+        "price_change_h1": -0.0392,
+        "price_change_h12": -0.2152,
+        "price_change_m5_pct": -0.0125,
+        "price_change_m15_pct": -0.0127,
+        "price_change_m30_pct": -0.0427,
+        "price_stability_h24": 0.2187,
+        "volume_to_liquidity_ratio": -0.1332
+      },
+      "winnerMomentumP10": {
+        "m5": 0,
+        "m15": -1.649,
+        "m30": -2.654
+      },
+      "winnerMomentumP90": {
+        "m5": 0.123,
+        "m15": 2.348,
+        "m30": 3.767
+      },
+      "winnerCompositeP25": 0.35,
+      "winnerVolumeH12P5": 10256.4386474536,
+      "winnerLiquidityP5": 150701.34569995754
+    },
+    "proposedDemeterOverrides": {
+      "offensiveTokenRankingMetrics": {
+        "volume_h1": {
+          "weight": 0.0324
+        },
+        "volume_h6": {
+          "weight": 0.0181
+        },
+        "volume_m15": {
+          "weight": 0.0376
+        },
+        "buy_sell_ratio_h24": {
+          "weight": 0.0416
+        },
+        "price_change_h1": {
+          "weight": 0.0184
+        },
+        "price_change_h6": {
+          "weight": 0.015
+        },
+        "price_change_h12": {
+          "weight": 0.0212
+        },
+        "price_change_m5_pct": {
+          "weight": 0.1812
+        },
+        "price_change_m15_pct": {
+          "weight": 0.2618
+        },
+        "price_stability_h24": {
+          "weight": 0.0585
+        },
+        "volume_to_liquidity_ratio": {
+          "weight": 0.0151
+        }
+      }
+    },
+    "proposedTritonOverrides": {
+      "offensiveMomentumMinM5Pct": 0.1162,
+      "offensiveMomentumMaxM5Pct": 1.9505,
+      "offensiveMomentumMinM15Pct": 0.0186,
+      "offensiveMomentumMaxM15Pct": 3.2758,
+      "offensiveMomentumMinM30Pct": 0.0093,
+      "offensiveMomentumMaxM30Pct": 4.0246,
+      "scheduledChangeMinWeightedScore": 0.418,
+      "minPoolLiquidityUsd": 128096
+    },
+    "prune": {
+      "events": 16,
+      "outcomes": 17,
+      "optimal": 17
+    }
+  }
+}

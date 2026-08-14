@@ -1,0 +1,52 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "DM Sans", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "Consolas", "Courier New", monospace;
+  --color-demeter-blue: #347ded;
+  --color-demeter-blue-soft: #81abeb;
+  --color-demeter-blue-muted: #366cbf;
+  --color-console-bg: #070910;
+  --color-console-panel: #0a0e14;
+  --color-console-border: #366cbf40;
+  --color-console-amber: #fbbf24;
+}
+
+@layer base {
+  body {
+    @apply antialiased;
+    font-family: var(--font-mono);
+    background-color: var(--color-console-bg);
+    color: var(--color-demeter-blue);
+  }
+
+  ::selection {
+    background: rgba(52, 125, 237, 0.28);
+    color: #e8f0fc;
+  }
+}
+
+/* Subtle scanline overlay on main panel */
+.console-panel::before {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.12) 2px,
+    rgba(0, 0, 0, 0.12) 4px
+  );
+  opacity: 0.35;
+  z-index: 1;
+}
+
+.console-glow {
+  box-shadow:
+    0 0 0 1px rgba(52, 125, 237, 0.18),
+    0 0 40px rgba(52, 125, 237, 0.1),
+    inset 0 1px 0 rgba(129, 171, 235, 0.08);
+}

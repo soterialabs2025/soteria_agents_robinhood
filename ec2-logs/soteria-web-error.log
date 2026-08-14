@@ -1,0 +1,64 @@
+2026-06-07 02:15:25 +00:00: ⨯ Error: Cannot find module 'next/dist/server/lib/router-utils/instrumentation-globals.external.js'
+2026-06-07 02:15:26 +00:00: Require stack:
+2026-06-07 02:15:26 +00:00: - /var/www/soteria-agents/soteria_agents/node_modules/next/dist/compiled/next-server/app-route-turbo.runtime.prod.js
+2026-06-07 02:15:26 +00:00: - /var/www/soteria-agents/soteria_agents/.next/server/chunks/[root-of-the-server]__71e0e3b9._.js
+2026-06-07 02:15:26 +00:00: - /var/www/soteria-agents/soteria_agents/.next/server/chunks/[turbopack]_runtime.js
+2026-06-07 02:15:26 +00:00: - /var/www/soteria-agents/soteria_agents/.next/server/app/api/agent/route.js
+2026-06-07 02:15:26 +00:00: - /var/www/soteria-agents/soteria_agents/node_modules/next/dist/server/require.js
+2026-06-07 02:15:26 +00:00: - /var/www/soteria-agents/soteria_agents/node_modules/next/dist/server/next-server.js
+2026-06-07 02:15:26 +00:00: - /var/www/soteria-agents/soteria_agents/node_modules/next/dist/server/next.js
+2026-06-07 02:15:26 +00:00: - /var/www/soteria-agents/soteria_agents/node_modules/next/dist/server/lib/start-server.js
+2026-06-07 02:15:26 +00:00: - /var/www/soteria-agents/soteria_agents/node_modules/next/dist/cli/next-start.js
+2026-06-07 02:15:26 +00:00:     at ignore-listed frames {
+2026-06-07 02:15:26 +00:00:   code: 'MODULE_NOT_FOUND',
+2026-06-07 02:15:26 +00:00:   requireStack: [Array]
+2026-06-07 02:15:26 +00:00: }
+2026-06-07 02:15:49 +00:00: ⨯ TypeError: i is not a function
+2026-06-07 02:15:49 +00:00:     at async Module.O (.next/server/chunks/[root-of-the-server]__70fa1c4f._.js:1:8893)
+2026-06-10 06:02:52 +00:00: ⨯ Error: Cannot find module '/var/www/soteria-agents/soteria_agents/.next/server/middleware-manifest.json'
+2026-06-10 06:02:52 +00:00: Require stack:
+2026-06-10 06:02:52 +00:00: - /var/www/soteria-agents/soteria_agents/node_modules/next/dist/server/next-server.js
+2026-06-10 06:02:52 +00:00: - /var/www/soteria-agents/soteria_agents/node_modules/next/dist/server/next.js
+2026-06-10 06:02:52 +00:00: - /var/www/soteria-agents/soteria_agents/node_modules/next/dist/server/lib/start-server.js
+2026-06-10 06:02:52 +00:00: - /var/www/soteria-agents/soteria_agents/node_modules/next/dist/cli/next-start.js
+2026-06-10 06:02:52 +00:00:     at ignore-listed frames {
+2026-06-10 06:02:52 +00:00:   code: 'MODULE_NOT_FOUND',
+2026-06-10 06:02:52 +00:00:   requireStack: [Array]
+2026-06-10 06:02:52 +00:00: }
+2026-06-27 05:07:59 +00:00: ⨯ Error: Cannot find module 'next/dist/server/load-manifest.external.js'
+2026-06-27 05:07:59 +00:00: Require stack:
+2026-06-27 05:07:59 +00:00: - /var/www/soteria-agents/soteria_agents/node_modules/next/dist/compiled/next-server/app-route-turbo.runtime.prod.js
+2026-06-27 05:07:59 +00:00: - /var/www/soteria-agents/soteria_agents/.next/server/chunks/[root-of-the-server]__71e0e3b9._.js
+2026-06-27 05:07:59 +00:00: - /var/www/soteria-agents/soteria_agents/.next/server/chunks/[turbopack]_runtime.js
+2026-06-27 05:07:59 +00:00: - /var/www/soteria-agents/soteria_agents/.next/server/app/api/agent/route.js
+2026-06-27 05:07:59 +00:00: - /var/www/soteria-agents/soteria_agents/node_modules/next/dist/server/require.js
+2026-06-27 05:07:59 +00:00: - /var/www/soteria-agents/soteria_agents/node_modules/next/dist/server/next-server.js
+2026-06-27 05:07:59 +00:00: - /var/www/soteria-agents/soteria_agents/node_modules/next/dist/server/next.js
+2026-06-27 05:07:59 +00:00: - /var/www/soteria-agents/soteria_agents/node_modules/next/dist/server/lib/start-server.js
+2026-06-27 05:07:59 +00:00: - /var/www/soteria-agents/soteria_agents/node_modules/next/dist/cli/next-start.js
+2026-06-27 05:07:59 +00:00:     at ignore-listed frames {
+2026-06-27 05:07:59 +00:00:   code: 'MODULE_NOT_FOUND',
+2026-06-27 05:07:59 +00:00:   requireStack: [Array]
+2026-06-27 05:07:59 +00:00: }
+2026-06-27 05:07:59 +00:00: ⨯ TypeError: o is not a function
+2026-06-27 05:07:59 +00:00:     at async Module.H (.next/server/chunks/[root-of-the-server]__a45139bf._.js:2:2700)
+2026-06-27 05:08:04 +00:00: ⨯ TypeError: o is not a function
+2026-06-27 05:08:04 +00:00:     at async Module.H (.next/server/chunks/[root-of-the-server]__a45139bf._.js:2:2700)
+2026-06-27 05:08:27 +00:00: ⨯ TypeError: o is not a function
+2026-06-27 05:08:27 +00:00:     at async Module.H (.next/server/chunks/[root-of-the-server]__a45139bf._.js:2:2700)
+2026-06-27 05:08:40 +00:00: ⨯ TypeError: o is not a function
+2026-06-27 05:08:40 +00:00:     at async Module.H (.next/server/chunks/[root-of-the-server]__a45139bf._.js:2:2700)
+2026-06-27 05:08:48 +00:00: ⨯ TypeError: o is not a function
+2026-06-27 05:08:48 +00:00:     at async Module.H (.next/server/chunks/[root-of-the-server]__a45139bf._.js:2:2700)
+2026-06-27 05:08:54 +00:00: ⨯ TypeError: o is not a function
+2026-06-27 05:08:54 +00:00:     at async Module.H (.next/server/chunks/[root-of-the-server]__a45139bf._.js:2:2700)
+2026-06-27 05:09:24 +00:00: ⨯ TypeError: o is not a function
+2026-06-27 05:09:24 +00:00:     at async Module.H (.next/server/chunks/[root-of-the-server]__a45139bf._.js:2:2700)
+2026-06-27 05:10:24 +00:00: ⨯ TypeError: o is not a function
+2026-06-27 05:10:24 +00:00:     at async Module.H (.next/server/chunks/[root-of-the-server]__a45139bf._.js:2:2700)
+2026-06-27 05:10:24 +00:00: ⨯ Error: Failed to load static file for page: /500 ENOENT: no such file or directory, open '/var/www/soteria-agents/soteria_agents/.next/server/pages/500.html'
+2026-06-27 05:10:24 +00:00:     at ignore-listed frames
+2026-06-27 05:10:54 +00:00: ⨯ TypeError: o is not a function
+2026-06-27 05:10:54 +00:00:     at async Module.H (.next/server/chunks/[root-of-the-server]__a45139bf._.js:2:2700)
+2026-06-27 05:10:54 +00:00: ⨯ Error: Failed to load static file for page: /500 ENOENT: no such file or directory, open '/var/www/soteria-agents/soteria_agents/.next/server/pages/500.html'
+2026-06-27 05:10:54 +00:00:     at ignore-listed frames

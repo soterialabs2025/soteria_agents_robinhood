@@ -1,0 +1,799 @@
+2026-05-18 19:15:40 -07:00: Zod field at `#/definitions/PythActionProvider_fetch_price_feed/properties/quoteCurrency` uses `.optional()` without `.nullable()` which is not supported by the API. See: https://platform.openai.com/docs/guides/structured-outputs?api-mode=responses#all-fields-must-be-required
+2026-05-18 19:15:40 -07:00: This will become an error in a future version of the SDK.
+2026-05-18 19:15:40 -07:00: Zod field at `#/definitions/PythActionProvider_fetch_price_feed/properties/assetType` uses `.optional()` without `.nullable()` which is not supported by the API. See: https://platform.openai.com/docs/guides/structured-outputs?api-mode=responses#all-fields-must-be-required
+2026-05-18 19:15:40 -07:00: This will become an error in a future version of the SDK.
+2026-05-18 19:15:40 -07:00: Zod field at `#/definitions/ERC20ActionProvider_get_balance/properties/address` uses `.optional()` without `.nullable()` which is not supported by the API. See: https://platform.openai.com/docs/guides/structured-outputs?api-mode=responses#all-fields-must-be-required
+2026-05-18 19:15:40 -07:00: This will become an error in a future version of the SDK.
+2026-05-18 19:15:40 -07:00: Zod field at `#/definitions/X402ActionProvider_discover_x402_services/properties/facilitator` uses `.optional()` without `.nullable()` which is not supported by the API. See: https://platform.openai.com/docs/guides/structured-outputs?api-mode=responses#all-fields-must-be-required
+2026-05-18 19:15:40 -07:00: This will become an error in a future version of the SDK.
+2026-05-18 19:15:40 -07:00: Zod field at `#/definitions/X402ActionProvider_discover_x402_services/properties/maxUsdcPrice` uses `.optional()` without `.nullable()` which is not supported by the API. See: https://platform.openai.com/docs/guides/structured-outputs?api-mode=responses#all-fields-must-be-required
+2026-05-18 19:15:40 -07:00: This will become an error in a future version of the SDK.
+2026-05-18 19:15:40 -07:00: Zod field at `#/definitions/X402ActionProvider_discover_x402_services/properties/x402Versions` uses `.optional()` without `.nullable()` which is not supported by the API. See: https://platform.openai.com/docs/guides/structured-outputs?api-mode=responses#all-fields-must-be-required
+2026-05-18 19:15:40 -07:00: This will become an error in a future version of the SDK.
+2026-05-18 19:15:40 -07:00: Zod field at `#/definitions/X402ActionProvider_discover_x402_services/properties/keyword` uses `.optional()` without `.nullable()` which is not supported by the API. See: https://platform.openai.com/docs/guides/structured-outputs?api-mode=responses#all-fields-must-be-required
+2026-05-18 19:15:40 -07:00: This will become an error in a future version of the SDK.
+2026-05-18 19:15:40 -07:00: Zod field at `#/definitions/X402ActionProvider_retry_http_request_with_x402/properties/headers` uses `.optional()` without `.nullable()` which is not supported by the API. See: https://platform.openai.com/docs/guides/structured-outputs?api-mode=responses#all-fields-must-be-required
+2026-05-18 19:15:40 -07:00: This will become an error in a future version of the SDK.
+2026-05-18 19:15:40 -07:00: Zod field at `#/definitions/X402ActionProvider_retry_http_request_with_x402/properties/selectedPaymentOption/properties/maxAmountRequired` uses `.optional()` without `.nullable()` which is not supported by the API. See: https://platform.openai.com/docs/guides/structured-outputs?api-mode=responses#all-fields-must-be-required
+2026-05-18 19:15:40 -07:00: This will become an error in a future version of the SDK.
+2026-05-18 19:15:40 -07:00: Zod field at `#/definitions/X402ActionProvider_retry_http_request_with_x402/properties/selectedPaymentOption/properties/amount` uses `.optional()` without `.nullable()` which is not supported by the API. See: https://platform.openai.com/docs/guides/structured-outputs?api-mode=responses#all-fields-must-be-required
+2026-05-18 19:15:40 -07:00: This will become an error in a future version of the SDK.
+2026-05-18 19:15:40 -07:00: Zod field at `#/definitions/X402ActionProvider_retry_http_request_with_x402/properties/selectedPaymentOption/properties/price` uses `.optional()` without `.nullable()` which is not supported by the API. See: https://platform.openai.com/docs/guides/structured-outputs?api-mode=responses#all-fields-must-be-required
+2026-05-18 19:15:40 -07:00: This will become an error in a future version of the SDK.
+2026-05-18 19:15:40 -07:00: Zod field at `#/definitions/X402ActionProvider_retry_http_request_with_x402/properties/selectedPaymentOption/properties/payTo` uses `.optional()` without `.nullable()` which is not supported by the API. See: https://platform.openai.com/docs/guides/structured-outputs?api-mode=responses#all-fields-must-be-required
+2026-05-18 19:15:40 -07:00: This will become an error in a future version of the SDK.
+2026-05-18 19:15:40 -07:00: Zod field at `#/definitions/CdpApiActionProvider_request_faucet_funds/properties/assetId` uses `.optional()` without `.nullable()` which is not supported by the API. See: https://platform.openai.com/docs/guides/structured-outputs?api-mode=responses#all-fields-must-be-required
+2026-05-18 19:15:40 -07:00: This will become an error in a future version of the SDK.
+2026-05-18 19:15:40 -07:00: Zod field at `#/definitions/CdpEvmWalletActionProvider_list_spend_permissions/properties/network` uses `.optional()` without `.nullable()` which is not supported by the API. See: https://platform.openai.com/docs/guides/structured-outputs?api-mode=responses#all-fields-must-be-required
+2026-05-18 19:15:40 -07:00: This will become an error in a future version of the SDK.
+2026-05-18 19:15:40 -07:00: Zod field at `#/definitions/CdpEvmWalletActionProvider_use_spend_permission/properties/network` uses `.optional()` without `.nullable()` which is not supported by the API. See: https://platform.openai.com/docs/guides/structured-outputs?api-mode=responses#all-fields-must-be-required
+2026-05-18 19:15:40 -07:00: This will become an error in a future version of the SDK.
+2026-05-18 19:15:40 -07:00: Zod field at `#/definitions/CdpEvmWalletActionProvider_get_swap_price/properties/slippageBps` uses `.optional()` without `.nullable()` which is not supported by the API. See: https://platform.openai.com/docs/guides/structured-outputs?api-mode=responses#all-fields-must-be-required
+2026-05-18 19:15:40 -07:00: This will become an error in a future version of the SDK.
+2026-05-18 19:15:40 -07:00: Zod field at `#/definitions/CdpEvmWalletActionProvider_swap/properties/slippageBps` uses `.optional()` without `.nullable()` which is not supported by the API. See: https://platform.openai.com/docs/guides/structured-outputs?api-mode=responses#all-fields-must-be-required
+2026-05-18 19:15:40 -07:00: This will become an error in a future version of the SDK.
+2026-05-18 20:30:05 -07:00: [Demeter] No ranked tokens after offensive momentum gates (5 passed volume/liquidity/volatility/short-horizon pre-screen, 0 after momentum); skipping changeStrategyAsset
+2026-05-18 20:30:05 -07:00: [Demeter] Offensive momentum rejections:
+2026-05-18 20:30:05 -07:00:   noice: m15 -0.125% < offensive momentum min 0.08%
+2026-05-18 20:30:05 -07:00:   CLAWD: m30 -0.132% < offensive momentum min 0.01%
+2026-05-18 20:30:05 -07:00:   REI: m15 0% < offensive momentum min 0.08%
+2026-05-18 20:30:05 -07:00:   AUKI: m15 0% < offensive momentum min 0.08%
+2026-05-18 20:30:05 -07:00:   ZFI: price_change_h24_pct 18.525% >= 14% (offensive momentum extended 24h up-move)
+2026-05-18 20:32:22 -07:00: [Demeter] No ranked tokens after offensive momentum gates (5 passed volume/liquidity/volatility/short-horizon pre-screen, 0 after momentum); skipping changeStrategyAsset
+2026-05-18 20:32:22 -07:00: [Demeter] Offensive momentum rejections:
+2026-05-18 20:32:22 -07:00:   noice: m15 -0.125% < offensive momentum min 0.08%
+2026-05-18 20:32:22 -07:00:   CLAWD: m30 -0.062% < offensive momentum min 0.01%
+2026-05-18 20:32:22 -07:00:   REI: m15 0% < offensive momentum min 0.08%
+2026-05-18 20:32:22 -07:00:   AUKI: m15 -0.044% < offensive momentum min 0.08%
+2026-05-18 20:32:22 -07:00:   ZFI: price_change_h24_pct 18.525% >= 14% (offensive momentum extended 24h up-move)
+2026-05-18 20:34:24 -07:00: [Demeter] No ranked tokens after offensive momentum gates (5 passed volume/liquidity/volatility/short-horizon pre-screen, 0 after momentum); skipping changeStrategyAsset
+2026-05-18 20:34:24 -07:00: [Demeter] Offensive momentum rejections:
+2026-05-18 20:34:24 -07:00:   noice: m15 -0.125% < offensive momentum min 0.08%
+2026-05-18 20:34:24 -07:00:   CLAWD: m5 0.12% < offensive momentum min 0.6%
+2026-05-18 20:34:24 -07:00:   REI: m15 0% < offensive momentum min 0.08%
+2026-05-18 20:34:24 -07:00:   AUKI: m15 -0.044% < offensive momentum min 0.08%
+2026-05-18 20:34:24 -07:00:   ZFI: price_change_h24_pct 18.622% >= 14% (offensive momentum extended 24h up-move)
+2026-05-18 20:36:25 -07:00: [Demeter] No ranked tokens after offensive momentum gates (5 passed volume/liquidity/volatility/short-horizon pre-screen, 0 after momentum); skipping changeStrategyAsset
+2026-05-18 20:36:25 -07:00: [Demeter] Offensive momentum rejections:
+2026-05-18 20:36:25 -07:00:   noice: m15 -0.125% < offensive momentum min 0.08%
+2026-05-18 20:36:25 -07:00:   CLAWD: m5 0.12% < offensive momentum min 0.6%
+2026-05-18 20:36:25 -07:00:   REI: m15 0% < offensive momentum min 0.08%
+2026-05-18 20:36:25 -07:00:   AUKI: m15 -0.044% < offensive momentum min 0.08%
+2026-05-18 20:36:25 -07:00:   ZFI: price_change_h24_pct 18.622% >= 14% (offensive momentum extended 24h up-move)
+2026-05-18 20:38:34 -07:00: [Demeter] No ranked tokens after offensive momentum gates (5 passed volume/liquidity/volatility/short-horizon pre-screen, 0 after momentum); skipping changeStrategyAsset
+2026-05-18 20:38:34 -07:00: [Demeter] Offensive momentum rejections:
+2026-05-18 20:38:34 -07:00:   noice: m15 0% < offensive momentum min 0.08%
+2026-05-18 20:38:34 -07:00:   CLAWD: m5 0.12% < offensive momentum min 0.6%
+2026-05-18 20:38:34 -07:00:   REI: m15 0% < offensive momentum min 0.08%
+2026-05-18 20:38:34 -07:00:   AUKI: m15 0.04% < offensive momentum min 0.08%
+2026-05-18 20:38:34 -07:00:   ZFI: price_change_h24_pct 18.622% >= 14% (offensive momentum extended 24h up-move)
+2026-05-18 20:40:35 -07:00: [Demeter] No ranked tokens after offensive momentum gates (5 passed volume/liquidity/volatility/short-horizon pre-screen, 0 after momentum); skipping changeStrategyAsset
+2026-05-18 20:40:35 -07:00: [Demeter] Offensive momentum rejections:
+2026-05-18 20:40:35 -07:00:   noice: m15 0% < offensive momentum min 0.08%
+2026-05-18 20:40:35 -07:00:   CLAWD: m5 0% < offensive momentum min 0.6%
+2026-05-18 20:40:35 -07:00:   REI: m15 0% < offensive momentum min 0.08%
+2026-05-18 20:40:35 -07:00:   AUKI: m15 0.04% < offensive momentum min 0.08%
+2026-05-18 20:40:35 -07:00:   ZFI: price_change_h24_pct 18.622% >= 14% (offensive momentum extended 24h up-move)
+2026-05-18 20:42:37 -07:00: [Demeter] No ranked tokens after offensive momentum gates (5 passed volume/liquidity/volatility/short-horizon pre-screen, 0 after momentum); skipping changeStrategyAsset
+2026-05-18 20:42:37 -07:00: [Demeter] Offensive momentum rejections:
+2026-05-18 20:42:37 -07:00:   noice: m5 0% < offensive momentum min 0.6%
+2026-05-18 20:42:37 -07:00:   CLAWD: m5 0% < offensive momentum min 0.6%
+2026-05-18 20:42:37 -07:00:   REI: m15 0% < offensive momentum min 0.08%
+2026-05-18 20:42:37 -07:00:   AUKI: m15 0.04% < offensive momentum min 0.08%
+2026-05-18 20:42:37 -07:00:   ZFI: price_change_h24_pct 18.622% >= 14% (offensive momentum extended 24h up-move)
+2026-05-18 20:44:57 -07:00: [Demeter] No ranked tokens after offensive momentum gates (6 passed volume/liquidity/volatility/short-horizon pre-screen, 0 after momentum); skipping changeStrategyAsset
+2026-05-18 20:44:57 -07:00: [Demeter] Offensive momentum rejections:
+2026-05-18 20:44:57 -07:00:   FAIR: price_change_h24_pct 32.132% >= 14% (offensive momentum extended 24h up-move)
+2026-05-18 20:44:57 -07:00:   noice: m5 0% < offensive momentum min 0.6%
+2026-05-18 20:44:57 -07:00:   CLAWD: m5 0% < offensive momentum min 0.6%
+2026-05-18 20:44:57 -07:00:   REI: m15 0% < offensive momentum min 0.08%
+2026-05-18 20:44:57 -07:00:   AUKI: m15 0.04% < offensive momentum min 0.08%
+2026-05-18 20:44:57 -07:00:   ZFI: price_change_h24_pct 18.622% >= 14% (offensive momentum extended 24h up-move)
+2026-05-18 20:46:59 -07:00: [Demeter] No ranked tokens after offensive momentum gates (6 passed volume/liquidity/volatility/short-horizon pre-screen, 0 after momentum); skipping changeStrategyAsset
+2026-05-18 20:46:59 -07:00: [Demeter] Offensive momentum rejections:
+2026-05-18 20:46:59 -07:00:   FAIR: price_change_h24_pct 32.132% >= 14% (offensive momentum extended 24h up-move)
+2026-05-18 20:46:59 -07:00:   noice: m5 0.281% < offensive momentum min 0.6%
+2026-05-18 20:46:59 -07:00:   CLAWD: m5 0% < offensive momentum min 0.6%
+2026-05-18 20:46:59 -07:00:   REI: m15 0% < offensive momentum min 0.08%
+2026-05-18 20:46:59 -07:00:   AUKI: m15 0.04% < offensive momentum min 0.08%
+2026-05-18 20:46:59 -07:00:   ZFI: price_change_h24_pct 18.622% >= 14% (offensive momentum extended 24h up-move)
+2026-05-18 20:49:02 -07:00: [Demeter] No ranked tokens after offensive momentum gates (6 passed volume/liquidity/volatility/short-horizon pre-screen, 0 after momentum); skipping changeStrategyAsset
+2026-05-18 20:49:02 -07:00: [Demeter] Offensive momentum rejections:
+2026-05-18 20:49:02 -07:00:   FAIR: price_change_h24_pct 29.581% >= 14% (offensive momentum extended 24h up-move)
+2026-05-18 20:49:02 -07:00:   noice: m5 0.281% < offensive momentum min 0.6%
+2026-05-18 20:49:02 -07:00:   CLAWD: m15 0% < offensive momentum min 0.08%
+2026-05-18 20:49:02 -07:00:   REI: m15 0% < offensive momentum min 0.08%
+2026-05-18 20:49:02 -07:00:   AUKI: m15 0% < offensive momentum min 0.08%
+2026-05-18 20:49:02 -07:00:   ZFI: price_change_h24_pct 18.622% >= 14% (offensive momentum extended 24h up-move)
+2026-05-18 20:51:03 -07:00: [Demeter] No ranked tokens after offensive momentum gates (6 passed volume/liquidity/volatility/short-horizon pre-screen, 0 after momentum); skipping changeStrategyAsset
+2026-05-18 20:51:03 -07:00: [Demeter] Offensive momentum rejections:
+2026-05-18 20:51:03 -07:00:   FAIR: price_change_h24_pct 29.581% >= 14% (offensive momentum extended 24h up-move)
+2026-05-18 20:51:03 -07:00:   noice: m5 0.281% < offensive momentum min 0.6%
+2026-05-18 20:51:03 -07:00:   CLAWD: m15 0% < offensive momentum min 0.08%
+2026-05-18 20:51:03 -07:00:   REI: m15 0% < offensive momentum min 0.08%
+2026-05-18 20:51:03 -07:00:   AUKI: m15 0% < offensive momentum min 0.08%
+2026-05-18 20:51:03 -07:00:   ZFI: price_change_h24_pct 18.622% >= 14% (offensive momentum extended 24h up-move)
+2026-05-18 20:53:06 -07:00: [Demeter] No ranked tokens after offensive momentum gates (5 passed volume/liquidity/volatility/short-horizon pre-screen, 0 after momentum); skipping changeStrategyAsset
+2026-05-18 20:53:06 -07:00: [Demeter] Offensive momentum rejections:
+2026-05-18 20:53:06 -07:00:   FAIR: price_change_h24_pct 32.274% >= 14% (offensive momentum extended 24h up-move)
+2026-05-18 20:53:06 -07:00:   noice: m5 0% < offensive momentum min 0.6%
+2026-05-18 20:53:06 -07:00:   REI: m15 0% < offensive momentum min 0.08%
+2026-05-18 20:53:06 -07:00:   AUKI: m15 0% < offensive momentum min 0.08%
+2026-05-18 20:53:06 -07:00:   ZFI: price_change_h24_pct 18.622% >= 14% (offensive momentum extended 24h up-move)
+2026-05-18 20:55:07 -07:00: [Demeter] No ranked tokens after offensive momentum gates (5 passed volume/liquidity/volatility/short-horizon pre-screen, 0 after momentum); skipping changeStrategyAsset
+2026-05-18 20:55:07 -07:00: [Demeter] Offensive momentum rejections:
+2026-05-18 20:55:07 -07:00:   FAIR: price_change_h24_pct 32.274% >= 14% (offensive momentum extended 24h up-move)
+2026-05-18 20:55:07 -07:00:   noice: m5 0% < offensive momentum min 0.6%
+2026-05-18 20:55:07 -07:00:   REI: m15 0% < offensive momentum min 0.08%
+2026-05-18 20:55:07 -07:00:   AUKI: m15 0% < offensive momentum min 0.08%
+2026-05-18 20:55:07 -07:00:   ZFI: price_change_h24_pct 18.622% >= 14% (offensive momentum extended 24h up-move)
+2026-05-18 20:57:09 -07:00: [Demeter] No ranked tokens after offensive momentum gates (5 passed volume/liquidity/volatility/short-horizon pre-screen, 0 after momentum); skipping changeStrategyAsset
+2026-05-18 20:57:09 -07:00: [Demeter] Offensive momentum rejections:
+2026-05-18 20:57:09 -07:00:   FAIR: price_change_h24_pct 32.274% >= 14% (offensive momentum extended 24h up-move)
+2026-05-18 20:57:09 -07:00:   noice: m5 0% < offensive momentum min 0.6%
+2026-05-18 20:57:09 -07:00:   REI: m15 0% < offensive momentum min 0.08%
+2026-05-18 20:57:09 -07:00:   AUKI: m15 0% < offensive momentum min 0.08%
+2026-05-18 20:57:09 -07:00:   ZFI: price_change_h24_pct 18.841% >= 14% (offensive momentum extended 24h up-move)
+2026-05-18 20:59:26 -07:00: [Demeter] No ranked tokens after offensive momentum gates (5 passed volume/liquidity/volatility/short-horizon pre-screen, 0 after momentum); skipping changeStrategyAsset
+2026-05-18 20:59:26 -07:00: [Demeter] Offensive momentum rejections:
+2026-05-18 20:59:26 -07:00:   FAIR: price_change_h24_pct 37.518% >= 14% (offensive momentum extended 24h up-move)
+2026-05-18 20:59:26 -07:00:   noice: m15 0% < offensive momentum min 0.08%
+2026-05-18 20:59:26 -07:00:   REI: m15 0% < offensive momentum min 0.08%
+2026-05-18 20:59:26 -07:00:   AUKI: m15 0% < offensive momentum min 0.08%
+2026-05-18 20:59:26 -07:00:   ZFI: price_change_h24_pct 18.841% >= 14% (offensive momentum extended 24h up-move)
+2026-05-18 21:01:27 -07:00: [Demeter] No ranked tokens after offensive momentum gates (5 passed volume/liquidity/volatility/short-horizon pre-screen, 0 after momentum); skipping changeStrategyAsset
+2026-05-18 21:01:27 -07:00: [Demeter] Offensive momentum rejections:
+2026-05-18 21:01:27 -07:00:   FAIR: price_change_h24_pct 37.518% >= 14% (offensive momentum extended 24h up-move)
+2026-05-18 21:01:27 -07:00:   noice: m15 0% < offensive momentum min 0.08%
+2026-05-18 21:01:27 -07:00:   REI: m15 0% < offensive momentum min 0.08%
+2026-05-18 21:01:27 -07:00:   AUKI: m15 0% < offensive momentum min 0.08%
+2026-05-18 21:01:27 -07:00:   ZFI: price_change_h24_pct 18.841% >= 14% (offensive momentum extended 24h up-move)
+2026-05-18 21:04:00 -07:00: Zod field at `#/definitions/PythActionProvider_fetch_price_feed/properties/quoteCurrency` uses `.optional()` without `.nullable()` which is not supported by the API. See: https://platform.openai.com/docs/guides/structured-outputs?api-mode=responses#all-fields-must-be-required
+2026-05-18 21:04:00 -07:00: This will become an error in a future version of the SDK.
+2026-05-18 21:04:00 -07:00: Zod field at `#/definitions/PythActionProvider_fetch_price_feed/properties/assetType` uses `.optional()` without `.nullable()` which is not supported by the API. See: https://platform.openai.com/docs/guides/structured-outputs?api-mode=responses#all-fields-must-be-required
+2026-05-18 21:04:00 -07:00: This will become an error in a future version of the SDK.
+2026-05-18 21:04:00 -07:00: Zod field at `#/definitions/ERC20ActionProvider_get_balance/properties/address` uses `.optional()` without `.nullable()` which is not supported by the API. See: https://platform.openai.com/docs/guides/structured-outputs?api-mode=responses#all-fields-must-be-required
+2026-05-18 21:04:00 -07:00: This will become an error in a future version of the SDK.
+2026-05-18 21:04:00 -07:00: Zod field at `#/definitions/X402ActionProvider_discover_x402_services/properties/facilitator` uses `.optional()` without `.nullable()` which is not supported by the API. See: https://platform.openai.com/docs/guides/structured-outputs?api-mode=responses#all-fields-must-be-required
+2026-05-18 21:04:00 -07:00: This will become an error in a future version of the SDK.
+2026-05-18 21:04:00 -07:00: Zod field at `#/definitions/X402ActionProvider_discover_x402_services/properties/maxUsdcPrice` uses `.optional()` without `.nullable()` which is not supported by the API. See: https://platform.openai.com/docs/guides/structured-outputs?api-mode=responses#all-fields-must-be-required
+2026-05-18 21:04:00 -07:00: This will become an error in a future version of the SDK.
+2026-05-18 21:04:00 -07:00: Zod field at `#/definitions/X402ActionProvider_discover_x402_services/properties/x402Versions` uses `.optional()` without `.nullable()` which is not supported by the API. See: https://platform.openai.com/docs/guides/structured-outputs?api-mode=responses#all-fields-must-be-required
+2026-05-18 21:04:00 -07:00: This will become an error in a future version of the SDK.
+2026-05-18 21:04:00 -07:00: Zod field at `#/definitions/X402ActionProvider_discover_x402_services/properties/keyword` uses `.optional()` without `.nullable()` which is not supported by the API. See: https://platform.openai.com/docs/guides/structured-outputs?api-mode=responses#all-fields-must-be-required
+2026-05-18 21:04:00 -07:00: This will become an error in a future version of the SDK.
+2026-05-18 21:04:00 -07:00: Zod field at `#/definitions/X402ActionProvider_retry_http_request_with_x402/properties/headers` uses `.optional()` without `.nullable()` which is not supported by the API. See: https://platform.openai.com/docs/guides/structured-outputs?api-mode=responses#all-fields-must-be-required
+2026-05-18 21:04:00 -07:00: This will become an error in a future version of the SDK.
+2026-05-18 21:04:00 -07:00: Zod field at `#/definitions/X402ActionProvider_retry_http_request_with_x402/properties/selectedPaymentOption/properties/maxAmountRequired` uses `.optional()` without `.nullable()` which is not supported by the API. See: https://platform.openai.com/docs/guides/structured-outputs?api-mode=responses#all-fields-must-be-required
+2026-05-18 21:04:00 -07:00: This will become an error in a future version of the SDK.
+2026-05-18 21:04:00 -07:00: Zod field at `#/definitions/X402ActionProvider_retry_http_request_with_x402/properties/selectedPaymentOption/properties/amount` uses `.optional()` without `.nullable()` which is not supported by the API. See: https://platform.openai.com/docs/guides/structured-outputs?api-mode=responses#all-fields-must-be-required
+2026-05-18 21:04:00 -07:00: This will become an error in a future version of the SDK.
+2026-05-18 21:04:00 -07:00: Zod field at `#/definitions/X402ActionProvider_retry_http_request_with_x402/properties/selectedPaymentOption/properties/price` uses `.optional()` without `.nullable()` which is not supported by the API. See: https://platform.openai.com/docs/guides/structured-outputs?api-mode=responses#all-fields-must-be-required
+2026-05-18 21:04:00 -07:00: This will become an error in a future version of the SDK.
+2026-05-18 21:04:00 -07:00: Zod field at `#/definitions/X402ActionProvider_retry_http_request_with_x402/properties/selectedPaymentOption/properties/payTo` uses `.optional()` without `.nullable()` which is not supported by the API. See: https://platform.openai.com/docs/guides/structured-outputs?api-mode=responses#all-fields-must-be-required
+2026-05-18 21:04:00 -07:00: This will become an error in a future version of the SDK.
+2026-05-18 21:04:00 -07:00: Zod field at `#/definitions/CdpApiActionProvider_request_faucet_funds/properties/assetId` uses `.optional()` without `.nullable()` which is not supported by the API. See: https://platform.openai.com/docs/guides/structured-outputs?api-mode=responses#all-fields-must-be-required
+2026-05-18 21:04:00 -07:00: This will become an error in a future version of the SDK.
+2026-05-18 21:04:00 -07:00: Zod field at `#/definitions/CdpEvmWalletActionProvider_list_spend_permissions/properties/network` uses `.optional()` without `.nullable()` which is not supported by the API. See: https://platform.openai.com/docs/guides/structured-outputs?api-mode=responses#all-fields-must-be-required
+2026-05-18 21:04:00 -07:00: This will become an error in a future version of the SDK.
+2026-05-18 21:04:00 -07:00: Zod field at `#/definitions/CdpEvmWalletActionProvider_use_spend_permission/properties/network` uses `.optional()` without `.nullable()` which is not supported by the API. See: https://platform.openai.com/docs/guides/structured-outputs?api-mode=responses#all-fields-must-be-required
+2026-05-18 21:04:00 -07:00: This will become an error in a future version of the SDK.
+2026-05-18 21:04:00 -07:00: Zod field at `#/definitions/CdpEvmWalletActionProvider_get_swap_price/properties/slippageBps` uses `.optional()` without `.nullable()` which is not supported by the API. See: https://platform.openai.com/docs/guides/structured-outputs?api-mode=responses#all-fields-must-be-required
+2026-05-18 21:04:00 -07:00: This will become an error in a future version of the SDK.
+2026-05-18 21:04:00 -07:00: Zod field at `#/definitions/CdpEvmWalletActionProvider_swap/properties/slippageBps` uses `.optional()` without `.nullable()` which is not supported by the API. See: https://platform.openai.com/docs/guides/structured-outputs?api-mode=responses#all-fields-must-be-required
+2026-05-18 21:04:00 -07:00: This will become an error in a future version of the SDK.
+2026-05-18 21:12:23 -07:00: [Demeter] No ranked tokens after offensive momentum gates (5 passed volume/liquidity/volatility/short-horizon pre-screen, 0 after momentum); skipping changeStrategyAsset
+2026-05-18 21:12:23 -07:00: [Demeter] Offensive momentum rejections:
+2026-05-18 21:12:23 -07:00:   FAIR: price_change_h24_pct 41.684% >= 14% (offensive momentum extended 24h up-move)
+2026-05-18 21:12:23 -07:00:   noice: m15 0% < offensive momentum min 0.08%
+2026-05-18 21:12:23 -07:00:   CLAWD: m15 0% < offensive momentum min 0.08%
+2026-05-18 21:12:23 -07:00:   AUKI: m5 0% < offensive momentum min 0.6%
+2026-05-18 21:12:23 -07:00:   ZFI: price_change_h24_pct 21.122% >= 14% (offensive momentum extended 24h up-move)
+2026-05-18 21:14:24 -07:00: [Demeter] No ranked tokens after offensive momentum gates (6 passed volume/liquidity/volatility/short-horizon pre-screen, 0 after momentum); skipping changeStrategyAsset
+2026-05-18 21:14:24 -07:00: [Demeter] Offensive momentum rejections:
+2026-05-18 21:14:24 -07:00:   FAIR: price_change_h24_pct 38.25% >= 14% (offensive momentum extended 24h up-move)
+2026-05-18 21:14:24 -07:00:   noice: m15 0% < offensive momentum min 0.08%
+2026-05-18 21:14:24 -07:00:   CLAWD: m15 0% < offensive momentum min 0.08%
+2026-05-18 21:14:24 -07:00:   REI: m5 0% < offensive momentum min 0.6%
+2026-05-18 21:14:24 -07:00:   AUKI: m5 0% < offensive momentum min 0.6%
+2026-05-18 21:14:24 -07:00:   ZFI: price_change_h24_pct 21.122% >= 14% (offensive momentum extended 24h up-move)
+2026-05-18 21:16:36 -07:00: [Demeter] No ranked tokens after offensive momentum gates (6 passed volume/liquidity/volatility/short-horizon pre-screen, 0 after momentum); skipping changeStrategyAsset
+2026-05-18 21:16:36 -07:00: [Demeter] Offensive momentum rejections:
+2026-05-18 21:16:36 -07:00:   FAIR: price_change_h24_pct 38.25% >= 14% (offensive momentum extended 24h up-move)
+2026-05-18 21:16:36 -07:00:   noice: m15 0% < offensive momentum min 0.08%
+2026-05-18 21:16:36 -07:00:   CLAWD: m15 0% < offensive momentum min 0.08%
+2026-05-18 21:16:36 -07:00:   REI: m5 0.294% < offensive momentum min 0.6%
+2026-05-18 21:16:36 -07:00:   AUKI: m5 0% < offensive momentum min 0.6%
+2026-05-18 21:16:36 -07:00:   ZFI: price_change_h24_pct 21.122% >= 14% (offensive momentum extended 24h up-move)
+2026-05-18 21:18:37 -07:00: [Demeter] No ranked tokens after offensive momentum gates (6 passed volume/liquidity/volatility/short-horizon pre-screen, 0 after momentum); skipping changeStrategyAsset
+2026-05-18 21:18:37 -07:00: [Demeter] Offensive momentum rejections:
+2026-05-18 21:18:37 -07:00:   FAIR: price_change_h24_pct 38.25% >= 14% (offensive momentum extended 24h up-move)
+2026-05-18 21:18:37 -07:00:   noice: m15 0% < offensive momentum min 0.08%
+2026-05-18 21:18:37 -07:00:   CLAWD: m15 0% < offensive momentum min 0.08%
+2026-05-18 21:18:37 -07:00:   REI: m5 0.294% < offensive momentum min 0.6%
+2026-05-18 21:18:37 -07:00:   AUKI: m5 0% < offensive momentum min 0.6%
+2026-05-18 21:18:37 -07:00:   ZFI: price_change_h24_pct 21.122% >= 14% (offensive momentum extended 24h up-move)
+2026-05-18 21:20:38 -07:00: [Demeter] No ranked tokens after offensive momentum gates (6 passed volume/liquidity/volatility/short-horizon pre-screen, 0 after momentum); skipping changeStrategyAsset
+2026-05-18 21:20:38 -07:00: [Demeter] Offensive momentum rejections:
+2026-05-18 21:20:38 -07:00:   FAIR: price_change_h24_pct 38.25% >= 14% (offensive momentum extended 24h up-move)
+2026-05-18 21:20:38 -07:00:   noice: m15 0% < offensive momentum min 0.08%
+2026-05-18 21:20:38 -07:00:   CLAWD: m15 0% < offensive momentum min 0.08%
+2026-05-18 21:20:38 -07:00:   REI: m5 0.327% < offensive momentum min 0.6%
+2026-05-18 21:20:38 -07:00:   AUKI: m5 0% < offensive momentum min 0.6%
+2026-05-18 21:20:38 -07:00:   ZFI: price_change_h24_pct 21.122% >= 14% (offensive momentum extended 24h up-move)
+2026-05-18 21:22:49 -07:00: [Demeter] No ranked tokens after offensive momentum gates (5 passed volume/liquidity/volatility/short-horizon pre-screen, 0 after momentum); skipping changeStrategyAsset
+2026-05-18 21:22:49 -07:00: [Demeter] Offensive momentum rejections:
+2026-05-18 21:22:49 -07:00:   FAIR: price_change_h24_pct 38.25% >= 14% (offensive momentum extended 24h up-move)
+2026-05-18 21:22:49 -07:00:   noice: m15 0% < offensive momentum min 0.08%
+2026-05-18 21:22:49 -07:00:   CLAWD: m15 0.057% < offensive momentum min 0.08%
+2026-05-18 21:22:49 -07:00:   AUKI: m15 0% < offensive momentum min 0.08%
+2026-05-18 21:22:49 -07:00:   ZFI: price_change_h24_pct 21.122% >= 14% (offensive momentum extended 24h up-move)
+2026-05-18 21:24:50 -07:00: [Demeter] No ranked tokens after offensive momentum gates (5 passed volume/liquidity/volatility/short-horizon pre-screen, 0 after momentum); skipping changeStrategyAsset
+2026-05-18 21:24:50 -07:00: [Demeter] Offensive momentum rejections:
+2026-05-18 21:24:50 -07:00:   FAIR: price_change_h24_pct 38.25% >= 14% (offensive momentum extended 24h up-move)
+2026-05-18 21:24:50 -07:00:   noice: m15 0% < offensive momentum min 0.08%
+2026-05-18 21:24:50 -07:00:   CLAWD: m15 0.057% < offensive momentum min 0.08%
+2026-05-18 21:24:50 -07:00:   AUKI: m15 0% < offensive momentum min 0.08%
+2026-05-18 21:24:50 -07:00:   ZFI: price_change_h24_pct 21.122% >= 14% (offensive momentum extended 24h up-move)
+2026-05-18 21:26:52 -07:00: [Demeter] No ranked tokens after offensive momentum gates (5 passed volume/liquidity/volatility/short-horizon pre-screen, 0 after momentum); skipping changeStrategyAsset
+2026-05-18 21:26:52 -07:00: [Demeter] Offensive momentum rejections:
+2026-05-18 21:26:52 -07:00:   FAIR: price_change_h24_pct 38.25% >= 14% (offensive momentum extended 24h up-move)
+2026-05-18 21:26:52 -07:00:   noice: m15 0% < offensive momentum min 0.08%
+2026-05-18 21:26:52 -07:00:   CLAWD: m15 0.057% < offensive momentum min 0.08%
+2026-05-18 21:26:52 -07:00:   AUKI: m15 0% < offensive momentum min 0.08%
+2026-05-18 21:26:52 -07:00:   ZFI: price_change_h24_pct 21.122% >= 14% (offensive momentum extended 24h up-move)
+2026-05-18 21:29:03 -07:00: [Demeter] No ranked tokens after offensive momentum gates (5 passed volume/liquidity/volatility/short-horizon pre-screen, 0 after momentum); skipping changeStrategyAsset
+2026-05-18 21:29:03 -07:00: [Demeter] Offensive momentum rejections:
+2026-05-18 21:29:03 -07:00:   FAIR: price_change_h24_pct 38.25% >= 14% (offensive momentum extended 24h up-move)
+2026-05-18 21:29:03 -07:00:   noice: m15 0% < offensive momentum min 0.08%
+2026-05-18 21:29:03 -07:00:   CLAWD: m15 0.057% < offensive momentum min 0.08%
+2026-05-18 21:29:03 -07:00:   AUKI: m15 0% < offensive momentum min 0.08%
+2026-05-18 21:29:03 -07:00:   ZFI: price_change_h24_pct 18.173% >= 14% (offensive momentum extended 24h up-move)
+2026-05-18 21:31:04 -07:00: [Demeter] No ranked tokens after offensive momentum gates (4 passed volume/liquidity/volatility/short-horizon pre-screen, 0 after momentum); skipping changeStrategyAsset
+2026-05-18 21:31:04 -07:00: [Demeter] Offensive momentum rejections:
+2026-05-18 21:31:04 -07:00:   FAIR: price_change_h24_pct 40.676% >= 14% (offensive momentum extended 24h up-move)
+2026-05-18 21:31:04 -07:00:   noice: m15 0% < offensive momentum min 0.08%
+2026-05-18 21:31:04 -07:00:   AUKI: m15 0% < offensive momentum min 0.08%
+2026-05-18 21:31:04 -07:00:   ZFI: price_change_h24_pct 18.173% >= 14% (offensive momentum extended 24h up-move)
+2026-05-18 21:33:10 -07:00: [Demeter] No ranked tokens after offensive momentum gates (4 passed volume/liquidity/volatility/short-horizon pre-screen, 0 after momentum); skipping changeStrategyAsset
+2026-05-18 21:33:10 -07:00: [Demeter] Offensive momentum rejections:
+2026-05-18 21:33:10 -07:00:   FAIR: price_change_h24_pct 40.676% >= 14% (offensive momentum extended 24h up-move)
+2026-05-18 21:33:10 -07:00:   noice: m15 0% < offensive momentum min 0.08%
+2026-05-18 21:33:10 -07:00:   AUKI: m5 0.462% < offensive momentum min 0.6%
+2026-05-18 21:33:10 -07:00:   ZFI: price_change_h24_pct 18.143% >= 14% (offensive momentum extended 24h up-move)
+2026-05-18 21:35:12 -07:00: [Demeter] No ranked tokens after offensive momentum gates (5 passed volume/liquidity/volatility/short-horizon pre-screen, 0 after momentum); skipping changeStrategyAsset
+2026-05-18 21:35:12 -07:00: [Demeter] Offensive momentum rejections:
+2026-05-18 21:35:12 -07:00:   FAIR: price_change_h24_pct 40.676% >= 14% (offensive momentum extended 24h up-move)
+2026-05-18 21:35:12 -07:00:   noice: m15 0% < offensive momentum min 0.08%
+2026-05-18 21:35:12 -07:00:   REI: m15 -0.013% < offensive momentum min 0.08%
+2026-05-18 21:35:12 -07:00:   AUKI: m5 0.462% < offensive momentum min 0.6%
+2026-05-18 21:35:12 -07:00:   ZFI: price_change_h24_pct 18.143% >= 14% (offensive momentum extended 24h up-move)
+2026-05-18 21:37:13 -07:00: [Demeter] No ranked tokens after offensive momentum gates (5 passed volume/liquidity/volatility/short-horizon pre-screen, 0 after momentum); skipping changeStrategyAsset
+2026-05-18 21:37:13 -07:00: [Demeter] Offensive momentum rejections:
+2026-05-18 21:37:13 -07:00:   FAIR: price_change_h24_pct 40.676% >= 14% (offensive momentum extended 24h up-move)
+2026-05-18 21:37:13 -07:00:   noice: m15 0% < offensive momentum min 0.08%
+2026-05-18 21:37:13 -07:00:   REI: m15 -0.013% < offensive momentum min 0.08%
+2026-05-18 21:37:13 -07:00:   AUKI: m5 0.462% < offensive momentum min 0.6%
+2026-05-18 21:37:13 -07:00:   ZFI: price_change_h24_pct 18.143% >= 14% (offensive momentum extended 24h up-move)
+2026-05-18 21:39:14 -07:00: [Demeter] No ranked tokens after offensive momentum gates (5 passed volume/liquidity/volatility/short-horizon pre-screen, 0 after momentum); skipping changeStrategyAsset
+2026-05-18 21:39:14 -07:00: [Demeter] Offensive momentum rejections:
+2026-05-18 21:39:14 -07:00:   FAIR: price_change_h24_pct 40.676% >= 14% (offensive momentum extended 24h up-move)
+2026-05-18 21:39:14 -07:00:   noice: m15 0% < offensive momentum min 0.08%
+2026-05-18 21:39:14 -07:00:   REI: m15 -0.013% < offensive momentum min 0.08%
+2026-05-18 21:39:14 -07:00:   AUKI: m5 0.462% < offensive momentum min 0.6%
+2026-05-18 21:39:14 -07:00:   ZFI: price_change_h24_pct 18.143% >= 14% (offensive momentum extended 24h up-move)
+2026-05-18 21:41:32 -07:00: [Demeter] No ranked tokens after offensive momentum gates (4 passed volume/liquidity/volatility/short-horizon pre-screen, 0 after momentum); skipping changeStrategyAsset
+2026-05-18 21:41:32 -07:00: [Demeter] Offensive momentum rejections:
+2026-05-18 21:41:32 -07:00:   FAIR: price_change_h24_pct 40.191% >= 14% (offensive momentum extended 24h up-move)
+2026-05-18 21:41:32 -07:00:   noice: m15 0% < offensive momentum min 0.08%
+2026-05-18 21:41:32 -07:00:   AUKI: m5 0% < offensive momentum min 0.6%
+2026-05-18 21:41:32 -07:00:   ZFI: price_change_h24_pct 18.143% >= 14% (offensive momentum extended 24h up-move)
+2026-07-04 04:56:32 +00:00: bigint: Failed to load bindings, pure JS will be used (try npm run rebuild?)
+2026-07-04 05:53:16 +00:00: [UFloatKeeper] strategy 5 offensive-metrics NORMAL attempt 1/5 failed: Missing or invalid parameters.
+2026-07-04 05:53:16 +00:00: Double check you have provided the correct parameters.
+2026-07-04 05:53:16 +00:00: 
+2026-07-04 05:53:16 +00:00: URL: https://base-mainnet.infura.io/v3/3b35ec9bdf9d4b29a18e92e2d7140a01
+2026-07-04 05:53:16 +00:00: Request body: {"method":"eth_sendRawTransaction","params":["0x02f891822105822204830f4240836acfc08319c99094251490b438484cee5ab0e27c1c778c745bbb423b80a410bbb707000000000000000000000000316ffb9c875f900adcf04889e415cc86b564eba3c080a0306e385f102eda98ef437a5e75d2ebbfcca35cf3e6a949154a60b8e05ff93969a0509dc305f912a8a2922c92d222f96a8a5ed47d471b333fcd349a514299f67ba5"]}
+2026-07-04 05:53:16 +00:00:  
+2026-07-04 05:53:16 +00:00: Request Arguments:
+2026-07-04 05:53:16 +00:00:   from:  0x1CfA9B75FbA20A638b7ED10074c28087B2507f39
+2026-07-04 05:53:16 +00:00:   to:    0x251490B438484CEE5AB0E27C1c778C745BBb423b
+2026-07-04 05:53:16 +00:00:   data:  0x10bbb707000000000000000000000000316ffb9c875f900adcf04889e415cc86b564eba3
+2026-07-04 05:53:16 +00:00:   gas:   1690000
+2026-07-04 05:53:16 +00:00:  
+2026-07-04 05:53:16 +00:00: Contract Call:
+2026-07-04 05:53:16 +00:00:   address:   0x251490B438484CEE5AB0E27C1c778C745BBb423b
+2026-07-04 05:53:16 +00:00:   function:  changeAsset(address _newAssetAddr)
+2026-07-04 05:53:16 +00:00:   args:                 (0x316ffb9c875f900adcf04889e415cc86b564eba3)
+2026-07-04 05:53:16 +00:00:   sender:    0x1CfA9B75FbA20A638b7ED10074c28087B2507f39
+2026-07-04 05:53:16 +00:00: 
+2026-07-04 05:53:16 +00:00: Docs: https://viem.sh/docs/contract/writeContract
+2026-07-04 05:53:16 +00:00: Details: out of gas: gas required exceeds: 1690000
+2026-07-04 05:53:16 +00:00: Version: viem@2.43.5
+2026-07-04 05:53:46 +00:00: [UFloatKeeper] strategy 5 offensive-metrics NORMAL attempt 2/5 failed: Missing or invalid parameters.
+2026-07-04 05:53:46 +00:00: Double check you have provided the correct parameters.
+2026-07-04 05:53:46 +00:00: 
+2026-07-04 05:53:46 +00:00: URL: https://base-mainnet.infura.io/v3/3b35ec9bdf9d4b29a18e92e2d7140a01
+2026-07-04 05:53:46 +00:00: Request body: {"method":"eth_sendRawTransaction","params":["0x02f891822105822205830f4240836acfc08319c99094251490b438484cee5ab0e27c1c778c745bbb423b80a410bbb707000000000000000000000000316ffb9c875f900adcf04889e415cc86b564eba3c080a0b716801d801939516f627621cb7a5173aaacd9617082e5335ec12c1f58f50152a05cbcee95ddee1058422479a801bd6f683ae778fb76e60503028f080189865a22"]}
+2026-07-04 05:53:46 +00:00:  
+2026-07-04 05:53:46 +00:00: Request Arguments:
+2026-07-04 05:53:46 +00:00:   from:  0x1CfA9B75FbA20A638b7ED10074c28087B2507f39
+2026-07-04 05:53:46 +00:00:   to:    0x251490B438484CEE5AB0E27C1c778C745BBb423b
+2026-07-04 05:53:46 +00:00:   data:  0x10bbb707000000000000000000000000316ffb9c875f900adcf04889e415cc86b564eba3
+2026-07-04 05:53:46 +00:00:   gas:   1690000
+2026-07-04 05:53:46 +00:00:  
+2026-07-04 05:53:46 +00:00: Contract Call:
+2026-07-04 05:53:46 +00:00:   address:   0x251490B438484CEE5AB0E27C1c778C745BBb423b
+2026-07-04 05:53:46 +00:00:   function:  changeAsset(address _newAssetAddr)
+2026-07-04 05:53:46 +00:00:   args:                 (0x316ffb9c875f900adcf04889e415cc86b564eba3)
+2026-07-04 05:53:46 +00:00:   sender:    0x1CfA9B75FbA20A638b7ED10074c28087B2507f39
+2026-07-04 05:53:46 +00:00: 
+2026-07-04 05:53:46 +00:00: Docs: https://viem.sh/docs/contract/writeContract
+2026-07-04 05:53:46 +00:00: Details: out of gas: gas required exceeds: 1690000
+2026-07-04 05:53:46 +00:00: Version: viem@2.43.5
+2026-07-04 05:54:16 +00:00: [UFloatKeeper] strategy 5 offensive-metrics NORMAL attempt 3/5 failed: Missing or invalid parameters.
+2026-07-04 05:54:16 +00:00: Double check you have provided the correct parameters.
+2026-07-04 05:54:16 +00:00: 
+2026-07-04 05:54:16 +00:00: URL: https://base-mainnet.infura.io/v3/3b35ec9bdf9d4b29a18e92e2d7140a01
+2026-07-04 05:54:16 +00:00: Request body: {"method":"eth_sendRawTransaction","params":["0x02f891822105822205830f4240836acfc08319c99094251490b438484cee5ab0e27c1c778c745bbb423b80a410bbb707000000000000000000000000316ffb9c875f900adcf04889e415cc86b564eba3c080a0b716801d801939516f627621cb7a5173aaacd9617082e5335ec12c1f58f50152a05cbcee95ddee1058422479a801bd6f683ae778fb76e60503028f080189865a22"]}
+2026-07-04 05:54:16 +00:00:  
+2026-07-04 05:54:16 +00:00: Request Arguments:
+2026-07-04 05:54:16 +00:00:   from:  0x1CfA9B75FbA20A638b7ED10074c28087B2507f39
+2026-07-04 05:54:16 +00:00:   to:    0x251490B438484CEE5AB0E27C1c778C745BBb423b
+2026-07-04 05:54:16 +00:00:   data:  0x10bbb707000000000000000000000000316ffb9c875f900adcf04889e415cc86b564eba3
+2026-07-04 05:54:16 +00:00:   gas:   1690000
+2026-07-04 05:54:16 +00:00:  
+2026-07-04 05:54:16 +00:00: Contract Call:
+2026-07-04 05:54:16 +00:00:   address:   0x251490B438484CEE5AB0E27C1c778C745BBb423b
+2026-07-04 05:54:16 +00:00:   function:  changeAsset(address _newAssetAddr)
+2026-07-04 05:54:16 +00:00:   args:                 (0x316ffb9c875f900adcf04889e415cc86b564eba3)
+2026-07-04 05:54:16 +00:00:   sender:    0x1CfA9B75FbA20A638b7ED10074c28087B2507f39
+2026-07-04 05:54:16 +00:00: 
+2026-07-04 05:54:16 +00:00: Docs: https://viem.sh/docs/contract/writeContract
+2026-07-04 05:54:16 +00:00: Details: out of gas: gas required exceeds: 1690000
+2026-07-04 05:54:16 +00:00: Version: viem@2.43.5
+2026-07-04 05:54:47 +00:00: [UFloatKeeper] strategy 5 offensive-metrics NORMAL attempt 4/5 failed: Missing or invalid parameters.
+2026-07-04 05:54:47 +00:00: Double check you have provided the correct parameters.
+2026-07-04 05:54:47 +00:00: 
+2026-07-04 05:54:47 +00:00: URL: https://base-mainnet.infura.io/v3/3b35ec9bdf9d4b29a18e92e2d7140a01
+2026-07-04 05:54:47 +00:00: Request body: {"method":"eth_sendRawTransaction","params":["0x02f891822105822205830f4240836acfc08319c99094251490b438484cee5ab0e27c1c778c745bbb423b80a410bbb707000000000000000000000000316ffb9c875f900adcf04889e415cc86b564eba3c080a0b716801d801939516f627621cb7a5173aaacd9617082e5335ec12c1f58f50152a05cbcee95ddee1058422479a801bd6f683ae778fb76e60503028f080189865a22"]}
+2026-07-04 05:54:47 +00:00:  
+2026-07-04 05:54:47 +00:00: Request Arguments:
+2026-07-04 05:54:47 +00:00:   from:  0x1CfA9B75FbA20A638b7ED10074c28087B2507f39
+2026-07-04 05:54:47 +00:00:   to:    0x251490B438484CEE5AB0E27C1c778C745BBb423b
+2026-07-04 05:54:47 +00:00:   data:  0x10bbb707000000000000000000000000316ffb9c875f900adcf04889e415cc86b564eba3
+2026-07-04 05:54:47 +00:00:   gas:   1690000
+2026-07-04 05:54:47 +00:00:  
+2026-07-04 05:54:47 +00:00: Contract Call:
+2026-07-04 05:54:47 +00:00:   address:   0x251490B438484CEE5AB0E27C1c778C745BBb423b
+2026-07-04 05:54:47 +00:00:   function:  changeAsset(address _newAssetAddr)
+2026-07-04 05:54:47 +00:00:   args:                 (0x316ffb9c875f900adcf04889e415cc86b564eba3)
+2026-07-04 05:54:47 +00:00:   sender:    0x1CfA9B75FbA20A638b7ED10074c28087B2507f39
+2026-07-04 05:54:47 +00:00: 
+2026-07-04 05:54:47 +00:00: Docs: https://viem.sh/docs/contract/writeContract
+2026-07-04 05:54:47 +00:00: Details: out of gas: gas required exceeds: 1690000
+2026-07-04 05:54:47 +00:00: Version: viem@2.43.5
+2026-07-04 05:55:17 +00:00: [UFloatKeeper] strategy 5 offensive-metrics NORMAL attempt 5/5 failed: Missing or invalid parameters.
+2026-07-04 05:55:17 +00:00: Double check you have provided the correct parameters.
+2026-07-04 05:55:17 +00:00: 
+2026-07-04 05:55:17 +00:00: URL: https://base-mainnet.infura.io/v3/3b35ec9bdf9d4b29a18e92e2d7140a01
+2026-07-04 05:55:17 +00:00: Request body: {"method":"eth_sendRawTransaction","params":["0x02f891822105822206830f4240836acfc08319c99094251490b438484cee5ab0e27c1c778c745bbb423b80a410bbb707000000000000000000000000316ffb9c875f900adcf04889e415cc86b564eba3c080a04f898c4ac63eb3349aebac8f1c3fe28b984f6505145c582316b44671b66033c6a020db40bc6abbb362240f3f47e1d25ee9ded75d54110050fb57e1e8d02c63a0dc"]}
+2026-07-04 05:55:17 +00:00:  
+2026-07-04 05:55:17 +00:00: Request Arguments:
+2026-07-04 05:55:17 +00:00:   from:  0x1CfA9B75FbA20A638b7ED10074c28087B2507f39
+2026-07-04 05:55:17 +00:00:   to:    0x251490B438484CEE5AB0E27C1c778C745BBb423b
+2026-07-04 05:55:17 +00:00:   data:  0x10bbb707000000000000000000000000316ffb9c875f900adcf04889e415cc86b564eba3
+2026-07-04 05:55:17 +00:00:   gas:   1690000
+2026-07-04 05:55:17 +00:00:  
+2026-07-04 05:55:17 +00:00: Contract Call:
+2026-07-04 05:55:17 +00:00:   address:   0x251490B438484CEE5AB0E27C1c778C745BBb423b
+2026-07-04 05:55:17 +00:00:   function:  changeAsset(address _newAssetAddr)
+2026-07-04 05:55:17 +00:00:   args:                 (0x316ffb9c875f900adcf04889e415cc86b564eba3)
+2026-07-04 05:55:17 +00:00:   sender:    0x1CfA9B75FbA20A638b7ED10074c28087B2507f39
+2026-07-04 05:55:17 +00:00: 
+2026-07-04 05:55:17 +00:00: Docs: https://viem.sh/docs/contract/writeContract
+2026-07-04 05:55:17 +00:00: Details: out of gas: gas required exceeds: 1690000
+2026-07-04 05:55:17 +00:00: Version: viem@2.43.5
+2026-07-04 05:55:17 +00:00: [UFloatKeeper] strategy 5 offensive-metrics NORMAL failed: Missing or invalid parameters.
+2026-07-04 05:55:17 +00:00: Double check you have provided the correct parameters.
+2026-07-04 05:55:17 +00:00: 
+2026-07-04 05:55:17 +00:00: URL: https://base-mainnet.infura.io/v3/3b35ec9bdf9d4b29a18e92e2d7140a01
+2026-07-04 05:55:17 +00:00: Request body: {"method":"eth_sendRawTransaction","params":["0x02f891822105822206830f4240836acfc08319c99094251490b438484cee5ab0e27c1c778c745bbb423b80a410bbb707000000000000000000000000316ffb9c875f900adcf04889e415cc86b564eba3c080a04f898c4ac63eb3349aebac8f1c3fe28b984f6505145c582316b44671b66033c6a020db40bc6abbb362240f3f47e1d25ee9ded75d54110050fb57e1e8d02c63a0dc"]}
+2026-07-04 05:55:17 +00:00:  
+2026-07-04 05:55:17 +00:00: Request Arguments:
+2026-07-04 05:55:17 +00:00:   from:  0x1CfA9B75FbA20A638b7ED10074c28087B2507f39
+2026-07-04 05:55:17 +00:00:   to:    0x251490B438484CEE5AB0E27C1c778C745BBb423b
+2026-07-04 05:55:17 +00:00:   data:  0x10bbb707000000000000000000000000316ffb9c875f900adcf04889e415cc86b564eba3
+2026-07-04 05:55:17 +00:00:   gas:   1690000
+2026-07-04 05:55:17 +00:00:  
+2026-07-04 05:55:17 +00:00: Contract Call:
+2026-07-04 05:55:17 +00:00:   address:   0x251490B438484CEE5AB0E27C1c778C745BBb423b
+2026-07-04 05:55:17 +00:00:   function:  changeAsset(address _newAssetAddr)
+2026-07-04 05:55:17 +00:00:   args:                 (0x316ffb9c875f900adcf04889e415cc86b564eba3)
+2026-07-04 05:55:17 +00:00:   sender:    0x1CfA9B75FbA20A638b7ED10074c28087B2507f39
+2026-07-04 05:55:17 +00:00: 
+2026-07-04 05:55:17 +00:00: Docs: https://viem.sh/docs/contract/writeContract
+2026-07-04 05:55:17 +00:00: Details: out of gas: gas required exceeds: 1690000
+2026-07-04 05:55:17 +00:00: Version: viem@2.43.5
+2026-07-04 11:24:25 +00:00: [UFloatKeeper] strategy 5 offensive-metrics NORMAL attempt 1/5 failed: Missing or invalid parameters.
+2026-07-04 11:24:25 +00:00: Double check you have provided the correct parameters.
+2026-07-04 11:24:25 +00:00: 
+2026-07-04 11:24:25 +00:00: URL: https://base-mainnet.infura.io/v3/3b35ec9bdf9d4b29a18e92e2d7140a01
+2026-07-04 11:24:25 +00:00: Request body: {"method":"eth_sendRawTransaction","params":["0x02f8918221058222cc830f4240836acfc08319c99094251490b438484cee5ab0e27c1c778c745bbb423b80a410bbb707000000000000000000000000316ffb9c875f900adcf04889e415cc86b564eba3c001a0b82a3ce7b3a299c42f575391eca9585fd0e5f63b1b55c4936ac3141bcb1ca66fa037d250301390941922965a3b87a653a62dc0655cd7d3c66691b658fedd6a58ea"]}
+2026-07-04 11:24:25 +00:00:  
+2026-07-04 11:24:25 +00:00: Request Arguments:
+2026-07-04 11:24:25 +00:00:   from:  0x1CfA9B75FbA20A638b7ED10074c28087B2507f39
+2026-07-04 11:24:25 +00:00:   to:    0x251490B438484CEE5AB0E27C1c778C745BBb423b
+2026-07-04 11:24:25 +00:00:   data:  0x10bbb707000000000000000000000000316ffb9c875f900adcf04889e415cc86b564eba3
+2026-07-04 11:24:25 +00:00:   gas:   1690000
+2026-07-04 11:24:25 +00:00:  
+2026-07-04 11:24:25 +00:00: Contract Call:
+2026-07-04 11:24:25 +00:00:   address:   0x251490B438484CEE5AB0E27C1c778C745BBb423b
+2026-07-04 11:24:25 +00:00:   function:  changeAsset(address _newAssetAddr)
+2026-07-04 11:24:25 +00:00:   args:                 (0x316ffb9c875f900adcf04889e415cc86b564eba3)
+2026-07-04 11:24:25 +00:00:   sender:    0x1CfA9B75FbA20A638b7ED10074c28087B2507f39
+2026-07-04 11:24:25 +00:00: 
+2026-07-04 11:24:25 +00:00: Docs: https://viem.sh/docs/contract/writeContract
+2026-07-04 11:24:25 +00:00: Details: out of gas: gas required exceeds: 1690000
+2026-07-04 11:24:25 +00:00: Version: viem@2.43.5
+2026-07-04 11:24:55 +00:00: [UFloatKeeper] strategy 5 offensive-metrics NORMAL attempt 2/5 failed: Missing or invalid parameters.
+2026-07-04 11:24:55 +00:00: Double check you have provided the correct parameters.
+2026-07-04 11:24:55 +00:00: 
+2026-07-04 11:24:55 +00:00: URL: https://base-mainnet.infura.io/v3/3b35ec9bdf9d4b29a18e92e2d7140a01
+2026-07-04 11:24:55 +00:00: Request body: {"method":"eth_sendRawTransaction","params":["0x02f8918221058222cd830f4240836acfc08319c99094251490b438484cee5ab0e27c1c778c745bbb423b80a410bbb707000000000000000000000000316ffb9c875f900adcf04889e415cc86b564eba3c080a08416817ac4e986159471adfd40fcd1ca4a62c05ac07113928fe1c9e2a41352c1a075cbf87ca5628cd3cd7096ca7700303c4df37d96755ded104a5b30d486157f5a"]}
+2026-07-04 11:24:55 +00:00:  
+2026-07-04 11:24:55 +00:00: Request Arguments:
+2026-07-04 11:24:55 +00:00:   from:  0x1CfA9B75FbA20A638b7ED10074c28087B2507f39
+2026-07-04 11:24:55 +00:00:   to:    0x251490B438484CEE5AB0E27C1c778C745BBb423b
+2026-07-04 11:24:55 +00:00:   data:  0x10bbb707000000000000000000000000316ffb9c875f900adcf04889e415cc86b564eba3
+2026-07-04 11:24:55 +00:00:   gas:   1690000
+2026-07-04 11:24:55 +00:00:  
+2026-07-04 11:24:55 +00:00: Contract Call:
+2026-07-04 11:24:55 +00:00:   address:   0x251490B438484CEE5AB0E27C1c778C745BBb423b
+2026-07-04 11:24:55 +00:00:   function:  changeAsset(address _newAssetAddr)
+2026-07-04 11:24:55 +00:00:   args:                 (0x316ffb9c875f900adcf04889e415cc86b564eba3)
+2026-07-04 11:24:55 +00:00:   sender:    0x1CfA9B75FbA20A638b7ED10074c28087B2507f39
+2026-07-04 11:24:55 +00:00: 
+2026-07-04 11:24:55 +00:00: Docs: https://viem.sh/docs/contract/writeContract
+2026-07-04 11:24:55 +00:00: Details: out of gas: gas required exceeds: 1690000
+2026-07-04 11:24:55 +00:00: Version: viem@2.43.5
+2026-07-04 11:25:25 +00:00: [UFloatKeeper] strategy 5 offensive-metrics NORMAL attempt 3/5 failed: Missing or invalid parameters.
+2026-07-04 11:25:25 +00:00: Double check you have provided the correct parameters.
+2026-07-04 11:25:25 +00:00: 
+2026-07-04 11:25:25 +00:00: URL: https://base-mainnet.infura.io/v3/3b35ec9bdf9d4b29a18e92e2d7140a01
+2026-07-04 11:25:25 +00:00: Request body: {"method":"eth_sendRawTransaction","params":["0x02f8918221058222ce830f4240836acfc08319c99094251490b438484cee5ab0e27c1c778c745bbb423b80a410bbb707000000000000000000000000316ffb9c875f900adcf04889e415cc86b564eba3c080a0c37a0e5de06b5656b5ea908af0038e3d5abeb6c80298b070d6efcc1bca6fa428a038ebc41e582c5f85795dc90e41e2faf9ddd33dbb2cd3173cfd4d001382a13e19"]}
+2026-07-04 11:25:25 +00:00:  
+2026-07-04 11:25:25 +00:00: Request Arguments:
+2026-07-04 11:25:25 +00:00:   from:  0x1CfA9B75FbA20A638b7ED10074c28087B2507f39
+2026-07-04 11:25:25 +00:00:   to:    0x251490B438484CEE5AB0E27C1c778C745BBb423b
+2026-07-04 11:25:25 +00:00:   data:  0x10bbb707000000000000000000000000316ffb9c875f900adcf04889e415cc86b564eba3
+2026-07-04 11:25:25 +00:00:   gas:   1690000
+2026-07-04 11:25:25 +00:00:  
+2026-07-04 11:25:25 +00:00: Contract Call:
+2026-07-04 11:25:25 +00:00:   address:   0x251490B438484CEE5AB0E27C1c778C745BBb423b
+2026-07-04 11:25:25 +00:00:   function:  changeAsset(address _newAssetAddr)
+2026-07-04 11:25:25 +00:00:   args:                 (0x316ffb9c875f900adcf04889e415cc86b564eba3)
+2026-07-04 11:25:25 +00:00:   sender:    0x1CfA9B75FbA20A638b7ED10074c28087B2507f39
+2026-07-04 11:25:25 +00:00: 
+2026-07-04 11:25:25 +00:00: Docs: https://viem.sh/docs/contract/writeContract
+2026-07-04 11:25:25 +00:00: Details: out of gas: gas required exceeds: 1690000
+2026-07-04 11:25:25 +00:00: Version: viem@2.43.5
+2026-07-04 11:25:55 +00:00: [UFloatKeeper] strategy 5 offensive-metrics NORMAL attempt 4/5 failed: Missing or invalid parameters.
+2026-07-04 11:25:55 +00:00: Double check you have provided the correct parameters.
+2026-07-04 11:25:55 +00:00: 
+2026-07-04 11:25:55 +00:00: URL: https://base-mainnet.infura.io/v3/3b35ec9bdf9d4b29a18e92e2d7140a01
+2026-07-04 11:25:55 +00:00: Request body: {"method":"eth_sendRawTransaction","params":["0x02f8918221058222ce830f4240836acfc08319c99094251490b438484cee5ab0e27c1c778c745bbb423b80a410bbb707000000000000000000000000316ffb9c875f900adcf04889e415cc86b564eba3c080a0c37a0e5de06b5656b5ea908af0038e3d5abeb6c80298b070d6efcc1bca6fa428a038ebc41e582c5f85795dc90e41e2faf9ddd33dbb2cd3173cfd4d001382a13e19"]}
+2026-07-04 11:25:55 +00:00:  
+2026-07-04 11:25:55 +00:00: Request Arguments:
+2026-07-04 11:25:55 +00:00:   from:  0x1CfA9B75FbA20A638b7ED10074c28087B2507f39
+2026-07-04 11:25:55 +00:00:   to:    0x251490B438484CEE5AB0E27C1c778C745BBb423b
+2026-07-04 11:25:55 +00:00:   data:  0x10bbb707000000000000000000000000316ffb9c875f900adcf04889e415cc86b564eba3
+2026-07-04 11:25:55 +00:00:   gas:   1690000
+2026-07-04 11:25:55 +00:00:  
+2026-07-04 11:25:55 +00:00: Contract Call:
+2026-07-04 11:25:55 +00:00:   address:   0x251490B438484CEE5AB0E27C1c778C745BBb423b
+2026-07-04 11:25:55 +00:00:   function:  changeAsset(address _newAssetAddr)
+2026-07-04 11:25:55 +00:00:   args:                 (0x316ffb9c875f900adcf04889e415cc86b564eba3)
+2026-07-04 11:25:55 +00:00:   sender:    0x1CfA9B75FbA20A638b7ED10074c28087B2507f39
+2026-07-04 11:25:55 +00:00: 
+2026-07-04 11:25:55 +00:00: Docs: https://viem.sh/docs/contract/writeContract
+2026-07-04 11:25:55 +00:00: Details: out of gas: gas required exceeds: 1690000
+2026-07-04 11:25:55 +00:00: Version: viem@2.43.5
+2026-07-04 11:26:26 +00:00: [UFloatKeeper] strategy 5 offensive-metrics NORMAL attempt 5/5 failed: Missing or invalid parameters.
+2026-07-04 11:26:26 +00:00: Double check you have provided the correct parameters.
+2026-07-04 11:26:26 +00:00: 
+2026-07-04 11:26:26 +00:00: URL: https://base-mainnet.infura.io/v3/3b35ec9bdf9d4b29a18e92e2d7140a01
+2026-07-04 11:26:26 +00:00: Request body: {"method":"eth_sendRawTransaction","params":["0x02f8918221058222ce830f4240836acfc08319c99094251490b438484cee5ab0e27c1c778c745bbb423b80a410bbb707000000000000000000000000316ffb9c875f900adcf04889e415cc86b564eba3c080a0c37a0e5de06b5656b5ea908af0038e3d5abeb6c80298b070d6efcc1bca6fa428a038ebc41e582c5f85795dc90e41e2faf9ddd33dbb2cd3173cfd4d001382a13e19"]}
+2026-07-04 11:26:26 +00:00:  
+2026-07-04 11:26:26 +00:00: Request Arguments:
+2026-07-04 11:26:26 +00:00:   from:  0x1CfA9B75FbA20A638b7ED10074c28087B2507f39
+2026-07-04 11:26:26 +00:00:   to:    0x251490B438484CEE5AB0E27C1c778C745BBb423b
+2026-07-04 11:26:26 +00:00:   data:  0x10bbb707000000000000000000000000316ffb9c875f900adcf04889e415cc86b564eba3
+2026-07-04 11:26:26 +00:00:   gas:   1690000
+2026-07-04 11:26:26 +00:00:  
+2026-07-04 11:26:26 +00:00: Contract Call:
+2026-07-04 11:26:26 +00:00:   address:   0x251490B438484CEE5AB0E27C1c778C745BBb423b
+2026-07-04 11:26:26 +00:00:   function:  changeAsset(address _newAssetAddr)
+2026-07-04 11:26:26 +00:00:   args:                 (0x316ffb9c875f900adcf04889e415cc86b564eba3)
+2026-07-04 11:26:26 +00:00:   sender:    0x1CfA9B75FbA20A638b7ED10074c28087B2507f39
+2026-07-04 11:26:26 +00:00: 
+2026-07-04 11:26:26 +00:00: Docs: https://viem.sh/docs/contract/writeContract
+2026-07-04 11:26:26 +00:00: Details: out of gas: gas required exceeds: 1690000
+2026-07-04 11:26:26 +00:00: Version: viem@2.43.5
+2026-07-04 11:26:26 +00:00: [UFloatKeeper] strategy 5 offensive-metrics NORMAL failed: Missing or invalid parameters.
+2026-07-04 11:26:26 +00:00: Double check you have provided the correct parameters.
+2026-07-04 11:26:26 +00:00: 
+2026-07-04 11:26:26 +00:00: URL: https://base-mainnet.infura.io/v3/3b35ec9bdf9d4b29a18e92e2d7140a01
+2026-07-04 11:26:26 +00:00: Request body: {"method":"eth_sendRawTransaction","params":["0x02f8918221058222ce830f4240836acfc08319c99094251490b438484cee5ab0e27c1c778c745bbb423b80a410bbb707000000000000000000000000316ffb9c875f900adcf04889e415cc86b564eba3c080a0c37a0e5de06b5656b5ea908af0038e3d5abeb6c80298b070d6efcc1bca6fa428a038ebc41e582c5f85795dc90e41e2faf9ddd33dbb2cd3173cfd4d001382a13e19"]}
+2026-07-04 11:26:26 +00:00:  
+2026-07-04 11:26:26 +00:00: Request Arguments:
+2026-07-04 11:26:26 +00:00:   from:  0x1CfA9B75FbA20A638b7ED10074c28087B2507f39
+2026-07-04 11:26:26 +00:00:   to:    0x251490B438484CEE5AB0E27C1c778C745BBb423b
+2026-07-04 11:26:26 +00:00:   data:  0x10bbb707000000000000000000000000316ffb9c875f900adcf04889e415cc86b564eba3
+2026-07-04 11:26:26 +00:00:   gas:   1690000
+2026-07-04 11:26:26 +00:00:  
+2026-07-04 11:26:26 +00:00: Contract Call:
+2026-07-04 11:26:26 +00:00:   address:   0x251490B438484CEE5AB0E27C1c778C745BBb423b
+2026-07-04 11:26:26 +00:00:   function:  changeAsset(address _newAssetAddr)
+2026-07-04 11:26:26 +00:00:   args:                 (0x316ffb9c875f900adcf04889e415cc86b564eba3)
+2026-07-04 11:26:26 +00:00:   sender:    0x1CfA9B75FbA20A638b7ED10074c28087B2507f39
+2026-07-04 11:26:26 +00:00: 
+2026-07-04 11:26:26 +00:00: Docs: https://viem.sh/docs/contract/writeContract
+2026-07-04 11:26:26 +00:00: Details: out of gas: gas required exceeds: 1690000
+2026-07-04 11:26:26 +00:00: Version: viem@2.43.5
+2026-07-04 15:49:53 +00:00: [UFloatKeeper] performUpkeepBatch id 5 alone uses 2102378 gas (cap 1500000) — sending anyway
+2026-07-04 18:24:48 +00:00: [UFloatKeeper] performUpkeepBatch id 5 alone uses 2082333 gas (cap 1500000) — sending anyway
+2026-07-04 21:26:26 +00:00: [UFloatKeeper] performUpkeepBatch id 5 alone uses 1777883 gas (cap 1500000) — sending anyway
+2026-07-05 13:45:51 +00:00: [UFloatKeeper] strategy 5 offensive-metrics NORMAL attempt 1/5 failed: Missing or invalid parameters.
+2026-07-05 13:45:51 +00:00: Double check you have provided the correct parameters.
+2026-07-05 13:45:51 +00:00: 
+2026-07-05 13:45:51 +00:00: URL: https://base-mainnet.infura.io/v3/3b35ec9bdf9d4b29a18e92e2d7140a01
+2026-07-05 13:45:51 +00:00: Request body: {"method":"eth_sendRawTransaction","params":["0x02f891822105822686830f4240836acfc08319c99094251490b438484cee5ab0e27c1c778c745bbb423b80a410bbb707000000000000000000000000de61878b0b21ce395266c44d4d548d1c72a3eb07c001a04d7a887a20d95d72956cfce96eccdac293f26c1b91673bd7d7fe019f0e4de71ca055dca6c4bb5b630e22d3fa7c81a7de45e6c9e171d8a330e54e2e34dd8cddfc6e"]}
+2026-07-05 13:45:51 +00:00:  
+2026-07-05 13:45:51 +00:00: Request Arguments:
+2026-07-05 13:45:51 +00:00:   from:  0x1CfA9B75FbA20A638b7ED10074c28087B2507f39
+2026-07-05 13:45:51 +00:00:   to:    0x251490B438484CEE5AB0E27C1c778C745BBb423b
+2026-07-05 13:45:51 +00:00:   data:  0x10bbb707000000000000000000000000de61878b0b21ce395266c44d4d548d1c72a3eb07
+2026-07-05 13:45:51 +00:00:   gas:   1690000
+2026-07-05 13:45:51 +00:00:  
+2026-07-05 13:45:51 +00:00: Contract Call:
+2026-07-05 13:45:51 +00:00:   address:   0x251490B438484CEE5AB0E27C1c778C745BBb423b
+2026-07-05 13:45:51 +00:00:   function:  changeAsset(address _newAssetAddr)
+2026-07-05 13:45:51 +00:00:   args:                 (0xde61878b0b21ce395266c44d4d548d1c72a3eb07)
+2026-07-05 13:45:51 +00:00:   sender:    0x1CfA9B75FbA20A638b7ED10074c28087B2507f39
+2026-07-05 13:45:51 +00:00: 
+2026-07-05 13:45:51 +00:00: Docs: https://viem.sh/docs/contract/writeContract
+2026-07-05 13:45:51 +00:00: Details: out of gas: gas required exceeds: 1690000
+2026-07-05 13:45:51 +00:00: Version: viem@2.43.5
+2026-07-05 13:46:21 +00:00: [UFloatKeeper] strategy 5 offensive-metrics NORMAL attempt 2/5 failed: Missing or invalid parameters.
+2026-07-05 13:46:21 +00:00: Double check you have provided the correct parameters.
+2026-07-05 13:46:21 +00:00: 
+2026-07-05 13:46:21 +00:00: URL: https://base-mainnet.infura.io/v3/3b35ec9bdf9d4b29a18e92e2d7140a01
+2026-07-05 13:46:21 +00:00: Request body: {"method":"eth_sendRawTransaction","params":["0x02f891822105822686830f4240836acfc08319c99094251490b438484cee5ab0e27c1c778c745bbb423b80a410bbb707000000000000000000000000de61878b0b21ce395266c44d4d548d1c72a3eb07c001a04d7a887a20d95d72956cfce96eccdac293f26c1b91673bd7d7fe019f0e4de71ca055dca6c4bb5b630e22d3fa7c81a7de45e6c9e171d8a330e54e2e34dd8cddfc6e"]}
+2026-07-05 13:46:21 +00:00:  
+2026-07-05 13:46:21 +00:00: Request Arguments:
+2026-07-05 13:46:21 +00:00:   from:  0x1CfA9B75FbA20A638b7ED10074c28087B2507f39
+2026-07-05 13:46:21 +00:00:   to:    0x251490B438484CEE5AB0E27C1c778C745BBb423b
+2026-07-05 13:46:21 +00:00:   data:  0x10bbb707000000000000000000000000de61878b0b21ce395266c44d4d548d1c72a3eb07
+2026-07-05 13:46:21 +00:00:   gas:   1690000
+2026-07-05 13:46:21 +00:00:  
+2026-07-05 13:46:21 +00:00: Contract Call:
+2026-07-05 13:46:21 +00:00:   address:   0x251490B438484CEE5AB0E27C1c778C745BBb423b
+2026-07-05 13:46:21 +00:00:   function:  changeAsset(address _newAssetAddr)
+2026-07-05 13:46:21 +00:00:   args:                 (0xde61878b0b21ce395266c44d4d548d1c72a3eb07)
+2026-07-05 13:46:21 +00:00:   sender:    0x1CfA9B75FbA20A638b7ED10074c28087B2507f39
+2026-07-05 13:46:21 +00:00: 
+2026-07-05 13:46:21 +00:00: Docs: https://viem.sh/docs/contract/writeContract
+2026-07-05 13:46:21 +00:00: Details: out of gas: gas required exceeds: 1690000
+2026-07-05 13:46:21 +00:00: Version: viem@2.43.5
+2026-07-05 13:46:51 +00:00: [UFloatKeeper] strategy 5 offensive-metrics NORMAL attempt 3/5 failed: Missing or invalid parameters.
+2026-07-05 13:46:51 +00:00: Double check you have provided the correct parameters.
+2026-07-05 13:46:51 +00:00: 
+2026-07-05 13:46:51 +00:00: URL: https://base-mainnet.infura.io/v3/3b35ec9bdf9d4b29a18e92e2d7140a01
+2026-07-05 13:46:51 +00:00: Request body: {"method":"eth_sendRawTransaction","params":["0x02f891822105822687830f4240836acfc08319c99094251490b438484cee5ab0e27c1c778c745bbb423b80a410bbb707000000000000000000000000de61878b0b21ce395266c44d4d548d1c72a3eb07c001a0e4eff74e4476020740bb1aa89c78edf6f9ab5b6f37b3e8a1ca2ba29df984ad34a02e87d7ab8408de834e8c29c5e2d1c5fa94f567d88840d41e866f990fd2383558"]}
+2026-07-05 13:46:51 +00:00:  
+2026-07-05 13:46:51 +00:00: Request Arguments:
+2026-07-05 13:46:51 +00:00:   from:  0x1CfA9B75FbA20A638b7ED10074c28087B2507f39
+2026-07-05 13:46:51 +00:00:   to:    0x251490B438484CEE5AB0E27C1c778C745BBb423b
+2026-07-05 13:46:51 +00:00:   data:  0x10bbb707000000000000000000000000de61878b0b21ce395266c44d4d548d1c72a3eb07
+2026-07-05 13:46:51 +00:00:   gas:   1690000
+2026-07-05 13:46:51 +00:00:  
+2026-07-05 13:46:51 +00:00: Contract Call:
+2026-07-05 13:46:51 +00:00:   address:   0x251490B438484CEE5AB0E27C1c778C745BBb423b
+2026-07-05 13:46:51 +00:00:   function:  changeAsset(address _newAssetAddr)
+2026-07-05 13:46:51 +00:00:   args:                 (0xde61878b0b21ce395266c44d4d548d1c72a3eb07)
+2026-07-05 13:46:51 +00:00:   sender:    0x1CfA9B75FbA20A638b7ED10074c28087B2507f39
+2026-07-05 13:46:51 +00:00: 
+2026-07-05 13:46:51 +00:00: Docs: https://viem.sh/docs/contract/writeContract
+2026-07-05 13:46:51 +00:00: Details: out of gas: gas required exceeds: 1690000
+2026-07-05 13:46:51 +00:00: Version: viem@2.43.5
+2026-07-05 13:47:21 +00:00: [UFloatKeeper] strategy 5 offensive-metrics NORMAL attempt 4/5 failed: Missing or invalid parameters.
+2026-07-05 13:47:21 +00:00: Double check you have provided the correct parameters.
+2026-07-05 13:47:21 +00:00: 
+2026-07-05 13:47:21 +00:00: URL: https://base-mainnet.infura.io/v3/3b35ec9bdf9d4b29a18e92e2d7140a01
+2026-07-05 13:47:21 +00:00: Request body: {"method":"eth_sendRawTransaction","params":["0x02f891822105822687830f4240836acfc08319c99094251490b438484cee5ab0e27c1c778c745bbb423b80a410bbb707000000000000000000000000de61878b0b21ce395266c44d4d548d1c72a3eb07c001a0e4eff74e4476020740bb1aa89c78edf6f9ab5b6f37b3e8a1ca2ba29df984ad34a02e87d7ab8408de834e8c29c5e2d1c5fa94f567d88840d41e866f990fd2383558"]}
+2026-07-05 13:47:21 +00:00:  
+2026-07-05 13:47:21 +00:00: Request Arguments:
+2026-07-05 13:47:21 +00:00:   from:  0x1CfA9B75FbA20A638b7ED10074c28087B2507f39
+2026-07-05 13:47:21 +00:00:   to:    0x251490B438484CEE5AB0E27C1c778C745BBb423b
+2026-07-05 13:47:21 +00:00:   data:  0x10bbb707000000000000000000000000de61878b0b21ce395266c44d4d548d1c72a3eb07
+2026-07-05 13:47:21 +00:00:   gas:   1690000
+2026-07-05 13:47:21 +00:00:  
+2026-07-05 13:47:21 +00:00: Contract Call:
+2026-07-05 13:47:21 +00:00:   address:   0x251490B438484CEE5AB0E27C1c778C745BBb423b
+2026-07-05 13:47:21 +00:00:   function:  changeAsset(address _newAssetAddr)
+2026-07-05 13:47:21 +00:00:   args:                 (0xde61878b0b21ce395266c44d4d548d1c72a3eb07)
+2026-07-05 13:47:21 +00:00:   sender:    0x1CfA9B75FbA20A638b7ED10074c28087B2507f39
+2026-07-05 13:47:21 +00:00: 
+2026-07-05 13:47:21 +00:00: Docs: https://viem.sh/docs/contract/writeContract
+2026-07-05 13:47:21 +00:00: Details: out of gas: gas required exceeds: 1690000
+2026-07-05 13:47:21 +00:00: Version: viem@2.43.5
+2026-07-05 13:47:52 +00:00: [UFloatKeeper] strategy 5 offensive-metrics NORMAL attempt 5/5 failed: Missing or invalid parameters.
+2026-07-05 13:47:52 +00:00: Double check you have provided the correct parameters.
+2026-07-05 13:47:52 +00:00: 
+2026-07-05 13:47:52 +00:00: URL: https://base-mainnet.infura.io/v3/3b35ec9bdf9d4b29a18e92e2d7140a01
+2026-07-05 13:47:52 +00:00: Request body: {"method":"eth_sendRawTransaction","params":["0x02f891822105822687830f4240836acfc08319c99094251490b438484cee5ab0e27c1c778c745bbb423b80a410bbb707000000000000000000000000de61878b0b21ce395266c44d4d548d1c72a3eb07c001a0e4eff74e4476020740bb1aa89c78edf6f9ab5b6f37b3e8a1ca2ba29df984ad34a02e87d7ab8408de834e8c29c5e2d1c5fa94f567d88840d41e866f990fd2383558"]}
+2026-07-05 13:47:52 +00:00:  
+2026-07-05 13:47:52 +00:00: Request Arguments:
+2026-07-05 13:47:52 +00:00:   from:  0x1CfA9B75FbA20A638b7ED10074c28087B2507f39
+2026-07-05 13:47:52 +00:00:   to:    0x251490B438484CEE5AB0E27C1c778C745BBb423b
+2026-07-05 13:47:52 +00:00:   data:  0x10bbb707000000000000000000000000de61878b0b21ce395266c44d4d548d1c72a3eb07
+2026-07-05 13:47:52 +00:00:   gas:   1690000
+2026-07-05 13:47:52 +00:00:  
+2026-07-05 13:47:52 +00:00: Contract Call:
+2026-07-05 13:47:52 +00:00:   address:   0x251490B438484CEE5AB0E27C1c778C745BBb423b
+2026-07-05 13:47:52 +00:00:   function:  changeAsset(address _newAssetAddr)
+2026-07-05 13:47:52 +00:00:   args:                 (0xde61878b0b21ce395266c44d4d548d1c72a3eb07)
+2026-07-05 13:47:52 +00:00:   sender:    0x1CfA9B75FbA20A638b7ED10074c28087B2507f39
+2026-07-05 13:47:52 +00:00: 
+2026-07-05 13:47:52 +00:00: Docs: https://viem.sh/docs/contract/writeContract
+2026-07-05 13:47:52 +00:00: Details: out of gas: gas required exceeds: 1690000
+2026-07-05 13:47:52 +00:00: Version: viem@2.43.5
+2026-07-05 13:47:52 +00:00: [UFloatKeeper] strategy 5 offensive-metrics NORMAL failed: Missing or invalid parameters.
+2026-07-05 13:47:52 +00:00: Double check you have provided the correct parameters.
+2026-07-05 13:47:52 +00:00: 
+2026-07-05 13:47:52 +00:00: URL: https://base-mainnet.infura.io/v3/3b35ec9bdf9d4b29a18e92e2d7140a01
+2026-07-05 13:47:52 +00:00: Request body: {"method":"eth_sendRawTransaction","params":["0x02f891822105822687830f4240836acfc08319c99094251490b438484cee5ab0e27c1c778c745bbb423b80a410bbb707000000000000000000000000de61878b0b21ce395266c44d4d548d1c72a3eb07c001a0e4eff74e4476020740bb1aa89c78edf6f9ab5b6f37b3e8a1ca2ba29df984ad34a02e87d7ab8408de834e8c29c5e2d1c5fa94f567d88840d41e866f990fd2383558"]}
+2026-07-05 13:47:52 +00:00:  
+2026-07-05 13:47:52 +00:00: Request Arguments:
+2026-07-05 13:47:52 +00:00:   from:  0x1CfA9B75FbA20A638b7ED10074c28087B2507f39
+2026-07-05 13:47:52 +00:00:   to:    0x251490B438484CEE5AB0E27C1c778C745BBb423b
+2026-07-05 13:47:52 +00:00:   data:  0x10bbb707000000000000000000000000de61878b0b21ce395266c44d4d548d1c72a3eb07
+2026-07-05 13:47:52 +00:00:   gas:   1690000
+2026-07-05 13:47:52 +00:00:  
+2026-07-05 13:47:52 +00:00: Contract Call:
+2026-07-05 13:47:52 +00:00:   address:   0x251490B438484CEE5AB0E27C1c778C745BBb423b
+2026-07-05 13:47:52 +00:00:   function:  changeAsset(address _newAssetAddr)
+2026-07-05 13:47:52 +00:00:   args:                 (0xde61878b0b21ce395266c44d4d548d1c72a3eb07)
+2026-07-05 13:47:52 +00:00:   sender:    0x1CfA9B75FbA20A638b7ED10074c28087B2507f39
+2026-07-05 13:47:52 +00:00: 
+2026-07-05 13:47:52 +00:00: Docs: https://viem.sh/docs/contract/writeContract
+2026-07-05 13:47:52 +00:00: Details: out of gas: gas required exceeds: 1690000
+2026-07-05 13:47:52 +00:00: Version: viem@2.43.5
+2026-07-05 14:38:23 +00:00: [UFloatKeeper] strategy 5 offensive-metrics NORMAL attempt 1/5 failed: Missing or invalid parameters.
+2026-07-05 14:38:23 +00:00: Double check you have provided the correct parameters.
+2026-07-05 14:38:23 +00:00: 
+2026-07-05 14:38:23 +00:00: URL: https://base-mainnet.infura.io/v3/3b35ec9bdf9d4b29a18e92e2d7140a01
+2026-07-05 14:38:23 +00:00: Request body: {"method":"eth_sendRawTransaction","params":["0x02f8918221058226a6830f4240836acfc08319c99094251490b438484cee5ab0e27c1c778c745bbb423b80a410bbb7070000000000000000000000005f980dcfc4c0fa3911554cf5ab288ed0eb13dba3c080a066f1e7e4de6d3fab6c37930d3756e459536c3c4e2fd4f0941ce30752755a1133a07cccffc4c30f9fc7cad20adf9c3221cbedfad18ce57d4bffe45de8313d78a029"]}
+2026-07-05 14:38:23 +00:00:  
+2026-07-05 14:38:23 +00:00: Request Arguments:
+2026-07-05 14:38:23 +00:00:   from:  0x1CfA9B75FbA20A638b7ED10074c28087B2507f39
+2026-07-05 14:38:23 +00:00:   to:    0x251490B438484CEE5AB0E27C1c778C745BBb423b
+2026-07-05 14:38:23 +00:00:   data:  0x10bbb7070000000000000000000000005f980dcfc4c0fa3911554cf5ab288ed0eb13dba3
+2026-07-05 14:38:23 +00:00:   gas:   1690000
+2026-07-05 14:38:23 +00:00:  
+2026-07-05 14:38:23 +00:00: Contract Call:
+2026-07-05 14:38:23 +00:00:   address:   0x251490B438484CEE5AB0E27C1c778C745BBb423b
+2026-07-05 14:38:23 +00:00:   function:  changeAsset(address _newAssetAddr)
+2026-07-05 14:38:23 +00:00:   args:                 (0x5f980dcfc4c0fa3911554cf5ab288ed0eb13dba3)
+2026-07-05 14:38:23 +00:00:   sender:    0x1CfA9B75FbA20A638b7ED10074c28087B2507f39
+2026-07-05 14:38:23 +00:00: 
+2026-07-05 14:38:23 +00:00: Docs: https://viem.sh/docs/contract/writeContract
+2026-07-05 14:38:23 +00:00: Details: out of gas: gas required exceeds: 1690000
+2026-07-05 14:38:23 +00:00: Version: viem@2.43.5
+2026-07-05 14:38:53 +00:00: [UFloatKeeper] strategy 5 offensive-metrics NORMAL attempt 2/5 failed: Missing or invalid parameters.
+2026-07-05 14:38:53 +00:00: Double check you have provided the correct parameters.
+2026-07-05 14:38:53 +00:00: 
+2026-07-05 14:38:53 +00:00: URL: https://base-mainnet.infura.io/v3/3b35ec9bdf9d4b29a18e92e2d7140a01
+2026-07-05 14:38:53 +00:00: Request body: {"method":"eth_sendRawTransaction","params":["0x02f8918221058226a6830f4240836acfc08319c99094251490b438484cee5ab0e27c1c778c745bbb423b80a410bbb7070000000000000000000000005f980dcfc4c0fa3911554cf5ab288ed0eb13dba3c080a066f1e7e4de6d3fab6c37930d3756e459536c3c4e2fd4f0941ce30752755a1133a07cccffc4c30f9fc7cad20adf9c3221cbedfad18ce57d4bffe45de8313d78a029"]}
+2026-07-05 14:38:53 +00:00:  
+2026-07-05 14:38:53 +00:00: Request Arguments:
+2026-07-05 14:38:53 +00:00:   from:  0x1CfA9B75FbA20A638b7ED10074c28087B2507f39
+2026-07-05 14:38:53 +00:00:   to:    0x251490B438484CEE5AB0E27C1c778C745BBb423b
+2026-07-05 14:38:53 +00:00:   data:  0x10bbb7070000000000000000000000005f980dcfc4c0fa3911554cf5ab288ed0eb13dba3
+2026-07-05 14:38:53 +00:00:   gas:   1690000
+2026-07-05 14:38:53 +00:00:  
+2026-07-05 14:38:53 +00:00: Contract Call:
+2026-07-05 14:38:53 +00:00:   address:   0x251490B438484CEE5AB0E27C1c778C745BBb423b
+2026-07-05 14:38:53 +00:00:   function:  changeAsset(address _newAssetAddr)
+2026-07-05 14:38:53 +00:00:   args:                 (0x5f980dcfc4c0fa3911554cf5ab288ed0eb13dba3)
+2026-07-05 14:38:53 +00:00:   sender:    0x1CfA9B75FbA20A638b7ED10074c28087B2507f39
+2026-07-05 14:38:53 +00:00: 
+2026-07-05 14:38:53 +00:00: Docs: https://viem.sh/docs/contract/writeContract
+2026-07-05 14:38:53 +00:00: Details: out of gas: gas required exceeds: 1690000
+2026-07-05 14:38:53 +00:00: Version: viem@2.43.5
+2026-07-05 14:39:24 +00:00: [UFloatKeeper] strategy 5 offensive-metrics NORMAL attempt 3/5 failed: Missing or invalid parameters.
+2026-07-05 14:39:24 +00:00: Double check you have provided the correct parameters.
+2026-07-05 14:39:24 +00:00: 
+2026-07-05 14:39:24 +00:00: URL: https://base-mainnet.infura.io/v3/3b35ec9bdf9d4b29a18e92e2d7140a01
+2026-07-05 14:39:24 +00:00: Request body: {"method":"eth_sendRawTransaction","params":["0x02f8918221058226a6830f4240836acfc08319c99094251490b438484cee5ab0e27c1c778c745bbb423b80a410bbb7070000000000000000000000005f980dcfc4c0fa3911554cf5ab288ed0eb13dba3c080a066f1e7e4de6d3fab6c37930d3756e459536c3c4e2fd4f0941ce30752755a1133a07cccffc4c30f9fc7cad20adf9c3221cbedfad18ce57d4bffe45de8313d78a029"]}
+2026-07-05 14:39:24 +00:00:  
+2026-07-05 14:39:24 +00:00: Request Arguments:
+2026-07-05 14:39:24 +00:00:   from:  0x1CfA9B75FbA20A638b7ED10074c28087B2507f39
+2026-07-05 14:39:24 +00:00:   to:    0x251490B438484CEE5AB0E27C1c778C745BBb423b
+2026-07-05 14:39:24 +00:00:   data:  0x10bbb7070000000000000000000000005f980dcfc4c0fa3911554cf5ab288ed0eb13dba3
+2026-07-05 14:39:24 +00:00:   gas:   1690000
+2026-07-05 14:39:24 +00:00:  
+2026-07-05 14:39:24 +00:00: Contract Call:
+2026-07-05 14:39:24 +00:00:   address:   0x251490B438484CEE5AB0E27C1c778C745BBb423b
+2026-07-05 14:39:24 +00:00:   function:  changeAsset(address _newAssetAddr)
+2026-07-05 14:39:24 +00:00:   args:                 (0x5f980dcfc4c0fa3911554cf5ab288ed0eb13dba3)
+2026-07-05 14:39:24 +00:00:   sender:    0x1CfA9B75FbA20A638b7ED10074c28087B2507f39
+2026-07-05 14:39:24 +00:00: 
+2026-07-05 14:39:24 +00:00: Docs: https://viem.sh/docs/contract/writeContract
+2026-07-05 14:39:24 +00:00: Details: out of gas: gas required exceeds: 1690000
+2026-07-05 14:39:24 +00:00: Version: viem@2.43.5
+2026-07-05 14:39:54 +00:00: [UFloatKeeper] strategy 5 offensive-metrics NORMAL attempt 4/5 failed: Missing or invalid parameters.
+2026-07-05 14:39:54 +00:00: Double check you have provided the correct parameters.
+2026-07-05 14:39:54 +00:00: 
+2026-07-05 14:39:54 +00:00: URL: https://base-mainnet.infura.io/v3/3b35ec9bdf9d4b29a18e92e2d7140a01
+2026-07-05 14:39:54 +00:00: Request body: {"method":"eth_sendRawTransaction","params":["0x02f8918221058226a6830f4240836acfc08319c99094251490b438484cee5ab0e27c1c778c745bbb423b80a410bbb7070000000000000000000000005f980dcfc4c0fa3911554cf5ab288ed0eb13dba3c080a066f1e7e4de6d3fab6c37930d3756e459536c3c4e2fd4f0941ce30752755a1133a07cccffc4c30f9fc7cad20adf9c3221cbedfad18ce57d4bffe45de8313d78a029"]}
+2026-07-05 14:39:54 +00:00:  
+2026-07-05 14:39:54 +00:00: Request Arguments:
+2026-07-05 14:39:54 +00:00:   from:  0x1CfA9B75FbA20A638b7ED10074c28087B2507f39
+2026-07-05 14:39:54 +00:00:   to:    0x251490B438484CEE5AB0E27C1c778C745BBb423b
+2026-07-05 14:39:54 +00:00:   data:  0x10bbb7070000000000000000000000005f980dcfc4c0fa3911554cf5ab288ed0eb13dba3
+2026-07-05 14:39:54 +00:00:   gas:   1690000
+2026-07-05 14:39:54 +00:00:  
+2026-07-05 14:39:54 +00:00: Contract Call:
+2026-07-05 14:39:54 +00:00:   address:   0x251490B438484CEE5AB0E27C1c778C745BBb423b
+2026-07-05 14:39:54 +00:00:   function:  changeAsset(address _newAssetAddr)
+2026-07-05 14:39:54 +00:00:   args:                 (0x5f980dcfc4c0fa3911554cf5ab288ed0eb13dba3)
+2026-07-05 14:39:54 +00:00:   sender:    0x1CfA9B75FbA20A638b7ED10074c28087B2507f39
+2026-07-05 14:39:54 +00:00: 
+2026-07-05 14:39:54 +00:00: Docs: https://viem.sh/docs/contract/writeContract
+2026-07-05 14:39:54 +00:00: Details: out of gas: gas required exceeds: 1690000
+2026-07-05 14:39:54 +00:00: Version: viem@2.43.5
+2026-07-05 14:40:24 +00:00: [UFloatKeeper] strategy 5 offensive-metrics NORMAL attempt 5/5 failed: Missing or invalid parameters.
+2026-07-05 14:40:24 +00:00: Double check you have provided the correct parameters.
+2026-07-05 14:40:24 +00:00: 
+2026-07-05 14:40:24 +00:00: URL: https://base-mainnet.infura.io/v3/3b35ec9bdf9d4b29a18e92e2d7140a01
+2026-07-05 14:40:24 +00:00: Request body: {"method":"eth_sendRawTransaction","params":["0x02f8918221058226a7830f4240836acfc08319c99094251490b438484cee5ab0e27c1c778c745bbb423b80a410bbb7070000000000000000000000005f980dcfc4c0fa3911554cf5ab288ed0eb13dba3c001a04918ac8cbb8e5f788de7878144597c6cbb6441dfc169ac1213fcb7c33f382c87a07c2ee15b2ccf95375dacdaa7e2755d3b4bfa6e271156e112739aa0063528d9e8"]}
+2026-07-05 14:40:24 +00:00:  
+2026-07-05 14:40:24 +00:00: Request Arguments:
+2026-07-05 14:40:24 +00:00:   from:  0x1CfA9B75FbA20A638b7ED10074c28087B2507f39
+2026-07-05 14:40:24 +00:00:   to:    0x251490B438484CEE5AB0E27C1c778C745BBb423b
+2026-07-05 14:40:24 +00:00:   data:  0x10bbb7070000000000000000000000005f980dcfc4c0fa3911554cf5ab288ed0eb13dba3
+2026-07-05 14:40:24 +00:00:   gas:   1690000
+2026-07-05 14:40:24 +00:00:  
+2026-07-05 14:40:24 +00:00: Contract Call:
+2026-07-05 14:40:24 +00:00:   address:   0x251490B438484CEE5AB0E27C1c778C745BBb423b
+2026-07-05 14:40:24 +00:00:   function:  changeAsset(address _newAssetAddr)
+2026-07-05 14:40:24 +00:00:   args:                 (0x5f980dcfc4c0fa3911554cf5ab288ed0eb13dba3)
+2026-07-05 14:40:24 +00:00:   sender:    0x1CfA9B75FbA20A638b7ED10074c28087B2507f39
+2026-07-05 14:40:24 +00:00: 
+2026-07-05 14:40:24 +00:00: Docs: https://viem.sh/docs/contract/writeContract
+2026-07-05 14:40:24 +00:00: Details: out of gas: gas required exceeds: 1690000
+2026-07-05 14:40:24 +00:00: Version: viem@2.43.5
+2026-07-05 14:40:24 +00:00: [UFloatKeeper] strategy 5 offensive-metrics NORMAL failed: Missing or invalid parameters.
+2026-07-05 14:40:24 +00:00: Double check you have provided the correct parameters.
+2026-07-05 14:40:24 +00:00: 
+2026-07-05 14:40:24 +00:00: URL: https://base-mainnet.infura.io/v3/3b35ec9bdf9d4b29a18e92e2d7140a01
+2026-07-05 14:40:24 +00:00: Request body: {"method":"eth_sendRawTransaction","params":["0x02f8918221058226a7830f4240836acfc08319c99094251490b438484cee5ab0e27c1c778c745bbb423b80a410bbb7070000000000000000000000005f980dcfc4c0fa3911554cf5ab288ed0eb13dba3c001a04918ac8cbb8e5f788de7878144597c6cbb6441dfc169ac1213fcb7c33f382c87a07c2ee15b2ccf95375dacdaa7e2755d3b4bfa6e271156e112739aa0063528d9e8"]}
+2026-07-05 14:40:24 +00:00:  
+2026-07-05 14:40:24 +00:00: Request Arguments:
+2026-07-05 14:40:24 +00:00:   from:  0x1CfA9B75FbA20A638b7ED10074c28087B2507f39
+2026-07-05 14:40:24 +00:00:   to:    0x251490B438484CEE5AB0E27C1c778C745BBb423b
+2026-07-05 14:40:24 +00:00:   data:  0x10bbb7070000000000000000000000005f980dcfc4c0fa3911554cf5ab288ed0eb13dba3
+2026-07-05 14:40:24 +00:00:   gas:   1690000
+2026-07-05 14:40:24 +00:00:  
+2026-07-05 14:40:24 +00:00: Contract Call:
+2026-07-05 14:40:24 +00:00:   address:   0x251490B438484CEE5AB0E27C1c778C745BBb423b
+2026-07-05 14:40:24 +00:00:   function:  changeAsset(address _newAssetAddr)
+2026-07-05 14:40:24 +00:00:   args:                 (0x5f980dcfc4c0fa3911554cf5ab288ed0eb13dba3)
+2026-07-05 14:40:24 +00:00:   sender:    0x1CfA9B75FbA20A638b7ED10074c28087B2507f39
+2026-07-05 14:40:24 +00:00: 
+2026-07-05 14:40:24 +00:00: Docs: https://viem.sh/docs/contract/writeContract
+2026-07-05 14:40:24 +00:00: Details: out of gas: gas required exceeds: 1690000
+2026-07-05 14:40:24 +00:00: Version: viem@2.43.5
+2026-07-05 21:08:13 +00:00: [UFloatKeeper] performUpkeepBatch id 5 alone uses 1794638 gas (cap 1500000) — sending anyway

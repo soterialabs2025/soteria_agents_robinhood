@@ -1,0 +1,61 @@
+{
+  "network": "robinhood",
+  "currency": "USDG",
+  "services": {
+    "token-score": {
+      "description": "Rank 2–10 Robinhood Chain token contract addresses by LP-position metrics (volume, price momentum, buy pressure, turnover). Returns best token and full weighted ranking.",
+      "price": "0.01",
+      "paymentScheme": "exact",
+      "methods": ["POST"],
+      "category": "data",
+      "tags": ["defi", "liquidity", "ranking", "robinhood", "tokens"],
+      "schema": {
+        "input": {
+          "type": "object",
+          "properties": {
+            "tokens": {
+              "type": "array",
+              "description": "Robinhood Chain ERC-20 contract addresses to rank (min 2, max 10)",
+              "minItems": 2,
+              "maxItems": 10,
+              "items": {
+                "type": "string",
+                "description": "Token contract address on Robinhood Chain (0x…)"
+              }
+            }
+          },
+          "required": ["tokens"]
+        },
+        "output": {
+          "type": "object",
+          "properties": {
+            "network": {
+              "type": "string",
+              "description": "Always robinhood"
+            },
+            "best": {
+              "type": "object",
+              "description": "Top-ranked token for adding liquidity (null if none scored)"
+            },
+            "ranked": {
+              "type": "array",
+              "description": "Tokens ordered by weighted composite score (best first)"
+            },
+            "errors": {
+              "type": "array",
+              "description": "Per-address failures (e.g. no pool / not found)"
+            },
+            "metrics": {
+              "type": "object",
+              "description": "Metric keys and weights used for scoring"
+            },
+            "weight_sum": {
+              "type": "number",
+              "description": "Sum of active metric weights (score_normalized = score / weight_sum)"
+            }
+          }
+        }
+      }
+    }
+  }
+}

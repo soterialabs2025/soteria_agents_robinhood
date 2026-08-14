@@ -1,0 +1,45 @@
+# AWS Amplify Hosting — Next.js SSR (WEB_COMPUTE)
+# Console env vars must be written to .env.production at build time:
+# https://docs.aws.amazon.com/amplify/latest/userguide/ssr-environment-variables.html
+#
+# Required in Amplify Console → Environment variables:
+#   OPENAI_API_KEY, RPC_URL, COIN_GECKO_API_KEY
+# Optional (grep uses || true — omit any you don't need):
+#   CDP_*, DEMETER_PRIVATE_KEY, TRITON_PRIVATE_KEY, DEMETER_LOOPS_ENABLED=false
+
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - npm ci
+    build:
+      commands:
+        - rm -f .env.production
+        # Required — build fails with clear message if missing
+        - test -n "$OPENAI_API_KEY" || (echo "ERROR Missing OPENAI_API_KEY in Amplify Environment variables" && exit 1)
+        - test -n "$RPC_URL" || (echo "ERROR Missing RPC_URL in Amplify Environment variables" && exit 1)
+        - test -n "$COIN_GECKO_API_KEY" || (echo "ERROR Missing COIN_GECKO_API_KEY in Amplify Environment variables" && exit 1)
+        - env | grep -e OPENAI_API_KEY >> .env.production
+        - env | grep -e RPC_URL >> .env.production
+        - env | grep -e COIN_GECKO_API_KEY >> .env.production
+        # Optional — grep exits 1 when unset; || true prevents build failure
+        - env | grep -e CDP_API_KEY_ID >> .env.production || true
+        - env | grep -e CDP_API_KEY_SECRET >> .env.production || true
+        - env | grep -e CDP_WALLET_SECRET >> .env.production || true
+        - env | grep -e DEMETER_PRIVATE_KEY >> .env.production || true
+        - env | grep -e TRITON_PRIVATE_KEY >> .env.production || true
+        - env | grep -e EVM_PRIVATE_KEY >> .env.production || true
+        - env | grep -e EOA_ADDRESS >> .env.production || true
+        - env | grep -e EVM_WALLET_SIGNER >> .env.production || true
+        - env | grep -e DEMETER_LOOPS_ENABLED >> .env.production || true
+        - export NODE_OPTIONS=--max-old-space-size=4096
+        - npm run build
+  artifacts:
+    baseDirectory: .next
+    files:
+      - "**/*"
+  cache:
+    paths:
+      - node_modules/**/*
+      - .next/cache/**/*
