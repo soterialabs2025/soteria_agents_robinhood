@@ -281,7 +281,7 @@ Prevents runaway allocation; may allow build to complete on low-RAM instances:
 
 ```bash
 cd /var/www/soteria_agents_robinhood
-NODE_OPTIONS="--max-old-space-size=1536" npm run build
+NODE_OPTIONS="--max-old-space-size=2048" npm run build
 ```
 
 Use `1024` on a 1 GB instance, `1536` or `2048` on 2 GB.

@@ -13,7 +13,7 @@ const rpcUrl = getRpcUrl();
 
 const keeper = getFloatV4KeeperAddress() as `0x${string}`;
 const strat = "0xa40A982190d31Ae334a4D97b1B11CF9b1E769aef" as `0x${string}`;
-const demeter = "0x208169B1321A09e614a68B06b7F600Dc0E007212" as `0x${string}`;
+const demeter = "0x3ec00017066Eb2e2348D82d0e21D5fDB3357CE16" as `0x${string}`;
 const keeperAbi = floatKeeperV4Json.abi;
 const stratAbi = floatStrategyV4Json.abi;
 

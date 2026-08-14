@@ -112,7 +112,7 @@ export async function prepareAgentkitAndWalletProvider(options?: {
     }
   }
 
-  const accountAddressForCdp = (process.env.EOA_ADDRESS || eoaAddress || "0x208169B1321A09e614a68B06b7F600Dc0E007212") as Address;
+  const accountAddressForCdp = (process.env.EOA_ADDRESS || eoaAddress || "0x3ec00017066Eb2e2348D82d0e21D5fDB3357CE16") as Address;
 
   try {
     let walletProvider: WalletProvider;

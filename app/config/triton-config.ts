@@ -783,7 +783,7 @@ export function getTritonMergedConfig(): ReturnType<typeof getTritonRankingEligi
 
 
 /** Wallet for `TRITON_PRIVATE_KEY`; must match on-chain `tritonAddr` on LiquidStratMinV4. */
-export const TRITON_WALLET_ADDRESS = "0x66d60E991D09447245d668671d079b57eB48f58E" as const;
+export const TRITON_WALLET_ADDRESS = "0xbED21b27411A80a557bBA5BDd4e31E05E09E09f4" as const;
 
 /** LiquidStratMinV4 on Base. */
 export const LIQUID_STRAT_MIN_V4_ADDRESS = "0x14CC9303f5FA8D3A5BDb08604e436A953A88f7cE" as const;
