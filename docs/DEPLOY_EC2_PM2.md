@@ -20,8 +20,9 @@ Step-by-step guide to deploy the Soteria Agents app (Next.js + Demeter) on AWS E
 - Domain name with DNS access (for HTTPS)
 - GitHub repo with your code (or another way to transfer files)
 - SSH key pair for EC2
-
+ssh -T -i ~/.ssh/github_deploy_soteria_rh_ed25519 -o IdentitiesOnly=yes git@github.com
 ---
+ssh -T -i ~/.ssh/github_deploy_soteria_rh_ed25519 -o IdentitiesOnly=yes git@github.com
 
 ## Step 1: Launch EC2 Instance
 
@@ -112,10 +113,18 @@ GitHub remotes use either **HTTPS** or **SSH** ([About remote repositories](http
    ```bash
    ssh-keygen -t ed25519 -C "ec2-soteria-deploy" -f ~/.ssh/github_deploy_soteria_ed25519 -N ""
    ```
-
+ssh-keygen -t ed25519 -C "ec2-soteria-deploy" -f ~/.ssh/github_deploy_soteria_rh_ed25519 -N ""
    See [Generating a new SSH key and adding it to the ssh-agent](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent).
 
-3. **Add the public key to GitHub**: Repo → **Settings** → **Deploy keys** → **Add deploy key** — paste `~/.ssh/github_deploy_soteria_ed25519.pub`, title e.g. `EC2 prod`. Leave **Allow write access** unchecked if you only `git pull`. See [Managing deploy keys](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/managing-deploy-keys#deploy-keys).
+3. **Add the public key to GitHub**: on the EC2 instance, print the **contents** of the `.pub` file (not the path, not the private key):
+
+   ```bash
+   cat ~/.ssh/github_deploy_soteria_ed25519.pub
+   ```
+
+   Copy the **one line** that starts with `ssh-ed25519` (it looks like `ssh-ed25519 AAAAC3NzaC1lZDI1NTE5... ec2-soteria-deploy`). Then: repo → **Settings** → **Deploy keys** → **Add deploy key** — Title e.g. `EC2 prod`, paste that line into **Key**. Leave **Allow write access** unchecked if you only `git pull`.
+
+   GitHub rejects the key if you paste the file path, the private key (no `.pub`, starts with `-----BEGIN`), extra quotes/newlines, or a key already used as a personal SSH key or a deploy key on another repo (“Key is already in use”). Generate a new key pair on this instance if needed. See [Managing deploy keys](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/managing-deploy-keys#deploy-keys).
 
 4. **Trust `github.com` host key** (verify fingerprint against [GitHub’s SSH key fingerprints](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/githubs-ssh-key-fingerprints)):
 
@@ -163,6 +172,7 @@ You keep the same folder and history; only **`origin`** changes from HTTPS to SS
    ```
 
    You should see `git@github.com:...` for `fetch` and `push`.
+   git@github.com:soterialabs2025/soteria_agents_robinhood.git
 
 4. **Tell Git which key to use** for `github.com` (deploy keys are not the default `id_ed25519`). **Permanent setup (recommended):** edit **`~/.ssh/config`** on the EC2 instance as `ubuntu` — then plain `git pull` in **`./deploy.sh`** uses this key automatically (no `GIT_SSH_COMMAND` needed).
 

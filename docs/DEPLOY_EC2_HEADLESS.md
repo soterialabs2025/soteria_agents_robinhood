@@ -45,7 +45,7 @@ So on the server: use **PM2** for normal operation. Use `npm run demeter` only w
 
 ---
 
-## Step 2: Connect and Update
+## Step 2: Connect and   Update 
 
 ```bash
 ssh -i ~/.ssh/rh-agent-pair.pem ubuntu@3.145.26.185
@@ -92,29 +92,25 @@ ssh-keygen -t ed25519 -C isaiahc@soterialabs.io
 
 ---
 
-## Step 4: Clone and Set Up the  App 
+## Step 4: Clone and Set Up the App
 
-The repo clones into a folder named `soteria_agents`; that folder is the app root (where `package.json` lives).
+The app root is `/var/www/soteria_agents_robinhood` (where `package.json` lives). Clone into that directory with `.` so you do not get a nested folder. The directory must be empty (move an existing `.env` aside first, then move it back after clone).
 
 ```bash
-sudo mkdir -p /var/www/soteria-agents
+sudo mkdir -p /var/www/soteria_agents_robinhood
 sudo chown -R ubuntu:ubuntu /var/www
-cd /var/www/soteria-agents
-
-np
-cd soteria_agents
+cd /var/www/soteria_agents_robinhood
+GIT_SSH_COMMAND='ssh -i ~/.ssh/github_deploy_soteria_rh_ed25519 -o IdentitiesOnly=yes' git clone git@github.com:soterialabs2025/soteria_agents_robinhood.git .
 ```
 
-All following steps (env, build, PM2) run from `/var/www/soteria-agents/soteria_agents`.
-
-git@github.com:soterialabs2025/soteria_agents.git
+All following steps (env, build, PM2) run from `/var/www/soteria_agents_robinhood`.
 
 ---
 
 ## Step 5: Environment Variables
 
 ```bash
-cd /var/www/soteria-agents/soteria_agents
+cd /var/www/soteria_agents_robinhood
 nano .env
 ```
 
@@ -141,7 +137,7 @@ Save and exit (Ctrl+X, Y, Enter).
 The app still needs a build (agent code and deps). Run from the app root.
 
 ```bash
-cd /var/www/soteria-agents/soteria_agents
+cd /var/www/soteria_agents_robinhood
 npm ci
 npm run build
 ```
@@ -160,7 +156,7 @@ You should see Demeter start and the upkeep/harvest/change-strategy/price-check 
 
 ## Step 7: PM2 Ecosystem (Demeter Only)
 
-Create or update `ecosystem.config.cjs` in the app root (`/var/www/soteria-agents/soteria_agents`). Use `.cjs` so Node treats it as CommonJS (the project has `"type": "module"`). The `cwd` must be that folder so `npm run demeter` runs in the right place.
+Create or update `ecosystem.config.cjs` in the app root (`/var/www/soteria_agents_robinhood`). Use `.cjs` so Node treats it as CommonJS (the project has `"type": "module"`). The `cwd` must be that folder so `npm run demeter` runs in the right place.
 
 ```javascript
 /**
@@ -171,7 +167,7 @@ module.exports = {
   apps: [
     {
       name: "demeter",
-      cwd: "/var/www/soteria-agents/soteria_agents",
+      cwd: "/var/www/soteria_agents_robinhood",
       script: "npm",
       args: "run demeter",
       instances: 1,
@@ -190,7 +186,7 @@ module.exports = {
 ## Step 8: Start with PM2 and Enable Startup
 
 ```bash
-cd /var/www/soteria-agents/soteria_agents
+cd /var/www/soteria_agents_robinhood
 
 pm2 start ecosystem.config.cjs
 pm2 status
@@ -213,7 +209,7 @@ pm2 logs demeter
 Create the script in the app root:
 
 ```bash
-nano /var/www/soteria-agents/soteria_agents/deploy.sh
+nano /var/www/soteria_agents_robinhood/deploy.sh
 ```
 
 Paste:
@@ -221,7 +217,7 @@ Paste:
 ```bash
 #!/usr/bin/env bash
 set -euo pipefail
-APP_DIR="/var/www/soteria-agents/soteria_agents"
+APP_DIR="/var/www/soteria_agents_robinhood"
 cd "$APP_DIR"
 git fetch --all
 git reset --hard origin/main
@@ -232,13 +228,13 @@ echo "Deploy complete."
 ```
 
 ```bash
-chmod +x /var/www/soteria-agents/soteria_agents/deploy.sh
+chmod +x /var/www/soteria_agents_robinhood/deploy.sh
 ```
 
 To deploy updates (from anywhere, or from the app folder use `./deploy.sh`):
 
 ```bash
-/var/www/soteria-agents/soteria_agents/deploy.sh
+/var/www/soteria_agents_robinhood/deploy.sh
 ```
 
 ---
@@ -284,7 +280,7 @@ Then run `npm run build` again. It may be slow but should finish.
 Prevents runaway allocation; may allow build to complete on low-RAM instances:
 
 ```bash
-cd /var/www/soteria-agents/soteria_agents
+cd /var/www/soteria_agents_robinhood
 NODE_OPTIONS="--max-old-space-size=1536" npm run build
 ```
 

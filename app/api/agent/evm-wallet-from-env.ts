@@ -24,7 +24,6 @@ import { getNetworkId } from "../../config/demeter-config";
 
 const NETWORK_ID_TO_CHAIN: Record<string, Chain> = {
   [DEFAULT_NETWORK_ID]: robinhood,
-  "robinhood-mainnet": robinhood,
 };
 
 export type EvmWalletSignerMode = "cdp" | "viem";
