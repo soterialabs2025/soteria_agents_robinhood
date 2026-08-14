@@ -5,7 +5,7 @@ import type { Address } from "viem";
 
 /** Deployed OperatorRegistry on Base mainnet. Override via OPERATOR_REGISTRY_ADDRESS. */
 export const DEFAULT_OPERATOR_REGISTRY_ADDRESS =
-  "0x704618C4E8C201F45536DFD583911F8335e853Dd" as const;
+  "0x7df1120a04D82eA92EA2d5AA005e3316B37b936E" as const;
 
 /** Expected address for TRITON_TWO_PRIVATE_KEY (operator shard 2). */
 export const TRITON_TWO_WALLET_ADDRESS =
