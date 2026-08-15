@@ -91,7 +91,12 @@
         "internalType": "address"
       },
       {
-        "name": "liquidToken",
+        "name": "liquidShares",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "shareStaking",
         "type": "address",
         "internalType": "address"
       },
@@ -133,7 +138,7 @@
   },
   {
     "type": "function",
-    "name": "liquidTokenImplementation",
+    "name": "liquidSharesImplementation",
     "inputs": [],
     "outputs": [
       {
@@ -179,7 +184,12 @@
         "internalType": "address"
       },
       {
-        "name": "liquidToken",
+        "name": "liquidShares",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "shareStaking",
         "type": "address",
         "internalType": "address"
       },
@@ -205,32 +215,12 @@
   },
   {
     "type": "function",
-    "name": "setPackage",
+    "name": "setPackageActive",
     "inputs": [
       {
         "name": "asset",
         "type": "address",
         "internalType": "address"
-      },
-      {
-        "name": "strategy",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "vault",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "liquidToken",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "fee",
-        "type": "uint24",
-        "internalType": "uint24"
       },
       {
         "name": "active",
@@ -240,6 +230,19 @@
     ],
     "outputs": [],
     "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "shareStakingImplementation",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "stateMutability": "view"
   },
   {
     "type": "function",
@@ -258,6 +261,24 @@
     "type": "function",
     "name": "transferOwnership",
     "inputs": [
+      {
+        "name": "newOwner",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "transferPackageOwnership",
+    "inputs": [
+      {
+        "name": "asset",
+        "type": "address",
+        "internalType": "address"
+      },
       {
         "name": "newOwner",
         "type": "address",
@@ -336,6 +357,31 @@
   },
   {
     "type": "event",
+    "name": "PackageOwnershipTransferred",
+    "inputs": [
+      {
+        "name": "asset",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "previousOwner",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "newOwner",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
     "name": "VaultRegistryDeployed",
     "inputs": [
       {
@@ -351,9 +397,15 @@
         "internalType": "address"
       },
       {
-        "name": "liquidToken",
+        "name": "liquidShares",
         "type": "address",
         "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "shareStaking",
+        "type": "address",
+        "indexed": false,
         "internalType": "address"
       },
       {
@@ -469,7 +521,22 @@
   },
   {
     "type": "error",
+    "name": "OwnerMismatch",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "PackageOwnershipLocked",
+    "inputs": []
+  },
+  {
+    "type": "error",
     "name": "Unauthorized",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "UnknownPackage",
     "inputs": []
   },
   {

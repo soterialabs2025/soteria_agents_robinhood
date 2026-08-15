@@ -7,13 +7,16 @@
  * 3. Collect active strategy ids (optional AUTO_KEEPER_STRATEGY_IDS allowlist)
  * 4. performUpkeepBatch(ids) gas-chunked on upkeep interval
  * 5. performHarvestBatch(ids, skipIncreaseLiquidity) gas-chunked on harvest interval
+ *    — skips mode=STABLE (no NEUTRAL; AutoStrategyV3Rh is NORMAL/DEFENSIVE/OFFENSIVE/STABLE)
  *
  * Uses the same batch gas model as Float/UFloat keepers ({@link resolveBatchTxGasLimit}).
  */
 import type { Abi, Account, Address, PublicClient } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 
+import { AUTO_STRATEGY_MODE } from "../abi/contract-enums";
 import autoKeeperRhAbi from "../abi/auto-vaults-rh/AutoKeeper.abi.json";
+import autoStrategyRhAbi from "../abi/auto-vaults-rh/AutoStrategyV3Rh.abi.json";
 import { getRpcUrl, explorerTxUrl } from "../config/chain-config";
 import {
   createTritonPublicClient,
@@ -44,6 +47,7 @@ import { enqueueSerializedAddressTx } from "./operator-tx-queue";
 import { filterActiveByMinPoolValue, MIN_STRATEGY_POOL_VALUE_WEI } from "./strategy-pool-value-eligibility";
 
 const AUTO_KEEPER_ABI = autoKeeperRhAbi as Abi;
+const AUTO_STRATEGY_ABI = autoStrategyRhAbi as Abi;
 const AUTO_KEEPER_TX_MAX_ATTEMPTS = 3;
 
 function isNonceTooLowError(error: unknown): boolean {
@@ -136,6 +140,43 @@ export async function activeAutoStrategyIds(
   return eligible
     .filter((r) => (allowSet ? allowSet.has(r.id) : true))
     .map((r) => r.id);
+}
+
+export async function readAutoStrategyMode(
+  strategyAddress: Address,
+  rpcUrl: string
+): Promise<number> {
+  const client = createTritonPublicClient(rpcUrl);
+  const mode = await client.readContract({
+    address: strategyAddress,
+    abi: AUTO_STRATEGY_ABI,
+    functionName: "mode",
+  });
+  return Number(mode);
+}
+
+/** Harvest ids — same as {@link activeAutoStrategyIds} minus mode=STABLE (no LP). */
+export async function activeAutoHarvestStrategyIds(
+  rows: AutoWatchedRow[],
+  rpcUrl: string
+): Promise<number[]> {
+  const active = await activeAutoStrategyIds(rows, rpcUrl);
+  const activeSet = new Set(active);
+  const ids: number[] = [];
+  for (const row of rows) {
+    if (!activeSet.has(row.id)) continue;
+    try {
+      const mode = await readAutoStrategyMode(row.stratAddr, rpcUrl);
+      if (mode === AUTO_STRATEGY_MODE.Stable) continue;
+      ids.push(row.id);
+    } catch (e) {
+      console.warn(
+        `[AutoKeeper] harvest eligibility read failed for strategy ${row.id}:`,
+        e instanceof Error ? e.message : e
+      );
+    }
+  }
+  return ids;
 }
 
 function batchArgs(
@@ -466,7 +507,13 @@ async function autoKeeperHarvestLoop(
     }
     try {
       const rows = await listAutoWatchedRows(keeperAddress, rpcUrl);
-      const ids = await activeAutoStrategyIds(rows, rpcUrl);
+      const allActiveIds = await activeAutoStrategyIds(rows, rpcUrl);
+      const ids = await activeAutoHarvestStrategyIds(rows, rpcUrl);
+      if (allActiveIds.length > ids.length) {
+        console.log(
+          `[AutoKeeper] Harvest skipping ${allActiveIds.length - ids.length} mode=STABLE strateg${allActiveIds.length - ids.length === 1 ? "y" : "ies"}`
+        );
+      }
       await runAutoKeeperBatches(
         privateKey,
         rpcUrl,
@@ -530,7 +577,7 @@ export async function autoKeeperLoop(): Promise<void> {
     `[AutoKeeper] performUpkeepBatch every ${upkeepMs / 1000}s (gas-chunked, max send ${getAutoKeeperBatchMaxGas("performUpkeepBatch")})`
   );
   console.log(
-    `[AutoKeeper] performHarvestBatch every ${harvestMs / 3600000}h (skipIncreaseLiquidity=${skipLiq}; gas-chunked, max send ${getAutoKeeperBatchMaxGas("performHarvestBatch")})`
+    `[AutoKeeper] performHarvestBatch every ${harvestMs / 3600000}h (skips mode=STABLE; skipIncreaseLiquidity=${skipLiq}; gas-chunked, max send ${getAutoKeeperBatchMaxGas("performHarvestBatch")})`
   );
   console.log(
     `[AutoKeeper] Tx gas: ${getDemeterTxGasHeadroomBps() / 1000}× headroom (batch), min ${getTxMinGasLimit()}`

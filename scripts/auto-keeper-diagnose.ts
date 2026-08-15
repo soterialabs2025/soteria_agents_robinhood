@@ -10,7 +10,7 @@ import { privateKeyToAccount } from "viem/accounts";
 
 import autoKeeperRhAbi from "../app/abi/auto-vaults-rh/AutoKeeper.abi.json";
 import autoStrategyRhAbi from "../app/abi/auto-vaults-rh/AutoStrategyV3Rh.abi.json";
-import { formatFloatStrategyMode } from "../app/abi/contract-enums";
+import { formatAutoStrategyMode } from "../app/abi/contract-enums";
 import {
   AUTO_FACTORY_V3_RH_ADDRESS,
   AUTO_KEEPER_V3_RH_ADDRESS,
@@ -122,7 +122,7 @@ async function main() {
         client.readContract({ address: row.stratAddr, abi: STRAT_ABI, functionName: "keeper" }) as Promise<Address>,
       ]);
       console.log("ASSET:", asset);
-      console.log("mode:", Number(mode), formatFloatStrategyMode(Number(mode)));
+      console.log("mode:", Number(mode), formatAutoStrategyMode(Number(mode)));
       console.log("poolValue:", poolValue.toString(), `(${formatEther(poolValue)} ETH)`);
       console.log("balanceOfIdle:", idle.toString(), `(${formatEther(idle)} ETH)`);
       console.log("strategy.lastHarvest:", fmtTs(Number(lastHarvest)));

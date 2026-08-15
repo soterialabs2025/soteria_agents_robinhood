@@ -16,7 +16,7 @@ export const AUTO_OPERATOR_REGISTRY_ADDRESS =
 
 /** AutoFactoryV3Rh on Robinhood Chain. */
 export const AUTO_FACTORY_V3_RH_ADDRESS =
-  "0x53a2430Eb649FdA4A8000a6Da3550EAB8E0D3882" as const;
+  "0xFd6f1F71F2aAe90f89c5b11bdfa03871e263F13A" as const;
 
 /** AutoSwapRouterV3Rh on Robinhood Chain. */
 export const AUTO_SWAP_ROUTER_V3_RH_ADDRESS =
