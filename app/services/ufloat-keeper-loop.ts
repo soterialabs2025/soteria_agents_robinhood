@@ -29,7 +29,7 @@ import {
   getUfloatOffensiveIntervalMs,
 } from "../config/triton-config";
 import { getDemeterTxGasHeadroomBps, getTxMinGasLimit, isTxOutOfGasError, resolveBatchTxGasLimit, resolveTxGasLimit } from "../config/demeter-tx-gas";
-import { assertOperatorWalletsRegistered } from "./operator-registry";
+import { filterRegisteredOperatorWallets } from "./operator-registry";
 import { groupStrategyIdsByShard } from "./operator-shard";
 import { enqueueSerializedAddressTx } from "./operator-tx-queue";
 import {
@@ -61,7 +61,8 @@ export type UfloatWatchedRow = {
   active: boolean;
 };
 
-export async function resolveUFloatKeeperAddress(_rpcUrl?: string): Promise<Address> {
+/** Hardcoded RH UFloat V4 keeper — never resolves via FloatContractManager.getAddress. */
+export function resolveUFloatKeeperAddress(_rpcUrl?: string): Address {
   return getUfloatRhV4Pipeline().keeperAddress;
 }
 
@@ -428,7 +429,12 @@ async function startUfloatKeeperPipeline(
     );
   }
 
-  await assertOperatorWalletsRegistered(wallets, rpcUrl, onChainRegistry);
+  const shardWallets = await filterRegisteredOperatorWallets(
+    wallets,
+    rpcUrl,
+    onChainRegistry,
+    tag
+  );
 
   const upkeepMs = getUfloatKeeperUpkeepIntervalMs();
   const harvestMs = getUfloatKeeperHarvestIntervalMs();
@@ -437,19 +443,19 @@ async function startUfloatKeeperPipeline(
   const rows = await listUFloatWatchedRows(pipeline.keeperAddress, rpcUrl, pipeline.abi);
   const activeIds = await activeUFloatStrategyIds(rows, rpcUrl);
 
-  console.log(`[${tag}] Loop starting (keeper checks sharded ×${wallets.length})`);
-  console.log(`[${tag}] Keeper: ${pipeline.keeperAddress}`);
+  console.log(`[${tag}] Loop starting (keeper checks sharded ×${shardWallets.length})`);
+  console.log(`[${tag}] Keeper: ${pipeline.keeperAddress} (hardcoded, no manager lookup)`);
   console.log(`[${tag}] Factory: ${pipeline.factoryAddress}`);
   console.log(`[${tag}] SwapRouter: ${pipeline.swapRouterAddress}`);
   console.log(`[${tag}] OperatorRegistry: ${onChainRegistry}`);
-  for (const w of wallets) {
+  for (const w of shardWallets) {
     console.log(`[${tag}] Operator wallet ${w.id}: ${w.address}`);
   }
   console.log(
     `[${tag}] Active strategy ids (watched.active && pool+idle≥${MIN_STRATEGY_POOL_VALUE_WEI}): [${activeIds.join(", ") || "none"}]`
   );
   console.log(
-    `[${tag}] performUpkeepBatch every ${upkeepMs / 1000}s (gas-chunked, shard id % ${wallets.length}, max send ${getUfloatUpkeepBatchMaxGas()})`
+    `[${tag}] performUpkeepBatch every ${upkeepMs / 1000}s (gas-chunked, shard id % ${shardWallets.length}, max send ${getUfloatUpkeepBatchMaxGas()})`
   );
   console.log(
     `[${tag}] post-upkeep DEFENSIVE default-metrics on each performUpkeepBatch (~${upkeepMs / 1000}s); mode=STABLE is upkeep-only (owner exit); changeAsset uses Triton wallets`
@@ -466,8 +472,8 @@ async function startUfloatKeeperPipeline(
   );
 
   await Promise.race([
-    ufloatKeeperUpkeepLoop(rpcUrl, pipeline, wallets, upkeepMs),
-    ufloatKeeperHarvestLoop(rpcUrl, pipeline, wallets, harvestMs),
+    ufloatKeeperUpkeepLoop(rpcUrl, pipeline, shardWallets, upkeepMs),
+    ufloatKeeperHarvestLoop(rpcUrl, pipeline, shardWallets, harvestMs),
     ufloatKeeperOffensiveMetricsLoop(rpcUrl, pipeline, offensiveMetricsMs),
   ]);
 }
@@ -482,7 +488,7 @@ export async function ufloatKeeperLoop(): Promise<void> {
   }
 
   console.log(
-    `[UFloatKeeper] Starting ${pipelines.length} pipeline(s): ${pipelines.map((p) => p.label).join(", ")}`
+    `[UFloatKeeper] Starting ${pipelines.length} hardcoded RH pipeline(s) (no FloatContractManager.getAddress): ${pipelines.map((p) => `${p.label}=${p.keeperAddress}`).join(", ")}`
   );
 
   await Promise.race(pipelines.map((pipeline) => startUfloatKeeperPipeline(rpcUrl, pipeline, wallets)));

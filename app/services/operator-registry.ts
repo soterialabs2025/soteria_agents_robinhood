@@ -29,6 +29,35 @@ export type OperatorWalletCheck = {
   isOperator: boolean;
 };
 
+/**
+ * Keep wallets that are registered; skip the rest with a warning.
+ * Throws only if none remain.
+ */
+export async function filterRegisteredOperatorWallets<T extends { id: string; address: Address }>(
+  wallets: readonly T[],
+  rpcUrl: string,
+  registryAddress: Address,
+  logTag = "OperatorRegistry"
+): Promise<T[]> {
+  const registered: T[] = [];
+  for (const wallet of wallets) {
+    const isOperator = await readOperatorRegistryIsOperator(registryAddress, wallet.address, rpcUrl);
+    if (isOperator) {
+      registered.push(wallet);
+      continue;
+    }
+    console.warn(
+      `[${logTag}] skipping ${wallet.id} ${wallet.address} — not registered on ${registryAddress}`
+    );
+  }
+  if (registered.length === 0) {
+    throw new Error(
+      `No operator wallets are registered on OperatorRegistry ${registryAddress}`
+    );
+  }
+  return registered;
+}
+
 /** Verify every wallet is registered on OperatorRegistry; throws on first failure. */
 export async function assertOperatorWalletsRegistered(
   wallets: Array<{ id: string; address: Address }>,

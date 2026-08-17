@@ -33,7 +33,7 @@ import {
   resolveBatchTxGasLimit,
   resolveTxGasLimit,
 } from "../config/demeter-tx-gas";
-import { assertOperatorWalletsRegistered } from "./operator-registry";
+import { filterRegisteredOperatorWallets } from "./operator-registry";
 import { groupStrategyIdsByShard } from "./operator-shard";
 import { enqueueSerializedAddressTx } from "./operator-tx-queue";
 import {
@@ -573,7 +573,12 @@ async function startAutoKeeperPipeline(
       `[${tag}] operatorRegistry ${operatorRegistry} ≠ configured ${pipeline.operatorRegistryAddress} — isOperator uses on-chain registry`
     );
   }
-  await assertOperatorWalletsRegistered(wallets, rpcUrl, operatorRegistry);
+  const shardWallets = await filterRegisteredOperatorWallets(
+    wallets,
+    rpcUrl,
+    operatorRegistry,
+    tag
+  );
 
   const upkeepMs = getAutoKeeperUpkeepIntervalMs();
   const harvestMs = getAutoKeeperHarvestIntervalMs();
@@ -581,19 +586,19 @@ async function startAutoKeeperPipeline(
   const activeIds = await activeAutoStrategyIds(rows, rpcUrl);
   const skipLiq = getAutoKeeperHarvestSkipIncreaseLiquidity();
 
-  console.log(`[${tag}] Loop starting (sharded ×${wallets.length})`);
-  console.log(`[${tag}] Keeper: ${pipeline.keeperAddress}`);
+  console.log(`[${tag}] Loop starting (sharded ×${shardWallets.length})`);
+  console.log(`[${tag}] Keeper: ${pipeline.keeperAddress} (hardcoded, no manager lookup)`);
   console.log(`[${tag}] Factory: ${pipeline.factoryAddress}`);
   console.log(`[${tag}] SwapRouter: ${pipeline.swapRouterAddress}`);
   console.log(`[${tag}] OperatorRegistry: ${operatorRegistry}`);
-  for (const w of wallets) {
+  for (const w of shardWallets) {
     console.log(`[${tag}] Operator wallet ${w.id}: ${w.address}`);
   }
   console.log(
     `[${tag}] Active strategy ids (watched.active && pool+idle≥${MIN_STRATEGY_POOL_VALUE_WEI}): [${activeIds.join(", ") || "none"}]`
   );
   console.log(
-    `[${tag}] performUpkeepBatch every ${upkeepMs / 1000}s (gas-chunked, shard id % ${wallets.length}, max send ${getAutoKeeperBatchMaxGas("performUpkeepBatch")})`
+    `[${tag}] performUpkeepBatch every ${upkeepMs / 1000}s (gas-chunked, shard id % ${shardWallets.length}, max send ${getAutoKeeperBatchMaxGas("performUpkeepBatch")})`
   );
   console.log(
     `[${tag}] performHarvestBatch every ${harvestMs / 3600000}h (skips mode=STABLE; skipIncreaseLiquidity=${skipLiq}; gas-chunked, max send ${getAutoKeeperBatchMaxGas("performHarvestBatch")})`
@@ -603,8 +608,8 @@ async function startAutoKeeperPipeline(
   );
 
   await Promise.race([
-    autoKeeperUpkeepLoop(rpcUrl, pipeline, wallets, upkeepMs),
-    autoKeeperHarvestLoop(rpcUrl, pipeline, wallets, harvestMs),
+    autoKeeperUpkeepLoop(rpcUrl, pipeline, shardWallets, upkeepMs),
+    autoKeeperHarvestLoop(rpcUrl, pipeline, shardWallets, harvestMs),
   ]);
 }
 
