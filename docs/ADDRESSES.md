@@ -91,7 +91,7 @@ Fresh infra deploys (router + keeper + factory). Shared per-chain `AutoOperatorR
 |---|---|
 | AutoSwapRouterRhV4 | `0x724265D83E2Ea8296Bd61177d7B86a92Ba7e2520` |
 | AutoKeeperRhV4 | `0xD3d863409CCb2201037a82E2B5bd5fbB3EAe9203` |
-| AutoFactoryRhV4 | `0x31d7f19DB62Cdfe3c9Cd8d9818fBcCfe609DeE0A` |
+| AutoFactoryRhV4 | `0x09EC950d5826817C8daB870450E6C171b644881f` |
 | AutoOperatorRegistry (shared) | `0x7df1120a04D82eA92EA2d5AA005e3316B37b936E` |
 | feeManager (shared) | `0xEc57538d5C129e1e985d81b7Ef05BBb63375D8BE` |
 | Deployer | `0xf99faA74aF8cb06479bFCb62495F0404089EDc83` |
