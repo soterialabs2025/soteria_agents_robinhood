@@ -25,35 +25,43 @@ Prefer **`ROBINHOOD_MAIN_RPC_URL`**. `getRpcUrl()` / `getRpcUrlOptional()` in `a
 | Uniswap V3 factory | `0x1f7d7550B1b028f7571E69A784071F0205FD2EfA` |
 | Uniswap V4 PoolManager | `0x8366a39CC670B4001A1121B8F6A443A643e40951` |
 | STABLE USDG/WETH pool (Demeter) | `0x52e65B17fB6E5BA00Ed806f37Afcd2DaA50271Ca` |
-| AutoOperatorRegistry | `0x7df1120a04D82eA92EA2d5AA005e3316B37b936E` |
-| AutoFactoryV3Rh | `0xFd6f1F71F2aAe90f89c5b11bdfa03871e263F13A` |
-| AutoSwapRouterV3Rh | `0xB76cdfF814220334Bb46C247F5D7f5d6bE7c8d3B` |
-| AutoKeeperV3Rh | `0x6ef6afF9Dc71202252B9A0c95E1193aD7D1e5795` |
+| AutoOperatorRegistry (shared) | `0x7df1120a04D82eA92EA2d5AA005e3316B37b936E` |
+| AutoKeeperRhV3 | `0xD35CE6610AcB37D545bb5ec4192fC50505Dd26Ad` |
+| AutoFactoryRhV3 | `0xB3E65742e90af23f30527A9745B63F90DAA48B78` |
+| AutoSwapRouterRhV3 | `0x8A8c18445792e04e8512D5c6CD680331F9575a3F` |
+| AutoKeeperRhV4 | `0xD3d863409CCb2201037a82E2B5bd5fbB3EAe9203` |
+| AutoFactoryRhV4 | `0xB8ffE8b462A7C95968Bf6Ca56D0A124Db8947de7` |
+| AutoSwapRouterRhV4 | `0x724265D83E2Ea8296Bd61177d7B86a92Ba7e2520` |
+| AutoKeeperSv3 | `0x3Cb0A8c25356BF5764C4510A79458e73a6639372` |
+| AutoFactorySv3 | `0x8cB0DaECd13658cD099419a885c6D3571cBF5441` |
+| AutoSwapRouterSv3 | `0x568dCA271e5F7edb9769f5eA6076e2DA8D4014e8` |
+| UFloatKeeperV3 | `0xe2E744063446E372B9E28e4BB38aaBFcc6D43eE8` |
+| UFloatStrategyFactoryV3 | `0xA8966d59f38e7bE263C533Ccda87F36eaf5FFefE` |
+| UFloatSwapRouterV3 | `0x932f208D180dB8e375E17f88e86A9C1a81d7ACa8` |
+| UFloatKeeper (V4) | `0x2cF7c9aB33a8248B07435d58cc7754eB1EaB8d12` |
+| UFloatStrategyFactoryV4 | `0xBDE2231aC15DdbACa7A24837875e6F7DF0a855D9` |
+| UFloatSwapRouter (V4) | `0x562cfd3C373A649932597AD5D7a7c1CEa8402A76` |
 
-Shared helpers: `app/config/chain-config.ts` (`getViemChain`, `getRpcUrl`, explorer URL builders, `COINGECKO_NETWORK`, `WETH_ADDRESS`, `USDG_ADDRESS`, `UNISWAP_V3_FACTORY`). Auto V3 RH addresses live in `app/config/auto-keeper-config.ts` (env overrides: `AUTO_KEEPER_ADDRESS`, `AUTO_FACTORY_ADDRESS`, `AUTO_OPERATOR_REGISTRY_ADDRESS`, `AUTO_SWAP_ROUTER_ADDRESS`).
+Full addresses: [docs/ADDRESSES.md](./docs/ADDRESSES.md). Pipeline config: `app/config/rh-keeper-pipelines.ts`.
 
-## Auto vaults RH ABIs (`app/abi/auto-vaults-rh/`)
+Shared helpers: `app/config/chain-config.ts`. Keeper checks (upkeep/harvest) shard across up to four operator keys — `DEMETER_PRIVATE_KEY`, `DEMETER_TWO_PRIVATE_KEY`, `TRITON_PRIVATE_KEY`, `TRITON_TWO_PRIVATE_KEY` — with txs serialized per address. UFloat `changeAsset` stays on Triton wallets.
 
-Robinhood Auto V3 package (Uniswap V3). AutoKeeper loop imports `AutoKeeper.abi.json` (raw ABI array, not `{ abi: [...] }`).
+## Auto / UFloat RH ABIs
 
-| File | Role |
-|------|------|
-| `AutoKeeper.abi.json` | Upkeep / harvest / watched[] — same surface as Base except snapshots |
-| `AutoFactoryV3Rh.abi.json` | `deployVaultPackage` (strategy, vault, liquidShares, shareStaking, keeperId), `setPackageActive` |
-| `AutoVaultV3Rh.abi.json` | Vault (`depositETH`, `liquidShares`, `shareStaking`, pool-value snapshots) |
-| `AutoStrategyV3Rh.abi.json` | Strategy (pool / idle / harvest / mode) — old Base `AutoVault.json` mixed vault+strategy |
-| `LiquidShares.abi.json` | ERC-20 shares minted by the vault (replaces liquid token) |
-| `ShareStaking.abi.json` | Share staking / epoch rewards |
-| `IWETHV3Rh.abi.json` | WETH deposit / ERC-20 |
+| Dir | Keepers |
+|-----|---------|
+| `app/abi/auto-vaults-rh-v3/` | `AutoKeeperRhV3.abi.json` |
+| `app/abi/auto-vaults-rh-v4/` | `AutoKeeperRhV4.abi.json` |
+| `app/abi/auto-vault-sushi/` | `AutoKeeperSv3.abi.json` |
+| `app/abi/ustrategy-rh-v3/` | `UFloatKeeperV3.abi.json` |
+| `app/abi/ustrategy-rh-v4/` | `UFloatKeeper.abi.json` |
 
-Notable ABI diffs vs Base Auto:
+RhV3 / RhV4 / Sv3 AutoKeeper operator surfaces are identical (`performUpkeepBatch`, `performHarvestBatch(ids, skipIncreaseLiquidity)`, `watched` with `lastHarvest`). UFloat keepers omit `lastHarvest` on `watched` and name snapshots `snapshotPoolValue`.
 
-- `snapshotVaultPoolValue(id)` / `snapshotVaultPoolValueBatch(ids)` — dropped `bool skipIncreaseLiquidity`
-- Vault and strategy are separate contracts; eligibility still uses strategy `poolValue() + balanceOfIdle()` (no `totalValueWeth`)
-- Strategy has no `changeAsset` / `allowedTokens` (Auto path is upkeep + harvest only)
-- Mode is `NORMAL / DEFENSIVE / OFFENSIVE / STABLE` (no `NEUTRAL`). Neutral enter/exit (`enterNeutral`, `resumeNormal`, `MustBeNeutral`) is gone. Harvest skips `STABLE`.
-- Vault deposits are `depositETH` only; `liquidToken` is now `liquidShares` + `shareStaking`
+Auto mode is `NORMAL / DEFENSIVE / OFFENSIVE / STABLE` (no `NEUTRAL`). Harvest skips `STABLE`.
 
-## Not yet redeployed (still Base placeholders)
+Enable Auto pipelines with `AUTO_KEEPER_ENABLED=true`. Disable one with `AUTO_KEEPER_RH_V3_ENABLED=false` (or `RH_V4` / `SV3`). UFloat RH V3+V4 run when Triton keys are set; disable with `UFLOAT_KEEPER_RH_V3_ENABLED=false` / `UFLOAT_KEEPER_RH_V4_ENABLED=false`.
 
-Float / UFloat / LiquidStrat **manager, keeper, factory, and strategy contract addresses** in demeter/triton configs are still the Base deployments until those packages are redeployed on Robinhood Chain. Auto V3 RH (keeper, factory, operator registry, swap router) is live — see the table above.
+## Still Base (not RH keeper loops)
+
+Float V3/V4 manager/keeper addresses in `demeter-config.ts` remain Base placeholders. Those pipelines stay off unless `STRATEGY_IDS` / `FLOAT_V4_STRATEGY_IDS` are set. LiquidStratMinV4 is still the Base contract unless separately redeployed.

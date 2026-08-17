@@ -1,22 +1,14 @@
 /**
- * AutoKeeper (AutoVault V3 RH) — performUpkeepBatch + performHarvestBatch only.
- * ABI: `app/abi/auto-vaults-rh/AutoKeeper.abi.json`.
+ * AutoKeeper pipelines (Uni V3 / Uni V4 / Sushi V3) — performUpkeepBatch + performHarvestBatch.
+ * ABIs: AutoKeeperRhV3 / AutoKeeperRhV4 / AutoKeeperSv3 (identical operator surface).
  *
- * 1. AutoKeeperV3Rh + AutoFactoryV3Rh (Robinhood defaults; env override)
- * 2. Read watched[] via strategiesLength + watched(id)
- * 3. Collect active strategy ids (optional AUTO_KEEPER_STRATEGY_IDS allowlist)
- * 4. performUpkeepBatch(ids) gas-chunked on upkeep interval
- * 5. performHarvestBatch(ids, skipIncreaseLiquidity) gas-chunked on harvest interval
- *    — skips mode=STABLE (no NEUTRAL; AutoStrategyV3Rh is NORMAL/DEFENSIVE/OFFENSIVE/STABLE)
- *
- * Uses the same batch gas model as Float/UFloat keepers ({@link resolveBatchTxGasLimit}).
+ * Strategy ids shard across up to 4 operator wallets (id % N). Txs serialize per address.
+ * Harvest skips mode=STABLE (no NEUTRAL).
  */
 import type { Abi, Account, Address, PublicClient } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 
 import { AUTO_STRATEGY_MODE } from "../abi/contract-enums";
-import autoKeeperRhAbi from "../abi/auto-vaults-rh/AutoKeeper.abi.json";
-import autoStrategyRhAbi from "../abi/auto-vaults-rh/AutoStrategyV3Rh.abi.json";
 import { getRpcUrl, explorerTxUrl } from "../config/chain-config";
 import {
   createTritonPublicClient,
@@ -26,14 +18,13 @@ import {
   getAutoKeeperBatchMaxGas,
   getAutoKeeperHarvestIntervalMs,
   getAutoKeeperHarvestSkipIncreaseLiquidity,
-  getAutoKeeperPrivateKey,
   getAutoKeeperStrategyIdAllowlist,
   getAutoKeeperUpkeepIntervalMs,
-  getAutoOperatorRegistryAddress,
-  getAutoSwapRouterAddress,
-  resolveAutoFactoryAddress,
-  resolveAutoKeeperAddress,
 } from "../config/auto-keeper-config";
+import {
+  getEnabledAutoKeeperPipelines,
+  type AutoKeeperPipeline,
+} from "../config/rh-keeper-pipelines";
 import { checkDemeterStopSignal, sleepWithStopCheck } from "../config/demeter-stop";
 import {
   getDemeterTxGasHeadroomBps,
@@ -42,12 +33,25 @@ import {
   resolveBatchTxGasLimit,
   resolveTxGasLimit,
 } from "../config/demeter-tx-gas";
-import { readOperatorRegistryIsOperator } from "./operator-registry";
+import { assertOperatorWalletsRegistered } from "./operator-registry";
+import { groupStrategyIdsByShard } from "./operator-shard";
 import { enqueueSerializedAddressTx } from "./operator-tx-queue";
+import {
+  resolveRhOperatorWallets,
+  type RhOperatorWallet,
+} from "./rh-operator-pool";
 import { filterActiveByMinPoolValue, MIN_STRATEGY_POOL_VALUE_WEI } from "./strategy-pool-value-eligibility";
 
-const AUTO_KEEPER_ABI = autoKeeperRhAbi as Abi;
-const AUTO_STRATEGY_ABI = autoStrategyRhAbi as Abi;
+const AUTO_STRATEGY_MODE_ABI = [
+  {
+    type: "function",
+    name: "mode",
+    stateMutability: "view",
+    inputs: [],
+    outputs: [{ name: "", type: "uint8" }],
+  },
+] as const satisfies Abi;
+
 const AUTO_KEEPER_TX_MAX_ATTEMPTS = 3;
 
 function isNonceTooLowError(error: unknown): boolean {
@@ -73,32 +77,37 @@ function normalizePk(pk: string): `0x${string}` {
 
 export async function readAutoKeeperOperatorRegistry(
   keeperAddress: Address,
-  rpcUrl: string
+  rpcUrl: string,
+  abi: Abi
 ): Promise<Address> {
   const client = createTritonPublicClient(rpcUrl);
   return (await client.readContract({
     address: keeperAddress,
-    abi: AUTO_KEEPER_ABI,
+    abi,
     functionName: "operatorRegistry",
   })) as Address;
 }
 
 /** AutoKeeper.operatorRegistry for isOperator checks (not AutoFactory). */
 export async function getConfiguredAutoOperatorRegistry(rpcUrl: string): Promise<Address> {
-  const keeper = await resolveAutoKeeperAddress(rpcUrl);
-  return readAutoKeeperOperatorRegistry(keeper, rpcUrl);
+  const pipeline = getEnabledAutoKeeperPipelines()[0] ?? null;
+  if (!pipeline) {
+    throw new Error("No AutoKeeper pipelines enabled");
+  }
+  return readAutoKeeperOperatorRegistry(pipeline.keeperAddress, rpcUrl, pipeline.abi);
 }
 
 /** Load watched[] rows; strategy id = 0-based index. */
 export async function listAutoWatchedRows(
   keeperAddress: Address,
-  rpcUrl: string
+  rpcUrl: string,
+  abi: Abi
 ): Promise<AutoWatchedRow[]> {
   const client = createTritonPublicClient(rpcUrl);
   const len = Number(
     await client.readContract({
       address: keeperAddress,
-      abi: AUTO_KEEPER_ABI,
+      abi,
       functionName: "strategiesLength",
     })
   );
@@ -106,7 +115,7 @@ export async function listAutoWatchedRows(
   for (let id = 0; id < len; id++) {
     const row = await client.readContract({
       address: keeperAddress,
-      abi: AUTO_KEEPER_ABI,
+      abi,
       functionName: "watched",
       args: [BigInt(id)],
     });
@@ -149,7 +158,7 @@ export async function readAutoStrategyMode(
   const client = createTritonPublicClient(rpcUrl);
   const mode = await client.readContract({
     address: strategyAddress,
-    abi: AUTO_STRATEGY_ABI,
+    abi: AUTO_STRATEGY_MODE_ABI,
     functionName: "mode",
   });
   return Number(mode);
@@ -195,6 +204,7 @@ async function estimateBatchSendGas(
   publicClient: PublicClient,
   account: Account,
   keeperAddress: Address,
+  abi: Abi,
   functionName: AutoKeeperBatchFunction,
   ids: number[],
   skipIncreaseLiquidity: boolean
@@ -202,7 +212,7 @@ async function estimateBatchSendGas(
   const raw = await publicClient.estimateContractGas({
     account,
     address: keeperAddress,
-    abi: AUTO_KEEPER_ABI,
+    abi,
     functionName,
     args: batchArgs(functionName, ids, skipIncreaseLiquidity) as never,
   });
@@ -217,12 +227,13 @@ export async function chunkAutoKeeperIdsByGas(params: {
   publicClient: PublicClient;
   account: Account;
   keeperAddress: Address;
+  abi: Abi;
   functionName: AutoKeeperBatchFunction;
   ids: number[];
   skipIncreaseLiquidity: boolean;
   maxGas?: bigint;
 }): Promise<number[][]> {
-  const { publicClient, account, keeperAddress, functionName, ids, skipIncreaseLiquidity } =
+  const { publicClient, account, keeperAddress, abi, functionName, ids, skipIncreaseLiquidity } =
     params;
   const maxGas = params.maxGas ?? getAutoKeeperBatchMaxGas(functionName);
   if (ids.length === 0) return [];
@@ -231,6 +242,7 @@ export async function chunkAutoKeeperIdsByGas(params: {
     publicClient,
     account,
     keeperAddress,
+    abi,
     functionName,
     ids,
     skipIncreaseLiquidity
@@ -251,6 +263,7 @@ export async function chunkAutoKeeperIdsByGas(params: {
           publicClient,
           account,
           keeperAddress,
+          abi,
           functionName,
           trial,
           skipIncreaseLiquidity
@@ -299,6 +312,7 @@ async function submitAutoBatchTxOnce(
   privateKey: string,
   rpcUrl: string,
   keeperAddress: Address,
+  abi: Abi,
   functionName: AutoKeeperBatchFunction,
   ids: number[],
   skipIncreaseLiquidity: boolean
@@ -315,7 +329,7 @@ async function submitAutoBatchTxOnce(
       const rawEstimate = await publicClient.estimateContractGas({
         account,
         address: keeperAddress,
-        abi: AUTO_KEEPER_ABI,
+        abi,
         functionName,
         args,
       });
@@ -329,7 +343,7 @@ async function submitAutoBatchTxOnce(
       const hash = await wallet.writeContract({
         account,
         address: keeperAddress,
-        abi: AUTO_KEEPER_ABI,
+        abi,
         functionName,
         args,
         gas,
@@ -368,6 +382,7 @@ async function submitAutoBatchTx(
   privateKey: string,
   rpcUrl: string,
   keeperAddress: Address,
+  abi: Abi,
   functionName: AutoKeeperBatchFunction,
   ids: number[],
   skipIncreaseLiquidity: boolean
@@ -383,6 +398,7 @@ async function submitAutoBatchTx(
         privateKey,
         rpcUrl,
         keeperAddress,
+        abi,
         functionName,
         ids,
         skipIncreaseLiquidity
@@ -397,6 +413,7 @@ async function submitAutoBatchTx(
           privateKey,
           rpcUrl,
           keeperAddress,
+          abi,
           functionName,
           ids.slice(0, mid),
           skipIncreaseLiquidity
@@ -405,6 +422,7 @@ async function submitAutoBatchTx(
           privateKey,
           rpcUrl,
           keeperAddress,
+          abi,
           functionName,
           ids.slice(mid),
           skipIncreaseLiquidity
@@ -416,25 +434,27 @@ async function submitAutoBatchTx(
 }
 
 async function runAutoKeeperBatches(
-  privateKey: string,
+  wallet: RhOperatorWallet,
   rpcUrl: string,
-  keeperAddress: Address,
+  pipeline: AutoKeeperPipeline,
   functionName: AutoKeeperBatchFunction,
   ids: number[],
   label: string
 ): Promise<void> {
+  const tag = pipeline.label;
   if (ids.length === 0) {
-    console.log(`[AutoKeeper] ${label} skipped — no active watched strategies`);
+    console.log(`[${tag}] [${wallet.id}] ${label} skipped — no active watched strategies`);
     return;
   }
 
   const skipIncreaseLiquidity = getAutoKeeperHarvestSkipIncreaseLiquidity();
-  const wallet = createTritonWalletClient(privateKey, rpcUrl);
+  const walletClient = createTritonWalletClient(wallet.privateKey, rpcUrl);
   const publicClient = createTritonPublicClient(rpcUrl);
   const chunks = await chunkAutoKeeperIdsByGas({
     publicClient,
-    account: wallet.account,
-    keeperAddress,
+    account: walletClient.account,
+    keeperAddress: pipeline.keeperAddress,
+    abi: pipeline.abi,
     functionName,
     ids,
     skipIncreaseLiquidity,
@@ -443,19 +463,20 @@ async function runAutoKeeperBatches(
   for (const chunk of chunks) {
     try {
       const hash = await submitAutoBatchTx(
-        privateKey,
+        wallet.privateKey,
         rpcUrl,
-        keeperAddress,
+        pipeline.keeperAddress,
+        pipeline.abi,
         functionName,
         chunk,
         skipIncreaseLiquidity
       );
       console.log(
-        `[AutoKeeper] ${functionName} ids [${chunk.join(", ")}] tx ${hash} ${explorerTxUrl(hash)}`
+        `[${tag}] [${wallet.id}] ${functionName} ids [${chunk.join(", ")}] tx ${hash} ${explorerTxUrl(hash)}`
       );
     } catch (e) {
       console.warn(
-        `[AutoKeeper] ${functionName} ids [${chunk.join(", ")}] failed:`,
+        `[${tag}] [${wallet.id}] ${functionName} ids [${chunk.join(", ")}] failed:`,
         e instanceof Error ? e.message : e
       );
     }
@@ -465,126 +486,140 @@ async function runAutoKeeperBatches(
   }
 }
 
-async function autoKeeperUpkeepLoop(
-  privateKey: string,
+async function runShardedAutoBatches(
   rpcUrl: string,
-  keeperAddress: Address,
+  pipeline: AutoKeeperPipeline,
+  wallets: RhOperatorWallet[],
+  functionName: AutoKeeperBatchFunction,
+  ids: number[],
+  label: string
+): Promise<void> {
+  const walletIds = wallets.map((w) => w.id);
+  const groups = groupStrategyIdsByShard(ids, walletIds);
+  await Promise.all(
+    wallets.map(async (wallet) => {
+      const shardIds = groups.get(wallet.id) ?? [];
+      if (shardIds.length === 0) return;
+      await runAutoKeeperBatches(wallet, rpcUrl, pipeline, functionName, shardIds, label);
+    })
+  );
+}
+
+async function autoKeeperUpkeepLoop(
+  rpcUrl: string,
+  pipeline: AutoKeeperPipeline,
+  wallets: RhOperatorWallet[],
   intervalMs: number
 ): Promise<never> {
+  const tag = pipeline.label;
   for (;;) {
     if (checkDemeterStopSignal()) {
-      console.log("[AutoKeeper] Stop signal — exiting upkeep loop");
+      console.log(`[${tag}] Stop signal — exiting upkeep loop`);
       return undefined as never;
     }
     try {
-      const rows = await listAutoWatchedRows(keeperAddress, rpcUrl);
+      const rows = await listAutoWatchedRows(pipeline.keeperAddress, rpcUrl, pipeline.abi);
       const ids = await activeAutoStrategyIds(rows, rpcUrl);
-      await runAutoKeeperBatches(
-        privateKey,
-        rpcUrl,
-        keeperAddress,
-        "performUpkeepBatch",
-        ids,
-        "Upkeep"
-      );
+      await runShardedAutoBatches(rpcUrl, pipeline, wallets, "performUpkeepBatch", ids, "Upkeep");
     } catch (e) {
-      console.error("[AutoKeeper] Upkeep loop error:", e instanceof Error ? e.message : e);
+      console.error(`[${tag}] Upkeep loop error:`, e instanceof Error ? e.message : e);
     }
     await sleepWithStopCheck(intervalMs);
   }
 }
 
 async function autoKeeperHarvestLoop(
-  privateKey: string,
   rpcUrl: string,
-  keeperAddress: Address,
+  pipeline: AutoKeeperPipeline,
+  wallets: RhOperatorWallet[],
   intervalMs: number
 ): Promise<never> {
+  const tag = pipeline.label;
   for (;;) {
     if (checkDemeterStopSignal()) {
-      console.log("[AutoKeeper] Stop signal — exiting harvest loop");
+      console.log(`[${tag}] Stop signal — exiting harvest loop`);
       return undefined as never;
     }
     try {
-      const rows = await listAutoWatchedRows(keeperAddress, rpcUrl);
+      const rows = await listAutoWatchedRows(pipeline.keeperAddress, rpcUrl, pipeline.abi);
       const allActiveIds = await activeAutoStrategyIds(rows, rpcUrl);
       const ids = await activeAutoHarvestStrategyIds(rows, rpcUrl);
       if (allActiveIds.length > ids.length) {
         console.log(
-          `[AutoKeeper] Harvest skipping ${allActiveIds.length - ids.length} mode=STABLE strateg${allActiveIds.length - ids.length === 1 ? "y" : "ies"}`
+          `[${tag}] Harvest skipping ${allActiveIds.length - ids.length} mode=STABLE strateg${allActiveIds.length - ids.length === 1 ? "y" : "ies"}`
         );
       }
-      await runAutoKeeperBatches(
-        privateKey,
-        rpcUrl,
-        keeperAddress,
-        "performHarvestBatch",
-        ids,
-        "Harvest"
-      );
+      await runShardedAutoBatches(rpcUrl, pipeline, wallets, "performHarvestBatch", ids, "Harvest");
     } catch (e) {
-      console.error("[AutoKeeper] Harvest loop error:", e instanceof Error ? e.message : e);
+      console.error(`[${tag}] Harvest loop error:`, e instanceof Error ? e.message : e);
     }
     await sleepWithStopCheck(intervalMs);
   }
 }
 
-/** AutoKeeper upkeep + harvest loops. Requires `AUTO_KEEPER_ENABLED=true` + `DEMETER_TWO_PRIVATE_KEY`. */
-export async function autoKeeperLoop(): Promise<void> {
-  const rpcUrl = getRpcUrl();
-
-  const privateKey = getAutoKeeperPrivateKey();
-  if (!privateKey) {
-    throw new Error("DEMETER_TWO_PRIVATE_KEY is required for AutoKeeper loop");
-  }
-
-  const keeperAddress = await resolveAutoKeeperAddress(rpcUrl);
-  const autoFactory = await resolveAutoFactoryAddress(rpcUrl);
-  const expectedRegistry = getAutoOperatorRegistryAddress();
-  const swapRouter = getAutoSwapRouterAddress();
-  const operatorAddress = privateKeyToAccount(normalizePk(privateKey)).address;
-
-  const operatorRegistry = await readAutoKeeperOperatorRegistry(keeperAddress, rpcUrl);
-  if (operatorRegistry.toLowerCase() !== expectedRegistry.toLowerCase()) {
+async function startAutoKeeperPipeline(
+  rpcUrl: string,
+  pipeline: AutoKeeperPipeline,
+  wallets: RhOperatorWallet[]
+): Promise<void> {
+  const tag = pipeline.label;
+  const operatorRegistry = await readAutoKeeperOperatorRegistry(
+    pipeline.keeperAddress,
+    rpcUrl,
+    pipeline.abi
+  );
+  if (operatorRegistry.toLowerCase() !== pipeline.operatorRegistryAddress.toLowerCase()) {
     console.warn(
-      `[AutoKeeper] AutoKeeper.operatorRegistry ${operatorRegistry} ≠ configured AutoOperatorRegistry ${expectedRegistry} — isOperator uses on-chain operatorRegistry`
+      `[${tag}] operatorRegistry ${operatorRegistry} ≠ configured ${pipeline.operatorRegistryAddress} — isOperator uses on-chain registry`
     );
   }
-
-  const ok = await readOperatorRegistryIsOperator(operatorRegistry, operatorAddress, rpcUrl);
-  if (!ok) {
-    throw new Error(
-      `DEMETER_TWO wallet ${operatorAddress} is not registered on AutoKeeper.operatorRegistry ${operatorRegistry}`
-    );
-  }
+  await assertOperatorWalletsRegistered(wallets, rpcUrl, operatorRegistry);
 
   const upkeepMs = getAutoKeeperUpkeepIntervalMs();
   const harvestMs = getAutoKeeperHarvestIntervalMs();
-  const rows = await listAutoWatchedRows(keeperAddress, rpcUrl);
+  const rows = await listAutoWatchedRows(pipeline.keeperAddress, rpcUrl, pipeline.abi);
   const activeIds = await activeAutoStrategyIds(rows, rpcUrl);
   const skipLiq = getAutoKeeperHarvestSkipIncreaseLiquidity();
 
-  console.log("[AutoKeeper] Loop starting");
-  console.log(`[AutoKeeper] Keeper (AutoKeeperV3Rh): ${keeperAddress}`);
-  console.log(`[AutoKeeper] AutoFactoryV3Rh: ${autoFactory}`);
-  console.log(`[AutoKeeper] AutoSwapRouterV3Rh: ${swapRouter}`);
-  console.log(`[AutoKeeper] OperatorRegistry: ${operatorRegistry} (AutoKeeper.operatorRegistry)`);
-  console.log(`[AutoKeeper] Operator wallet (DEMETER_TWO): ${operatorAddress}`);
+  console.log(`[${tag}] Loop starting (sharded ×${wallets.length})`);
+  console.log(`[${tag}] Keeper: ${pipeline.keeperAddress}`);
+  console.log(`[${tag}] Factory: ${pipeline.factoryAddress}`);
+  console.log(`[${tag}] SwapRouter: ${pipeline.swapRouterAddress}`);
+  console.log(`[${tag}] OperatorRegistry: ${operatorRegistry}`);
+  for (const w of wallets) {
+    console.log(`[${tag}] Operator wallet ${w.id}: ${w.address}`);
+  }
   console.log(
-    `[AutoKeeper] Active strategy ids (watched.active && pool+idle≥${MIN_STRATEGY_POOL_VALUE_WEI}): [${activeIds.join(", ") || "none"}]`
+    `[${tag}] Active strategy ids (watched.active && pool+idle≥${MIN_STRATEGY_POOL_VALUE_WEI}): [${activeIds.join(", ") || "none"}]`
   );
   console.log(
-    `[AutoKeeper] performUpkeepBatch every ${upkeepMs / 1000}s (gas-chunked, max send ${getAutoKeeperBatchMaxGas("performUpkeepBatch")})`
+    `[${tag}] performUpkeepBatch every ${upkeepMs / 1000}s (gas-chunked, shard id % ${wallets.length}, max send ${getAutoKeeperBatchMaxGas("performUpkeepBatch")})`
   );
   console.log(
-    `[AutoKeeper] performHarvestBatch every ${harvestMs / 3600000}h (skips mode=STABLE; skipIncreaseLiquidity=${skipLiq}; gas-chunked, max send ${getAutoKeeperBatchMaxGas("performHarvestBatch")})`
+    `[${tag}] performHarvestBatch every ${harvestMs / 3600000}h (skips mode=STABLE; skipIncreaseLiquidity=${skipLiq}; gas-chunked, max send ${getAutoKeeperBatchMaxGas("performHarvestBatch")})`
   );
   console.log(
-    `[AutoKeeper] Tx gas: ${getDemeterTxGasHeadroomBps() / 1000}× headroom (batch), min ${getTxMinGasLimit()}`
+    `[${tag}] Tx gas: ${getDemeterTxGasHeadroomBps() / 1000}× headroom (batch), min ${getTxMinGasLimit()}`
   );
 
   await Promise.race([
-    autoKeeperUpkeepLoop(privateKey, rpcUrl, keeperAddress, upkeepMs),
-    autoKeeperHarvestLoop(privateKey, rpcUrl, keeperAddress, harvestMs),
+    autoKeeperUpkeepLoop(rpcUrl, pipeline, wallets, upkeepMs),
+    autoKeeperHarvestLoop(rpcUrl, pipeline, wallets, harvestMs),
   ]);
+}
+
+/** AutoKeeper upkeep + harvest on all enabled RH pipelines. */
+export async function autoKeeperLoop(): Promise<void> {
+  const rpcUrl = getRpcUrl();
+  const wallets = resolveRhOperatorWallets();
+  const pipelines = getEnabledAutoKeeperPipelines();
+  if (pipelines.length === 0) {
+    throw new Error("AUTO_KEEPER_ENABLED but no AutoKeeper pipelines are enabled");
+  }
+
+  console.log(
+    `[AutoKeeper] Starting ${pipelines.length} pipeline(s): ${pipelines.map((p) => p.label).join(", ")}`
+  );
+
+  await Promise.race(pipelines.map((pipeline) => startAutoKeeperPipeline(rpcUrl, pipeline, wallets)));
 }

@@ -205,7 +205,7 @@ if (!isCoingeckoMode && FLOAT_PIPELINES.length === 0 && !hasActiveNonFloatKeeper
   throw new Error(
     "No keeper loops enabled. For UFloat-only: set TRITON_PRIVATE_KEY (and optional TRITON_TWO_PRIVATE_KEY), " +
       "TRITON_UFLOAT_KEEPER_ENABLED=true, empty strategyIds/floatV4StrategyIds in config.overrides.json. " +
-      "For AutoKeeper: set AUTO_KEEPER_ENABLED=true and DEMETER_TWO_PRIVATE_KEY."
+      "For AutoKeeper: set AUTO_KEEPER_ENABLED=true and at least one of DEMETER_PRIVATE_KEY / DEMETER_TWO_PRIVATE_KEY / TRITON_PRIVATE_KEY / TRITON_TWO_PRIVATE_KEY."
   );
 }
 
@@ -1812,7 +1812,7 @@ async function autoKeeperLoopSafe(): Promise<void> {
     const msg = e instanceof Error ? e.message : String(e);
     console.error("[Demeter] AutoKeeper loop failed at startup or runtime:", msg);
     console.error(
-      "[Demeter] Other keeper loops continue. Fix AUTO_KEEPER_* / DEMETER_TWO_PRIVATE_KEY / AutoKeeperV3Rh+AutoFactoryV3Rh / .env, then restart."
+      "[Demeter] Other keeper loops continue. Fix AUTO_KEEPER_* / operator keys / RhV3+RhV4+Sv3 addresses / .env, then restart."
     );
     await new Promise<void>(() => {
       /* block Promise.race */
@@ -1910,7 +1910,7 @@ async function main() {
     if (isUfloatKeeperEnabled()) {
       const ufloatOps = resolveUfloatTxWallets();
       console.log(
-        `[Demeter] UFloatKeeperV4 loop enabled (${ufloatOps.length} Triton operator wallet${ufloatOps.length === 1 ? "" : "s"})`
+        `[Demeter] UFloat RH V3+V4 keeper loops enabled (changeAsset: ${ufloatOps.length} Triton wallet${ufloatOps.length === 1 ? "" : "s"}; keeper checks use shared 4-wallet shard)`
       );
     } else if (isLiquidStratMinV4LoopEnabled()) {
       console.log("[Demeter] LiquidStratMinV4 loop enabled (TRITON_PRIVATE_KEY)");
@@ -1918,7 +1918,9 @@ async function main() {
       console.log("[Demeter] Triton operator key(s) set but UFloat + LiquidStrat loops disabled via env/overrides");
     }
     if (isAutoKeeperEnabled()) {
-      console.log("[Demeter] AutoKeeper (AutoVault) loop enabled (DEMETER_TWO_PRIVATE_KEY)");
+      console.log(
+        "[Demeter] AutoKeeper RH pipelines enabled (Uni V3 / Uni V4 / Sushi V3; keeper checks sharded across configured operator wallets)"
+      );
     }
     console.log("[Demeter] Wallet initialized for loop operations");
     console.log(

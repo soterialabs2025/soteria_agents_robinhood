@@ -1,8 +1,8 @@
 /**
- * AutoKeeper V3 RH (AutoVault liquidity manager) — upkeep + harvest only.
- * Canonical Robinhood deployments below; env overrides: AUTO_KEEPER_ADDRESS,
- * AUTO_FACTORY_ADDRESS, AUTO_OPERATOR_REGISTRY_ADDRESS, AUTO_SWAP_ROUTER_ADDRESS.
- * Operator allowlist: AutoKeeper.operatorRegistry via `DEMETER_TWO_PRIVATE_KEY`.
+ * AutoKeeper shared settings (intervals, gas, harvest flags).
+ * Per-DEX RH keepers (Uni V3 / Uni V4 / Sushi V3) live in {@link rh-keeper-pipelines}.
+ * Operator wallets: up to 4 keys via {@link resolveRhOperatorWallets}.
+ * Legacy getters below default to AutoKeeperRhV3 (docs/ADDRESSES.md).
  */
 
 import type { Address } from "viem";
@@ -14,17 +14,17 @@ import { DEMETER_TWO_WALLET_ADDRESS } from "./operator-registry-config";
 export const AUTO_OPERATOR_REGISTRY_ADDRESS =
   "0x7df1120a04D82eA92EA2d5AA005e3316B37b936E" as const;
 
-/** AutoFactoryV3Rh on Robinhood Chain. */
+/** AutoFactoryRhV3 on Robinhood Chain (legacy alias). */
 export const AUTO_FACTORY_V3_RH_ADDRESS =
-  "0xeCad673d6B338D9b530401105332FFD55D35696F" as const;
+  "0xB3E65742e90af23f30527A9745B63F90DAA48B78" as const;
 
-/** AutoSwapRouterV3Rh on Robinhood Chain. */
+/** AutoSwapRouterRhV3 on Robinhood Chain (legacy alias). */
 export const AUTO_SWAP_ROUTER_V3_RH_ADDRESS =
-  "0xB76cdfF814220334Bb46C247F5D7f5d6bE7c8d3B" as const;
+  "0x8A8c18445792e04e8512D5c6CD680331F9575a3F" as const;
 
-/** AutoKeeperV3Rh on Robinhood Chain. */
+/** AutoKeeperRhV3 on Robinhood Chain (legacy alias). */
 export const AUTO_KEEPER_V3_RH_ADDRESS =
-  "0x6ef6afF9Dc71202252B9A0c95E1193aD7D1e5795" as const;
+  "0xD35CE6610AcB37D545bb5ec4192fC50505Dd26Ad" as const;
 
 function envAddress(name: string): Address | null {
   const raw = process.env[name]?.trim();
@@ -125,13 +125,20 @@ export function getAutoKeeperPrivateKey(): string | null {
 }
 
 /**
- * When true, Demeter runs AutoKeeper upkeep + harvest loops.
- * Default off. Set `AUTO_KEEPER_ENABLED=true` and `DEMETER_TWO_PRIVATE_KEY`.
+ * When true, Demeter runs AutoKeeper upkeep + harvest on all enabled RH pipelines
+ * (Uni V3, Uni V4, Sushi V3). Default off.
+ * Set `AUTO_KEEPER_ENABLED=true` and at least one of DEMETER_PRIVATE_KEY,
+ * DEMETER_TWO_PRIVATE_KEY, TRITON_PRIVATE_KEY, TRITON_TWO_PRIVATE_KEY.
  */
 export function isAutoKeeperEnabled(): boolean {
   if (envFlagFalse("AUTO_KEEPER_ENABLED")) return false;
   if (!envFlagTrue("AUTO_KEEPER_ENABLED")) return false;
-  return Boolean(process.env.DEMETER_TWO_PRIVATE_KEY?.trim());
+  return Boolean(
+    process.env.DEMETER_PRIVATE_KEY?.trim() ||
+      process.env.DEMETER_TWO_PRIVATE_KEY?.trim() ||
+      process.env.TRITON_PRIVATE_KEY?.trim() ||
+      process.env.TRITON_TWO_PRIVATE_KEY?.trim()
+  );
 }
 
 export function getAutoKeeperUpkeepIntervalMs(): number {

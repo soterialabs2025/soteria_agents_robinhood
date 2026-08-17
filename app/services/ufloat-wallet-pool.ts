@@ -12,7 +12,7 @@ import {
   getTritonTwoPrivateKeyFromEnv,
 } from "../config/triton-config";
 import { pickShardWalletId } from "./operator-shard";
-import { enqueueSerializedWalletWork } from "./operator-tx-queue";
+import { enqueueSerializedAddressTx } from "./operator-tx-queue";
 
 export type UfloatTxWalletId = "triton" | "triton_two";
 
@@ -21,8 +21,6 @@ export type UfloatTxWallet = {
   privateKey: string;
   address: Address;
 };
-
-const walletQueues = new Map<string, Promise<unknown>>();
 
 function normalizePrivateKey(pk: string): `0x${string}` {
   const trimmed = pk.trim();
@@ -88,12 +86,13 @@ export function getUfloatWalletForStrategyId(strategyId: number): UfloatTxWallet
   return getUfloatTxWallet(walletId);
 }
 
-/** Run `fn` after prior txs on this wallet complete (FIFO per wallet id). */
+/** Run `fn` after prior txs on this wallet address complete (shared with AutoKeeper). */
 export function enqueueUfloatWalletTx<T>(
   walletId: UfloatTxWalletId,
   fn: () => Promise<T>
 ): Promise<T> {
-  return enqueueSerializedWalletWork(walletQueues, walletId, fn);
+  const wallet = getUfloatTxWallet(walletId);
+  return enqueueSerializedAddressTx(wallet.address, fn);
 }
 
 /** @deprecated Use {@link getTritonPrivateKeyFromEnv} when primary Triton key is required. */
