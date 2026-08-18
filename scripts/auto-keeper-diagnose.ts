@@ -7,7 +7,6 @@ import "dotenv/config";
 import type { Abi, Address } from "viem";
 import { createPublicClient, formatEther, http, zeroAddress } from "viem";
 
-import { formatAutoStrategyMode } from "../app/abi/contract-enums";
 import { getRpcUrl, getViemChain } from "../app/config/chain-config";
 import { getEnabledAutoKeeperPipelines } from "../app/config/rh-keeper-pipelines";
 import { listAutoWatchedRows, readAutoKeeperOperatorRegistry } from "../app/services/auto-keeper-loop";
@@ -17,7 +16,6 @@ import { readStrategyPoolValueWei, MIN_STRATEGY_POOL_VALUE_WEI } from "../app/se
 
 const STRAT_ABI = [
   { type: "function", name: "ASSET", stateMutability: "view", inputs: [], outputs: [{ type: "address" }] },
-  { type: "function", name: "mode", stateMutability: "view", inputs: [], outputs: [{ type: "uint8" }] },
   { type: "function", name: "poolValue", stateMutability: "view", inputs: [], outputs: [{ type: "uint256" }] },
   { type: "function", name: "balanceOfIdle", stateMutability: "view", inputs: [], outputs: [{ type: "uint256" }] },
   { type: "function", name: "lastHarvest", stateMutability: "view", inputs: [], outputs: [{ type: "uint256" }] },
@@ -131,9 +129,8 @@ async function main() {
       );
 
       try {
-        const [asset, mode, poolValue, idle, lastHarvest, vault, stratKeeper] = await Promise.all([
+        const [asset, poolValue, idle, lastHarvest, vault, stratKeeper] = await Promise.all([
           client.readContract({ address: row.stratAddr, abi: STRAT_ABI, functionName: "ASSET" }) as Promise<Address>,
-          client.readContract({ address: row.stratAddr, abi: STRAT_ABI, functionName: "mode" }) as Promise<number>,
           client.readContract({ address: row.stratAddr, abi: STRAT_ABI, functionName: "poolValue" }) as Promise<bigint>,
           client.readContract({ address: row.stratAddr, abi: STRAT_ABI, functionName: "balanceOfIdle" }) as Promise<bigint>,
           client.readContract({ address: row.stratAddr, abi: STRAT_ABI, functionName: "lastHarvest" }) as Promise<bigint>,
@@ -141,7 +138,6 @@ async function main() {
           client.readContract({ address: row.stratAddr, abi: STRAT_ABI, functionName: "keeper" }) as Promise<Address>,
         ]);
         console.log("ASSET:", asset);
-        console.log("mode:", Number(mode), formatAutoStrategyMode(Number(mode)));
         console.log("poolValue:", poolValue.toString(), `(${formatEther(poolValue)} ETH)`);
         console.log("balanceOfIdle:", idle.toString(), `(${formatEther(idle)} ETH)`);
         console.log("strategy.lastHarvest:", fmtTs(Number(lastHarvest)));

@@ -58,7 +58,7 @@ Shared helpers: `app/config/chain-config.ts`. Keeper checks (upkeep/harvest) sha
 
 RhV3 / RhV4 / Sv3 AutoKeeper operator surfaces are identical (`performUpkeepBatch`, `performHarvestBatch(ids, skipIncreaseLiquidity)`, `watched` with `lastHarvest`). UFloat keepers omit `lastHarvest` on `watched` and name snapshots `snapshotPoolValue`.
 
-Auto mode is `NORMAL / DEFENSIVE / OFFENSIVE / STABLE` (no `NEUTRAL`). Harvest skips `STABLE`.
+Auto strategies have no `mode()`. Harvest uses the same active-id list as upkeep (`watched.active` and pool+idle floor). UFloat still has mode and still skips `STABLE` on harvest.
 
 Enable Auto pipelines with `AUTO_KEEPER_ENABLED=true`. Disable one with `AUTO_KEEPER_RH_V3_ENABLED=false` (or `RH_V4` / `SV3`). UFloat RH V3+V4 run when Triton keys are set; disable with `UFLOAT_KEEPER_RH_V3_ENABLED=false` / `UFLOAT_KEEPER_RH_V4_ENABLED=false`.
 

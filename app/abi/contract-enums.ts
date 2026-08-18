@@ -68,17 +68,6 @@ export function formatUFloatStratMethod(method: number): string {
   return UFLOAT_STRAT_METHOD_LABEL[method as UFloatStratMethodValue] ?? `Unknown(${method})`;
 }
 
-/** AutoStrategyV3Rh.mode — same ordinals as UFloat: `enum Mode { NORMAL, DEFENSIVE, OFFENSIVE, STABLE }` (no NEUTRAL). */
-export const AUTO_STRATEGY_MODE = UFLOAT_STRATEGY_MODE;
-
-export type AutoStrategyModeValue = UFloatStrategyModeValue;
-
-export const AUTO_STRATEGY_MODE_LABEL = UFLOAT_STRATEGY_MODE_LABEL;
-
-export function formatAutoStrategyMode(mode: number): string {
-  return formatUFloatStrategyMode(mode);
-}
-
 export function formatFloatStrategyMode(mode: number): string {
   return FLOAT_STRATEGY_MODE_LABEL[mode as FloatStrategyModeValue] ?? `Unknown(${mode})`;
 }
