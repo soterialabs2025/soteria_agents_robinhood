@@ -90,7 +90,7 @@ Fresh infra deploys (router + keeper + factory). Shared per-chain `AutoOperatorR
 | Contract | Address |
 |---|---|
 | AutoSwapRouterRhV4 | `0x724265D83E2Ea8296Bd61177d7B86a92Ba7e2520` |
-| AutoKeeperRhV4 | `0xD3d863409CCb2201037a82E2B5bd5fbB3EAe9203` |
+| AutoKeeperRhV4 | `0x79F9ea39E7e5304791DF8cfEe835F6592c35e022` |
 | AutoFactoryRhV4 | `0xEDd2772fC4A3DFe73ae4dc068458f4fe36c13F93` |
 | AutoOperatorRegistry (shared) | `0x7df1120a04D82eA92EA2d5AA005e3316B37b936E` |
 | feeManager (shared) | `0xEc57538d5C129e1e985d81b7Ef05BBb63375D8BE` |
@@ -105,7 +105,7 @@ Fresh infra deploys (router + keeper + factory). Shared per-chain `AutoOperatorR
 
 
 ```text
-["0x724265D83E2Ea8296Bd61177d7B86a92Ba7e2520","0x7df1120a04D82eA92EA2d5AA005e3316B37b936E","0xD3d863409CCb2201037a82E2B5bd5fbB3EAe9203","0xEc57538d5C129e1e985d81b7Ef05BBb63375D8BE"]
+["0x724265D83E2Ea8296Bd61177d7B86a92Ba7e2520","0x7df1120a04D82eA92EA2d5AA005e3316B37b936E","0x79F9ea39E7e5304791DF8cfEe835F6592c35e022","0xEc57538d5C129e1e985d81b7Ef05BBb63375D8BE"]
 
 ```
 
