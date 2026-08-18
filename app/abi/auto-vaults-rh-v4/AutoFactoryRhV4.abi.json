@@ -109,6 +109,33 @@
         "name": "hookData",
         "type": "bytes",
         "internalType": "bytes"
+      },
+      {
+        "name": "bands",
+        "type": "tuple",
+        "internalType": "struct AutoStrategyManagerRhV4.BandConfig",
+        "components": [
+          {
+            "name": "rangeBelowTicks",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "rangeAboveTicks",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "innerBelowTicks",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "innerAboveTicks",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
       }
     ],
     "outputs": [

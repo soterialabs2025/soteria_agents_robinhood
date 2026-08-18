@@ -300,19 +300,6 @@
   },
   {
     "type": "function",
-    "name": "weth",
-    "inputs": [],
-    "outputs": [
-      {
-        "name": "",
-        "type": "address",
-        "internalType": "contract IWETH"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
     "name": "withdraw",
     "inputs": [
       {
@@ -346,7 +333,7 @@
         "internalType": "address"
       },
       {
-        "name": "wethNotional",
+        "name": "ethNotional",
         "type": "uint256",
         "indexed": false,
         "internalType": "uint256"
@@ -525,17 +512,6 @@
     "type": "error",
     "name": "ReentrancyGuardReentrantCall",
     "inputs": []
-  },
-  {
-    "type": "error",
-    "name": "SafeERC20FailedOperation",
-    "inputs": [
-      {
-        "name": "token",
-        "type": "address",
-        "internalType": "address"
-      }
-    ]
   },
   {
     "type": "error",
