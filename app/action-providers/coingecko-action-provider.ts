@@ -13,8 +13,8 @@ import {
   offensiveMomentumExcludeReason,
   passesOffensiveMomentumGates,
   type OffensiveMomentumExcludeContext,
-  STABLE_USDC_WETH_PAIR,
-  STABLE_V4_WETH_ADDRESS,
+  getStableUsdcWethPair,
+  getStableV4WethAddress,
   type MarketBreadthStableMode,
   type TokenRankingMetricsMap,
   resolveWeightedScoreBaseline,
@@ -761,7 +761,7 @@ function buildStableBreadthSyntheticTokenSummaryRow(
   const poolVolH6 = vol12 * 5;
 
   if (stableMode === "v4_weth") {
-    const addr = STABLE_V4_WETH_ADDRESS;
+    const addr = getStableV4WethAddress();
     return {
       symbol: "WETH",
       name: "Wrapped Ether",
@@ -797,7 +797,7 @@ function buildStableBreadthSyntheticTokenSummaryRow(
     };
   }
 
-  const addr = STABLE_USDC_WETH_PAIR.tokenAddress;
+  const addr = getStableUsdcWethPair().tokenAddress;
   return {
     symbol: "USDC",
     name: "USD Coin",

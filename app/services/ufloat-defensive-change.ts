@@ -19,7 +19,7 @@ import {
   getUfloatChangeAssetCooldownMs,
   getUfloatDefensiveRankingEligibilityThresholds,
   getUfloatTokenRankingMetrics,
-  TRITON_WETH_ADDRESS,
+  getTritonWethAddress,
 } from "../config/triton-config";
 import { writeViemContractWithChangeAssetGasHeadroom } from "./demeter-wallet-tx";
 import {
@@ -256,7 +256,7 @@ export async function sendUFloatStrategyChangeAsset(
       readUFloatStrategyMode(strategyAddress, rpcUrl),
     ]);
     const targetLc = normalizeAddr(newAssetAddr);
-    const wethLc = TRITON_WETH_ADDRESS.toLowerCase();
+    const wethLc = getTritonWethAddress().toLowerCase();
 
     if (modeBefore === UFLOAT_STABLE_MODE) {
       return {
@@ -336,7 +336,7 @@ export function pickUFloatDefensiveCandidates(
   const tokens = comparison.tokens_summary;
   if (!ranked?.length || !tokens?.length) return [];
 
-  const wethLower = TRITON_WETH_ADDRESS.toLowerCase();
+  const wethLower = getTritonWethAddress().toLowerCase();
   const currentLower = normalizeAddr(currentAsset);
 
   const candidates: { symbol: string; address: Address }[] = [];

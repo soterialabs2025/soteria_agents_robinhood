@@ -24,7 +24,7 @@ import {
   getTritonScheduledChangeMinWeightedScore,
   LIQUID_STRAT_MIN_V4_ADDRESS,
   TRITON_WALLET_ADDRESS,
-  TRITON_WETH_ADDRESS,
+  getTritonWethAddress,
 } from "../app/config/triton-config";
 import { resolveViemChainForNetworkId } from "../app/api/agent/evm-wallet-from-env";
 import { getRpcUrl } from "../app/config/chain-config";
@@ -53,7 +53,7 @@ async function main() {
       "stale_assetAddr: assetAddr does not match WETH parking — old code used assetAddr and may have sent changeAsset(WETH) no-ops"
     );
   }
-  const wethPool = await hasV4PoolConfigForAsset(rpcUrl, TRITON_WETH_ADDRESS as `0x${string}`);
+  const wethPool = await hasV4PoolConfigForAsset(rpcUrl, getTritonWethAddress());
   const assetPool = await hasV4PoolConfigForAsset(rpcUrl, heldAsset);
   console.log("v4_pool_config_weth:", wethPool);
   console.log("v4_pool_config_held_asset:", assetPool);

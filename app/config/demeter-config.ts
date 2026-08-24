@@ -2,7 +2,11 @@
 import * as fs from "fs";
 import * as path from "path";
 
+import type { Address } from "viem";
+
 import { FLOAT_STRATEGY_MODE } from "../abi/contract-enums";
+import { DEFAULT_USDG_ADDRESS, DEFAULT_WETH_ADDRESS, getUsdgAddress, getWethAddress } from "./chain-config";
+import { pickAddr } from "./env-address";
 
 // =============================================================================
 // Default token ranking metrics (weights must sum to 1.0) - MAX SCORE - .72
@@ -537,7 +541,7 @@ export function passesVolatilityH24Band(volatilityH24: unknown, minUsd: number, 
 /** V3 market-breadth stable token — WETH/USDC pool turnover can exceed {@link DEFAULT_MAX_VOLATILITY_H24_USD}. */
 export function isStableUsdcTokenAddress(tokenAddress: string | undefined | null): boolean {
   if (!tokenAddress?.trim()) return false;
-  return tokenAddress.trim().toLowerCase() === STABLE_USDC_WETH_PAIR.tokenAddress.toLowerCase();
+  return tokenAddress.trim().toLowerCase() === getStableUsdcWethPair().tokenAddress.toLowerCase();
 }
 
 /**
@@ -943,16 +947,31 @@ export const FLOAT_STRATEGY_STABLE_MODE = FLOAT_STRATEGY_MODE.Stable;
 
 /**
  * Float V3 market-breadth stable: USDG via `changeStrategyAsset` (WETH/USDG v3 pool, fee 100).
+ * Overrides: `USDG_ADDRESS`, `STABLE_USDG_WETH_POOL`.
  */
+export const DEFAULT_STABLE_USDG_WETH_POOL = "0x52e65B17fB6E5BA00Ed806f37Afcd2DaA50271Ca" as const;
+
 export const STABLE_USDC_WETH_PAIR = {
-  tokenAddress: "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168",
-  poolAddress: "0x52e65B17fB6E5BA00Ed806f37Afcd2DaA50271Ca",
+  tokenAddress: DEFAULT_USDG_ADDRESS,
+  poolAddress: DEFAULT_STABLE_USDG_WETH_POOL,
 } as const;
+
+export function getStableUsdcWethPair(): { tokenAddress: Address; poolAddress: Address } {
+  return {
+    tokenAddress: getUsdgAddress(),
+    poolAddress: pickAddr("STABLE_USDG_WETH_POOL", DEFAULT_STABLE_USDG_WETH_POOL),
+  };
+}
 
 /**
  * Float V4 market-breadth stable: 100% WETH via `FloatContractManagerV4.exitStrategyToStable()` (mode STABLE, registry ASSET=WETH).
+ * Override: `WETH_ADDRESS` or `STABLE_V4_WETH_ADDRESS`.
  */
-export const STABLE_V4_WETH_ADDRESS = "0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73" as const;
+export const STABLE_V4_WETH_ADDRESS = DEFAULT_WETH_ADDRESS;
+
+export function getStableV4WethAddress(): Address {
+  return pickAddr("STABLE_V4_WETH_ADDRESS", getWethAddress());
+}
 
 /** `buildTokenComparison` stable synthetic row + on-chain action for market breadth. */
 export type MarketBreadthStableMode = "v3_usdc" | "v4_weth";

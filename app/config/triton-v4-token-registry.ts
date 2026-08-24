@@ -1,7 +1,7 @@
 import type { Address } from "viem";
 
 import { TOKEN_POOL_PAIRS_V4_EXPORT, TRITON_V4_TOKEN_ADDRESS_ARRAY } from "../action-providers/coingecko-action-provider";
-import { TRITON_WETH_ADDRESS } from "./triton-config";
+import { getTritonWethAddress } from "./triton-config";
 
 /** Display names for Triton V4 tokens (keys = lowercase checksummed address). */
 const V4_TOKEN_NAMES_BY_ADDRESS: Record<string, string> = {
@@ -36,7 +36,6 @@ const V4_TOKEN_NAMES_BY_ADDRESS: Record<string, string> = {
 };
 
 const V4_NAME_ALIASES: Record<string, string> = {
-  weth: TRITON_WETH_ADDRESS.toLowerCase(),
   hermes: "0x95ccfd2b81a9667b0cc979992632f98fc853eba3",
   helixa: "0xab3f23c2abcb4e12cc8b593c218a7ba64ed17ba3",
   gitlaw: "0x5f980dcfc4c0fa3911554cf5ab288ed0eb13dba3",
@@ -72,12 +71,6 @@ const V4_BY_NORMALIZED_NAME = (() => {
         address: pair.tokenAddress as Address,
         poolAddress: pair.poolAddress,
       });
-    } else if (alias === "weth") {
-      map.set("weth", {
-        name: "weth",
-        address: TRITON_WETH_ADDRESS as Address,
-        poolAddress: "",
-      });
     }
   }
   return map;
@@ -101,8 +94,8 @@ export function resolveTritonV4Token(input: string): TritonV4TokenRef | null {
   if (!raw) return null;
   if (/^0x[a-fA-F0-9]{40}$/.test(raw)) {
     const lc = raw.toLowerCase();
-    if (lc === TRITON_WETH_ADDRESS.toLowerCase()) {
-      return { name: "weth", address: TRITON_WETH_ADDRESS as Address, poolAddress: "" };
+    if (lc === getTritonWethAddress().toLowerCase()) {
+      return { name: "weth", address: getTritonWethAddress(), poolAddress: "" };
     }
     const pair = TOKEN_POOL_PAIRS_V4_EXPORT.find((p) => p.tokenAddress === lc);
     if (!pair) return null;
@@ -113,11 +106,14 @@ export function resolveTritonV4Token(input: string): TritonV4TokenRef | null {
     };
   }
   const key = normalizeTokenNameKey(raw);
+  if (key === "weth") {
+    return { name: "weth", address: getTritonWethAddress(), poolAddress: "" };
+  }
   return V4_BY_NORMALIZED_NAME.get(key) ?? null;
 }
 
 export function tokenNameForAddress(address: string): string | null {
   const lc = address.trim().toLowerCase();
-  if (lc === TRITON_WETH_ADDRESS.toLowerCase()) return "weth";
+  if (lc === getTritonWethAddress().toLowerCase()) return "weth";
   return V4_TOKEN_NAMES_BY_ADDRESS[lc] ?? null;
 }

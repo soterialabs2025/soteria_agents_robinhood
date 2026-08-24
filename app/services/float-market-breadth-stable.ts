@@ -11,9 +11,9 @@ import { getStrategyMode } from "../action-providers/keeper-strategy-action-prov
 import type { FloatKeeperPipeline } from "../config/float-keeper-pipeline";
 import {
   FLOAT_STRATEGY_STABLE_MODE,
+  getStableUsdcWethPair,
+  getStableV4WethAddress,
   isStableUsdcTokenAddress,
-  STABLE_USDC_WETH_PAIR,
-  STABLE_V4_WETH_ADDRESS,
 } from "../config/demeter-config";
 
 export type FloatDefensiveStableParkResult =
@@ -29,8 +29,8 @@ export function defensiveStableChosenToken(
   strategyRegistryKey: FloatManagerStrategyKey
 ): { symbol: string; address: string } {
   return strategyRegistryKey === "FloatStrategyV4"
-    ? { symbol: "WETH", address: STABLE_V4_WETH_ADDRESS }
-    : { symbol: "USDC", address: STABLE_USDC_WETH_PAIR.tokenAddress };
+    ? { symbol: "WETH", address: getStableV4WethAddress() }
+    : { symbol: "USDC", address: getStableUsdcWethPair().tokenAddress };
 }
 
 /**
@@ -59,7 +59,7 @@ export async function tryFloatV4MarketBreadthStableExit(
     return { kind: "skipped", reason: "no FLOAT_V4 strategy id configured" };
   }
 
-  const wethLower = STABLE_V4_WETH_ADDRESS.toLowerCase();
+  const wethLower = getStableV4WethAddress().toLowerCase();
   try {
     const asset = (await getFloatAssetAddress(
       pipeline.contractManagerAddress as Address,
@@ -110,7 +110,7 @@ export async function tryFloatV3DefensiveStablePark(
     return { kind: "not_applicable" };
   }
 
-  const usdcLower = STABLE_USDC_WETH_PAIR.tokenAddress.toLowerCase();
+  const usdcLower = getStableUsdcWethPair().tokenAddress.toLowerCase();
   try {
     const asset = (
       await getFloatAssetAddress(
@@ -132,7 +132,7 @@ export async function tryFloatV3DefensiveStablePark(
   const result = await sendChangeStrategyAsset(
     walletProvider,
     pipeline.contractManagerAddress as Address,
-    STABLE_USDC_WETH_PAIR.tokenAddress
+    getStableUsdcWethPair().tokenAddress
   );
   if (result.success) {
     return { kind: "sent", txHash: result.transactionHash };
@@ -213,7 +213,7 @@ export function shouldSkipPeriodicDefensivePoolFetch(
           "V4 stable is WETH via exitStrategyToStable — USDC has no V4 pool mapping (V3-only stable token)",
       };
     }
-    if (assetLc === STABLE_V4_WETH_ADDRESS.toLowerCase()) {
+    if (assetLc === getStableV4WethAddress().toLowerCase()) {
       return {
         skip: true,
         reason:

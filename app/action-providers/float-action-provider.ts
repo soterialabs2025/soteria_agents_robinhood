@@ -5,7 +5,7 @@ import type { Abi } from "viem";
 
 import floatStrategyJson from "../abi/FloatStrategy.json";
 import floatStrategyV4Json from "../abi/FloatStrategyV4.json";
-import { getRpcUrlOptional, getViemChain, UNISWAP_V3_FACTORY } from "../config/chain-config";
+import { getRpcUrlOptional, getUniswapV3Factory, getViemChain } from "../config/chain-config";
 import { sendEvmTxWithGasHeadroom } from "../services/demeter-wallet-tx";
 
 /** Canonical FloatStrategy ABI (keep in sync with deployed strategy — see `app/abi/FloatStrategy.json`). */
@@ -108,8 +108,6 @@ const LIQUID_STRATEGY_VIEW_ABI = [
   },
 ] as const;
 
-/** Uniswap V3 factory on Robinhood Chain (same as FloatContractManager / FloatStrategy). */
-const UNISWAP_V3_FACTORY_BASE = UNISWAP_V3_FACTORY;
 /** 1% fee tier used by Demeter asset/WETH pool resolution (matches manager contract). */
 const UNISWAP_V3_FEE_1_PCT = 10_000;
 
@@ -343,15 +341,16 @@ export async function resolveAssetWethPoolV3(
     chain: getViemChain(),
     transport: http(rpcUrl),
   });
+  const factory = getUniswapV3Factory();
   let pool = (await client.readContract({
-    address: UNISWAP_V3_FACTORY_BASE,
+    address: factory,
     abi: UNISWAP_V3_FACTORY_ABI,
     functionName: "getPool",
     args: [assetAddr as Address, wethAddr as Address, UNISWAP_V3_FEE_1_PCT],
   })) as Address;
   if (pool === zeroAddress) {
     pool = (await client.readContract({
-      address: UNISWAP_V3_FACTORY_BASE,
+      address: factory,
       abi: UNISWAP_V3_FACTORY_ABI,
       functionName: "getPool",
       args: [wethAddr as Address, assetAddr as Address, UNISWAP_V3_FEE_1_PCT],

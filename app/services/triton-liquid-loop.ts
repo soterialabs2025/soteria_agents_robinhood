@@ -50,7 +50,7 @@ import {
   getTritonPriceCheckIntervalMs,
   getTritonPrivateKeyFromEnv,
   LIQUID_STRAT_MIN_V4_ADDRESS,
-  TRITON_WETH_ADDRESS,
+  getTritonWethAddress,
 } from "../config/triton-config";
 import { checkDemeterStopSignal, sleepWithStopCheck } from "../config/demeter-stop";
 import {
@@ -96,7 +96,7 @@ function pickTopOffensiveToken(comparison: ComparisonShape): {
       minPoolLiquidityUsd: minLiq,
       minVolatilityH24Usd: minVolatility,
       maxVolatilityH24Usd: maxVolatility,
-      wethLower: TRITON_WETH_ADDRESS.toLowerCase(),
+      wethLower: getTritonWethAddress().toLowerCase(),
     });
     if (!topActionable || topActionable.score < scoreFloor) {
       console.log(
@@ -109,7 +109,7 @@ function pickTopOffensiveToken(comparison: ComparisonShape): {
   for (const { symbol, score } of ranked) {
     const token = tokens.find((t) => t.symbol === symbol);
     const addr = token?.address?.toLowerCase();
-    if (!addr || addr === TRITON_WETH_ADDRESS.toLowerCase()) continue;
+    if (!addr || addr === getTritonWethAddress().toLowerCase()) continue;
     if (token && typeof token.volume_h12 === "number" && token.volume_h12 < minVol) continue;
     if (token && (typeof token.liquidity_usd !== "number" || token.liquidity_usd < minLiq)) continue;
     if (!passesVolatilityH24Band(token?.volatility_h24, minVolatility, maxVolatility)) continue;
@@ -215,7 +215,7 @@ async function tryExecuteScheduledAction(
       return false;
     }
     console.log(`[Triton] Scheduled exit due → changeAsset(WETH) (${action.notes ?? "time-based"})`);
-    const tx = await sendLiquidStratChangeAsset(privateKey, rpcUrl, TRITON_WETH_ADDRESS as Address);
+    const tx = await sendLiquidStratChangeAsset(privateKey, rpcUrl, getTritonWethAddress() as Address);
     if (!tx.success) {
       console.error(`[Triton] Scheduled exit changeAsset(WETH) failed: ${tx.error}`);
       return true;
@@ -316,7 +316,7 @@ async function checkDefensiveExit(
       `[Triton] ${tokenLabel} now ${formatPctFromEntry(currentPct)} vs entry, peak ${formatPctFromEntry(peakPct)} — custom exit: ${customEval.reason}`
     );
     console.log(`[Triton] Custom exit → changeAsset(WETH)`);
-    const tx = await sendLiquidStratChangeAsset(privateKey, rpcUrl, TRITON_WETH_ADDRESS as Address);
+    const tx = await sendLiquidStratChangeAsset(privateKey, rpcUrl, getTritonWethAddress() as Address);
     if (!tx.success) {
       console.error(`[Triton] changeAsset(WETH) failed: ${tx.error}`);
       return;
@@ -352,7 +352,7 @@ async function checkDefensiveExit(
   if (!evaluation.exit) return;
 
   console.log(`[Triton] Defensive exit (${evaluation.tier}): ${evaluation.reason} → changeAsset(WETH)`);
-  const tx = await sendLiquidStratChangeAsset(privateKey, rpcUrl, TRITON_WETH_ADDRESS as Address);
+  const tx = await sendLiquidStratChangeAsset(privateKey, rpcUrl, getTritonWethAddress() as Address);
   if (!tx.success) {
     console.error(`[Triton] changeAsset(WETH) failed: ${tx.error}`);
     return;

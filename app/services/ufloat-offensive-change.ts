@@ -20,7 +20,7 @@ import {
   getUfloatApplyScheduledChangeMinWeightedScore,
   getUfloatChangeAssetCooldownMs,
   getUfloatOffensiveIntervalMs,
-  TRITON_WETH_ADDRESS,
+  getTritonWethAddress,
 } from "../config/triton-config";
 import {
   buildUfloatPoolByTokenMap,
@@ -124,7 +124,7 @@ export function pickOffensiveMetricsForAllowlist(
     minPoolLiquidityUsd: ranking.minPoolLiquidityUsd,
     minVolatilityH24Usd: ranking.minVolatilityH24Usd,
     maxVolatilityH24Usd: ranking.maxVolatilityH24Usd,
-    wethLower: TRITON_WETH_ADDRESS.toLowerCase(),
+    wethLower: getTritonWethAddress().toLowerCase(),
   });
   if (!topActionable) return null;
 

@@ -1,14 +1,16 @@
-import { STABLE_USDC_WETH_PAIR, STABLE_V4_WETH_ADDRESS } from "../../config/demeter-config";
+import { getStableUsdcWethPair, getStableV4WethAddress } from "../../config/demeter-config";
 
-const STABLE_CALIBRATION_ADDRESSES_LC = new Set([
-  STABLE_V4_WETH_ADDRESS.toLowerCase(),
-  STABLE_USDC_WETH_PAIR.tokenAddress.toLowerCase(),
-]);
+function stableCalibrationAddressesLc(): Set<string> {
+  return new Set([
+    getStableV4WethAddress().toLowerCase(),
+    getStableUsdcWethPair().tokenAddress.toLowerCase(),
+  ]);
+}
 
 /** WETH / USDC stable rotations are not useful for offensive metric calibration. */
 export function isStableCalibrationTokenAddress(address: string | null | undefined): boolean {
   if (!address?.trim()) return false;
-  return STABLE_CALIBRATION_ADDRESSES_LC.has(address.trim().toLowerCase());
+  return stableCalibrationAddressesLc().has(address.trim().toLowerCase());
 }
 
 /** Need at least two rankable tokens to compare 6h forward returns. */

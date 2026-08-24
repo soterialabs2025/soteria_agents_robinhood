@@ -13,7 +13,8 @@ import autoKeeperSv3Abi from "../abi/auto-vault-sushi/AutoKeeperSv3.abi.json";
 import ufloatKeeperV3Abi from "../abi/ustrategy-rh-v3/UFloatKeeperV3.abi.json";
 import ufloatKeeperV4Abi from "../abi/ustrategy-rh-v4/UFloatKeeper.abi.json";
 
-import { AUTO_OPERATOR_REGISTRY_ADDRESS } from "./auto-keeper-config";
+import { pickAddr } from "./env-address";
+import { getOperatorRegistryAddress } from "./operator-registry-config";
 
 export type AutoKeeperPipelineId = "auto-rh-v3" | "auto-rh-v4" | "auto-sv3";
 export type UfloatKeeperPipelineId = "ufloat-rh-v3" | "ufloat-rh-v4";
@@ -40,12 +41,6 @@ export type UfloatKeeperPipeline = {
   operatorRegistryAddress: Address;
   abi: Abi;
 };
-
-function envAddress(name: string): Address | null {
-  const raw = process.env[name]?.trim();
-  if (raw && /^0x[a-fA-F0-9]{40}$/.test(raw)) return raw as Address;
-  return null;
-}
 
 function envFlagFalse(name: string): boolean {
   const raw = process.env[name]?.trim().toLowerCase();
@@ -77,10 +72,6 @@ export const UFLOAT_KEEPER_RH_V4_ADDRESS = "0x2cF7c9aB33a8248B07435d58cc7754eB1E
 export const UFLOAT_FACTORY_RH_V4_ADDRESS = "0xBDE2231aC15DdbACa7A24837875e6F7DF0a855D9" as const;
 export const UFLOAT_SWAP_ROUTER_RH_V4_ADDRESS = "0x562cfd3C373A649932597AD5D7a7c1CEa8402A76" as const;
 
-function pickAddr(envName: string, fallback: Address): Address {
-  return envAddress(envName) ?? fallback;
-}
-
 export function getAutoRhV3Pipeline(): AutoKeeperPipeline {
   return {
     id: "auto-rh-v3",
@@ -89,10 +80,7 @@ export function getAutoRhV3Pipeline(): AutoKeeperPipeline {
     keeperAddress: pickAddr("AUTO_KEEPER_RH_V3_ADDRESS", AUTO_KEEPER_RH_V3_ADDRESS),
     factoryAddress: pickAddr("AUTO_FACTORY_RH_V3_ADDRESS", AUTO_FACTORY_RH_V3_ADDRESS),
     swapRouterAddress: pickAddr("AUTO_SWAP_ROUTER_RH_V3_ADDRESS", AUTO_SWAP_ROUTER_RH_V3_ADDRESS),
-    operatorRegistryAddress: pickAddr(
-      "AUTO_OPERATOR_REGISTRY_ADDRESS",
-      AUTO_OPERATOR_REGISTRY_ADDRESS
-    ),
+    operatorRegistryAddress: getOperatorRegistryAddress(),
     abi: autoKeeperRhV3Abi as Abi,
   };
 }
@@ -105,10 +93,7 @@ export function getAutoRhV4Pipeline(): AutoKeeperPipeline {
     keeperAddress: pickAddr("AUTO_KEEPER_RH_V4_ADDRESS", AUTO_KEEPER_RH_V4_ADDRESS),
     factoryAddress: pickAddr("AUTO_FACTORY_RH_V4_ADDRESS", AUTO_FACTORY_RH_V4_ADDRESS),
     swapRouterAddress: pickAddr("AUTO_SWAP_ROUTER_RH_V4_ADDRESS", AUTO_SWAP_ROUTER_RH_V4_ADDRESS),
-    operatorRegistryAddress: pickAddr(
-      "AUTO_OPERATOR_REGISTRY_ADDRESS",
-      AUTO_OPERATOR_REGISTRY_ADDRESS
-    ),
+    operatorRegistryAddress: getOperatorRegistryAddress(),
     abi: autoKeeperRhV4Abi as Abi,
   };
 }
@@ -121,10 +106,7 @@ export function getAutoSv3Pipeline(): AutoKeeperPipeline {
     keeperAddress: pickAddr("AUTO_KEEPER_SV3_ADDRESS", AUTO_KEEPER_SV3_ADDRESS),
     factoryAddress: pickAddr("AUTO_FACTORY_SV3_ADDRESS", AUTO_FACTORY_SV3_ADDRESS),
     swapRouterAddress: pickAddr("AUTO_SWAP_ROUTER_SV3_ADDRESS", AUTO_SWAP_ROUTER_SV3_ADDRESS),
-    operatorRegistryAddress: pickAddr(
-      "AUTO_OPERATOR_REGISTRY_ADDRESS",
-      AUTO_OPERATOR_REGISTRY_ADDRESS
-    ),
+    operatorRegistryAddress: getOperatorRegistryAddress(),
     abi: autoKeeperSv3Abi as Abi,
   };
 }
@@ -137,10 +119,7 @@ export function getUfloatRhV3Pipeline(): UfloatKeeperPipeline {
     keeperAddress: pickAddr("UFLOAT_KEEPER_RH_V3_ADDRESS", UFLOAT_KEEPER_RH_V3_ADDRESS),
     factoryAddress: pickAddr("UFLOAT_FACTORY_RH_V3_ADDRESS", UFLOAT_FACTORY_RH_V3_ADDRESS),
     swapRouterAddress: pickAddr("UFLOAT_SWAP_ROUTER_RH_V3_ADDRESS", UFLOAT_SWAP_ROUTER_RH_V3_ADDRESS),
-    operatorRegistryAddress: pickAddr(
-      "OPERATOR_REGISTRY_ADDRESS",
-      AUTO_OPERATOR_REGISTRY_ADDRESS
-    ),
+    operatorRegistryAddress: getOperatorRegistryAddress(),
     abi: ufloatKeeperV3Abi as Abi,
   };
 }
@@ -153,10 +132,7 @@ export function getUfloatRhV4Pipeline(): UfloatKeeperPipeline {
     keeperAddress: pickAddr("UFLOAT_KEEPER_RH_V4_ADDRESS", UFLOAT_KEEPER_RH_V4_ADDRESS),
     factoryAddress: pickAddr("UFLOAT_FACTORY_RH_V4_ADDRESS", UFLOAT_FACTORY_RH_V4_ADDRESS),
     swapRouterAddress: pickAddr("UFLOAT_SWAP_ROUTER_RH_V4_ADDRESS", UFLOAT_SWAP_ROUTER_RH_V4_ADDRESS),
-    operatorRegistryAddress: pickAddr(
-      "OPERATOR_REGISTRY_ADDRESS",
-      AUTO_OPERATOR_REGISTRY_ADDRESS
-    ),
+    operatorRegistryAddress: getOperatorRegistryAddress(),
     abi: ufloatKeeperV4Abi as Abi,
   };
 }

@@ -8,10 +8,9 @@ import {
   getX402TokenRankingWeightSum,
 } from "../../config/demeter-config";
 import { getUfloatDefensiveRankingEligibilityThresholds } from "../../config/triton-config";
-import { COINGECKO_NETWORK, WETH_ADDRESS } from "../../config/chain-config";
+import { COINGECKO_NETWORK, getWethAddress } from "../../config/chain-config";
 
 const NETWORK = COINGECKO_NETWORK;
-const WETH_BASE = WETH_ADDRESS;
 const COINGECKO_API_BASE = "https://pro-api.coingecko.com/api/v3";
 const MIN_TOKENS = 2;
 const MAX_TOKENS = 10;
@@ -171,7 +170,7 @@ export async function resolveTopPoolsForTokens(
 
   const poolByToken = new Map<string, string>();
   const errors: X402TokenScoreError[] = [];
-  const wethLc = WETH_BASE.toLowerCase();
+  const wethLc = getWethAddress().toLowerCase();
 
   type TokenRow = NonNullable<typeof raw.data>[number];
   const tokenDataByAddr = new Map<string, TokenRow>();

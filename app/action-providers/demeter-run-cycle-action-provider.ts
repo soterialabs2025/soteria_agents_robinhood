@@ -17,8 +17,8 @@ import {
   tryFloatDefensiveStableParkWhenNoPick,
   tryFloatV4MarketBreadthStableExit,
 } from "../services/float-market-breadth-stable";
-import { FLOAT_STRATEGY_STABLE_MODE, STABLE_V4_WETH_ADDRESS } from "../config/demeter-config";
-import { getRpcUrlOptional, WETH_ADDRESS } from "../config/chain-config";
+import { FLOAT_STRATEGY_STABLE_MODE, getStableV4WethAddress } from "../config/demeter-config";
+import { getRpcUrlOptional, getWethAddress } from "../config/chain-config";
 import {
   buildFloatKeeperPipelines,
   formatFloatChangeStrategyLogTag,
@@ -115,7 +115,7 @@ const STABLE_MODE = FLOAT_STRATEGY_STABLE_MODE;
 const OFFENSIVE_CHANGE_THRESHOLD = 20;
 
 /** WETH on Robinhood Chain – never select; contract's WETH path fails gas estimation (same as demeter-agent). */
-const WETH_BASE = WETH_ADDRESS;
+const wethBase = () => getWethAddress();
 
 /** Retry changeStrategy submissions after failures. */
 const CHANGE_STRATEGY_TX_RETRY_MS = 30_000; // 30 seconds
@@ -277,7 +277,7 @@ async function runChangeStrategy(
         (comparison as { market_breadth_on_chain_action?: string }).market_breadth_on_chain_action ===
           "exitStrategyToStable"))
   ) {
-    const stableChosen = { symbol: "WETH", address: STABLE_V4_WETH_ADDRESS };
+    const stableChosen = { symbol: "WETH", address: getStableV4WethAddress() };
     const stableResult = await tryFloatV4MarketBreadthStableExit(walletProvider, pipeline, rpcUrl);
     if (stableResult.kind === "skipped") {
       await logAudit({
@@ -394,7 +394,7 @@ async function runChangeStrategy(
       minPoolLiquidityUsd: minLiq,
       minVolatilityH24Usd: minVolatilityH24,
       maxVolatilityH24Usd: maxVolatilityH24,
-      wethLower: WETH_BASE.toLowerCase(),
+      wethLower: wethBase().toLowerCase(),
     });
     if (topActionable && topActionable.score < minWeightedScore) {
       await logAudit({
@@ -413,7 +413,7 @@ async function runChangeStrategy(
       };
     }
   }
-  const wethLower = WETH_BASE.toLowerCase();
+  const wethLower = wethBase().toLowerCase();
 
   const candidates: {
     symbol: string;
@@ -431,7 +431,7 @@ async function runChangeStrategy(
       if (isStableUsdcTokenAddress(token?.address)) continue;
       if (
         pipeline.strategyRegistryKey === "FloatStrategyV4" &&
-        addr === STABLE_V4_WETH_ADDRESS.toLowerCase()
+        addr === getStableV4WethAddress().toLowerCase()
       ) {
         continue;
       }
@@ -559,9 +559,9 @@ async function runChangeStrategy(
           changeStrategyTransaction: stableResult.txHash,
           topThreeTokens,
           oldToken,
-          chosenToken: { symbol: "WETH", address: STABLE_V4_WETH_ADDRESS },
+          chosenToken: { symbol: "WETH", address: getStableV4WethAddress() },
           chosenTokenMetrics: buildChosenMetrics(chosen, chosenMetricsBase()),
-          changeSummary: buildChangeSummary(oldToken, { symbol: "WETH", address: STABLE_V4_WETH_ADDRESS }),
+          changeSummary: buildChangeSummary(oldToken, { symbol: "WETH", address: getStableV4WethAddress() }),
           outcome: "success",
         });
         return { changed: true, txHash: stableResult.txHash };

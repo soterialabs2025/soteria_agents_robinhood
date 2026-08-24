@@ -4,18 +4,25 @@
  * Wallet: `TRITON_PRIVATE_KEY` (expected address {@link TRITON_WALLET_ADDRESS}).
  */
 
+import type { Address } from "viem";
+
 import {
   DEFAULT_OFFENSIVE_ABSOLUTE_SCHEDULED_CHANGE_MIN_WEIGHTED_SCORE,
   getOffensiveWeightedScoreNormalization,
   getTokenRankingMetrics,
   type TokenRankingMetricsMap,
 } from "./demeter-config";
+import { DEFAULT_WETH_ADDRESS, getWethAddress } from "./chain-config";
+import { pickAddr } from "./env-address";
 import type { RankingEligibilityThresholds } from "./ranking-eligibility";
 import { loadTritonOverrides } from "./triton-overrides";
 
+/** WETH on Robinhood Chain (defensive parking asset). Prefer {@link getTritonWethAddress}. */
+export const TRITON_WETH_ADDRESS = DEFAULT_WETH_ADDRESS;
 
-/** WETH on Robinhood Chain (defensive parking asset). */
-export const TRITON_WETH_ADDRESS = "0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73" as const;
+export function getTritonWethAddress(): Address {
+  return pickAddr("TRITON_WETH_ADDRESS", getWethAddress());
+}
 
 
 /** Float V4 / Triton loop + ranking defaults (mirror demeter-config; tune independently)

@@ -8,11 +8,15 @@
 import type { Address } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 
-import { DEMETER_TWO_WALLET_ADDRESS } from "./operator-registry-config";
+import { envAddress } from "./env-address";
+import {
+  DEFAULT_OPERATOR_REGISTRY_ADDRESS,
+  DEMETER_TWO_WALLET_ADDRESS,
+  getOperatorRegistryAddress,
+} from "./operator-registry-config";
 
-/** AutoOperatorRegistry on Robinhood Chain. */
-export const AUTO_OPERATOR_REGISTRY_ADDRESS =
-  "0x7df1120a04D82eA92EA2d5AA005e3316B37b936E" as const;
+/** AutoOperatorRegistry on Robinhood Chain. Prefer {@link getOperatorRegistryAddress}. */
+export const AUTO_OPERATOR_REGISTRY_ADDRESS = DEFAULT_OPERATOR_REGISTRY_ADDRESS;
 
 /** AutoFactoryRhV3 on Robinhood Chain (legacy alias). */
 export const AUTO_FACTORY_V3_RH_ADDRESS =
@@ -26,12 +30,6 @@ export const AUTO_SWAP_ROUTER_V3_RH_ADDRESS =
 export const AUTO_KEEPER_V3_RH_ADDRESS =
   "0xD35CE6610AcB37D545bb5ec4192fC50505Dd26Ad" as const;
 
-function envAddress(name: string): Address | null {
-  const raw = process.env[name]?.trim();
-  if (raw && /^0x[a-fA-F0-9]{40}$/.test(raw)) return raw as Address;
-  return null;
-}
-
 /** AutoKeeperV3Rh: env `AUTO_KEEPER_ADDRESS` or {@link AUTO_KEEPER_V3_RH_ADDRESS}. */
 export function getAutoKeeperAddress(): Address {
   return envAddress("AUTO_KEEPER_ADDRESS") ?? AUTO_KEEPER_V3_RH_ADDRESS;
@@ -42,9 +40,9 @@ export function getAutoFactoryAddress(): Address {
   return envAddress("AUTO_FACTORY_ADDRESS") ?? AUTO_FACTORY_V3_RH_ADDRESS;
 }
 
-/** AutoOperatorRegistry: env `AUTO_OPERATOR_REGISTRY_ADDRESS` or {@link AUTO_OPERATOR_REGISTRY_ADDRESS}. */
+/** AutoOperatorRegistry: `OPERATOR_REGISTRY_ADDRESS` / `AUTO_OPERATOR_REGISTRY_ADDRESS` or default. */
 export function getAutoOperatorRegistryAddress(): Address {
-  return envAddress("AUTO_OPERATOR_REGISTRY_ADDRESS") ?? AUTO_OPERATOR_REGISTRY_ADDRESS;
+  return getOperatorRegistryAddress();
 }
 
 /** AutoSwapRouterV3Rh: env `AUTO_SWAP_ROUTER_ADDRESS` or {@link AUTO_SWAP_ROUTER_V3_RH_ADDRESS}. */

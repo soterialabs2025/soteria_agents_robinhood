@@ -33,7 +33,7 @@ import {
 import {
   LIQUID_STRAT_MIN_V4_ADDRESS,
   TRITON_WALLET_ADDRESS,
-  TRITON_WETH_ADDRESS,
+  getTritonWethAddress,
 } from "../config/triton-config";
 import {
   explorerAddressUrl,
@@ -52,10 +52,8 @@ const LIQUID_MODE_LABELS: Record<number, string> = {
   3: "NEUTRAL",
 };
 
-const WETH_LC = TRITON_WETH_ADDRESS.toLowerCase();
-
 export function isTritonWethAddress(addr: string): boolean {
-  return addr.trim().toLowerCase() === WETH_LC;
+  return addr.trim().toLowerCase() === getTritonWethAddress().toLowerCase();
 }
 
 export type LiquidStratAccess = {

@@ -40,8 +40,8 @@ import {
   tryFloatDefensiveStableParkWhenNoPick,
   tryFloatV4MarketBreadthStableExit,
 } from "./float-market-breadth-stable";
-import { FLOAT_STRATEGY_STABLE_MODE, STABLE_V4_WETH_ADDRESS } from "../config/demeter-config";
-import { getRpcUrlOptional, WETH_ADDRESS } from "../config/chain-config";
+import { FLOAT_STRATEGY_STABLE_MODE, getStableV4WethAddress } from "../config/demeter-config";
+import { getRpcUrlOptional, getWethAddress } from "../config/chain-config";
 import {
   buildFloatKeeperPipelines,
   sleepFloatPipelineStagger,
@@ -193,7 +193,7 @@ const isCompareMode = process.argv.includes("--compare");
 const RPC_URL = getRpcUrlOptional();
 const FLOAT_PIPELINES: FloatKeeperPipeline[] = isCoingeckoMode ? [] : buildFloatKeeperPipelines();
 // WETH on Robinhood Chain – never select as strategy asset; contract's WETH path fails gas estimation
-const WETH_BASE = WETH_ADDRESS;
+const wethBase = () => getWethAddress();
 
 function hasActiveNonFloatKeeperLoops(): boolean {
   return (
@@ -967,7 +967,7 @@ async function executeChangeStrategy(
     const logTag = formatFloatChangeStrategyLogTag(pipeline);
     const stableChosen = {
       symbol: "WETH",
-      address: STABLE_V4_WETH_ADDRESS,
+      address: getStableV4WethAddress(),
     };
 
     if (!rpcUrl) {
@@ -1047,7 +1047,7 @@ async function executeChangeStrategy(
         });
         return {
           outcome: "success",
-          address: STABLE_V4_WETH_ADDRESS,
+          address: getStableV4WethAddress(),
           marketBreadthDefensiveActive: true,
         };
       }
@@ -1145,7 +1145,7 @@ async function executeChangeStrategy(
       minPoolLiquidityUsd: minLiq,
       minVolatilityH24Usd: minVolatilityH24,
       maxVolatilityH24Usd: maxVolatilityH24,
-      wethLower: WETH_BASE.toLowerCase(),
+      wethLower: wethBase().toLowerCase(),
     });
     if (topActionable && topActionable.score < scoreFloor) {
       console.log(
@@ -1168,7 +1168,7 @@ async function executeChangeStrategy(
       };
     }
   }
-  const wethLower = WETH_BASE.toLowerCase();
+  const wethLower = wethBase().toLowerCase();
   const currentLower = currentAssetAddress?.toLowerCase();
   const candidates: {
     symbol: string;
@@ -1192,7 +1192,7 @@ async function executeChangeStrategy(
       }
       if (
         pipeline.strategyRegistryKey === "FloatStrategyV4" &&
-        addr === STABLE_V4_WETH_ADDRESS.toLowerCase()
+        addr === getStableV4WethAddress().toLowerCase()
       ) {
         console.log(`[Demeter] Skipping ${symbol} — STABLE re-entry excludes parked WETH`);
         continue;
@@ -1382,14 +1382,14 @@ async function executeChangeStrategy(
             changeStrategyTransaction: stableResult.txHash,
             topThreeTokens,
             oldToken,
-            chosenToken: { symbol: "WETH", address: STABLE_V4_WETH_ADDRESS },
+            chosenToken: { symbol: "WETH", address: getStableV4WethAddress() },
             chosenTokenMetrics: buildChosenMetrics(chosen, chosenMetricsBase()),
-            changeSummary: buildChangeSummary(oldToken, { symbol: "WETH", address: STABLE_V4_WETH_ADDRESS }),
+            changeSummary: buildChangeSummary(oldToken, { symbol: "WETH", address: getStableV4WethAddress() }),
             outcome: "success",
           });
           return {
             outcome: "success",
-            address: STABLE_V4_WETH_ADDRESS,
+            address: getStableV4WethAddress(),
             marketBreadthDefensiveActive,
           };
         }

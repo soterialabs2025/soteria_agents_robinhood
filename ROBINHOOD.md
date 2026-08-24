@@ -44,6 +44,22 @@ Prefer **`ROBINHOOD_MAIN_RPC_URL`**. `getRpcUrl()` / `getRpcUrlOptional()` in `a
 
 Full addresses: [docs/ADDRESSES.md](./docs/ADDRESSES.md). Pipeline config: `app/config/rh-keeper-pipelines.ts`.
 
+Table values above are **code fallbacks**. Set the same names in `.env` to change them without a commit (restart Demeter / PM2 after edit).
+
+| Env | Used for |
+|-----|----------|
+| `WETH_ADDRESS` | Canonical WETH (also Triton / Float V4 stable) |
+| `USDG_ADDRESS` | Canonical USDG (Float V3 stable token) |
+| `UNISWAP_V3_FACTORY` | Uniswap V3 factory (pool lookup) |
+| `UNISWAP_V4_POOL_MANAGER` | Uniswap V4 PoolManager |
+| `STABLE_USDG_WETH_POOL` | USDG/WETH v3 pool |
+| `OPERATOR_REGISTRY_ADDRESS` | Shared OperatorRegistry (`AUTO_OPERATOR_REGISTRY_ADDRESS` also accepted) |
+| `AUTO_KEEPER_RH_V3_ADDRESS` / `AUTO_FACTORY_RH_V3_ADDRESS` / `AUTO_SWAP_ROUTER_RH_V3_ADDRESS` | Auto Uni V3 |
+| `AUTO_KEEPER_RH_V4_ADDRESS` / `AUTO_FACTORY_RH_V4_ADDRESS` / `AUTO_SWAP_ROUTER_RH_V4_ADDRESS` | Auto Uni V4 |
+| `AUTO_KEEPER_SV3_ADDRESS` / `AUTO_FACTORY_SV3_ADDRESS` / `AUTO_SWAP_ROUTER_SV3_ADDRESS` | Auto Sushi V3 |
+| `UFLOAT_KEEPER_RH_V3_ADDRESS` / `UFLOAT_FACTORY_RH_V3_ADDRESS` / `UFLOAT_SWAP_ROUTER_RH_V3_ADDRESS` | UFloat V3 |
+| `UFLOAT_KEEPER_RH_V4_ADDRESS` / `UFLOAT_FACTORY_RH_V4_ADDRESS` / `UFLOAT_SWAP_ROUTER_RH_V4_ADDRESS` | UFloat V4 |
+
 Shared helpers: `app/config/chain-config.ts`. Keeper checks (upkeep/harvest) shard across up to four operator keys — `DEMETER_PRIVATE_KEY`, `DEMETER_TWO_PRIVATE_KEY`, `TRITON_PRIVATE_KEY`, `TRITON_TWO_PRIVATE_KEY` — with txs serialized per address. UFloat `changeAsset` stays on Triton wallets.
 
 ## Auto / UFloat RH ABIs
