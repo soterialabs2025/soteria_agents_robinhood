@@ -91,7 +91,7 @@ Fresh infra deploys (router + keeper + factory). Shared per-chain `AutoOperatorR
 |---|---|
 | AutoSwapRouterRhV4 | `0x724265D83E2Ea8296Bd61177d7B86a92Ba7e2520` |
 | AutoKeeperRhV4 | `0x79F9ea39E7e5304791DF8cfEe835F6592c35e022` |
-| AutoFactoryRhV4 | `0xEDd2772fC4A3DFe73ae4dc068458f4fe36c13F93` |
+| AutoFactoryRhV4 | `0x3D19ecDb90B06626f8EC860F7aec9A378E760E8D` |
 | AutoOperatorRegistry (shared) | `0x7df1120a04D82eA92EA2d5AA005e3316B37b936E` |
 | feeManager (shared) | `0xEc57538d5C129e1e985d81b7Ef05BBb63375D8BE` |
 | Deployer | `0xf99faA74aF8cb06479bFCb62495F0404089EDc83` |
@@ -115,7 +115,7 @@ Fresh infra deploys (router + keeper + factory). Shared per-chain `AutoOperatorR
 |---|---|
 | AutoSwapRouterSv3 | `0x568dCA271e5F7edb9769f5eA6076e2DA8D4014e8` |
 | AutoKeeperSv3 | `0x3Cb0A8c25356BF5764C4510A79458e73a6639372` |
-| AutoFactorySv3 | `0x8cB0DaECd13658cD099419a885c6D3571cBF5441` |
+| AutoFactorySv3 | `0x0bb7e7A4a57ad938a253d2302604D1256067785A` |
 | AutoOperatorRegistry (shared) | `0x7df1120a04D82eA92EA2d5AA005e3316B37b936E` |
 | feeManager (shared) | `0xEc57538d5C129e1e985d81b7Ef05BBb63375D8BE` |
 | Deployer | `0xf99faA74aF8cb06479bFCb62495F0404089EDc83` |
