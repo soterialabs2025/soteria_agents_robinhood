@@ -59,7 +59,7 @@ export async function resolveAutoFactoryAddress(_rpcUrl?: string): Promise<Addre
 }
 
 /** performUpkeepBatch cadence. Override: `AUTO_KEEPER_UPKEEP_INTERVAL_MS`. */
-export const DEFAULT_AUTO_KEEPER_UPKEEP_INTERVAL_MS = 90 * 1000; // 1 min 30 s
+export const DEFAULT_AUTO_KEEPER_UPKEEP_INTERVAL_MS = 150 * 1000; // 2 min 30 s
 
 /** performHarvestBatch cadence. Override: `AUTO_KEEPER_HARVEST_INTERVAL_MS`. */
 export const DEFAULT_AUTO_KEEPER_HARVEST_INTERVAL_MS = 6 * 60 * 60 * 1000; // 6 hours
