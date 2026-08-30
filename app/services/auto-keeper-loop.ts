@@ -4,6 +4,7 @@
  *
  * Strategy ids shard across up to 4 operator wallets (id % N). Txs serialize per address.
  * Auto strategies have no mode(); harvest uses the same active-id list as upkeep.
+ * Upkeep txs only after off-chain keeperCheck() (from=keeper) says remint is needed.
  */
 import type { Abi, Account, Address, PublicClient } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
@@ -39,6 +40,7 @@ import {
   resolveRhOperatorWallets,
   type RhOperatorWallet,
 } from "./rh-operator-pool";
+import { filterIdsNeedingRemint } from "./keeper-check-simulate";
 import { filterActiveByMinPoolValue, MIN_STRATEGY_POOL_VALUE_WEI } from "./strategy-pool-value-eligibility";
 
 const AUTO_KEEPER_TX_MAX_ATTEMPTS = 3;
@@ -471,8 +473,26 @@ async function autoKeeperUpkeepLoop(
     }
     try {
       const rows = await listAutoWatchedRows(pipeline.keeperAddress, rpcUrl, pipeline.abi);
-      const ids = await activeAutoStrategyIds(rows, rpcUrl);
-      await runShardedAutoBatches(rpcUrl, pipeline, wallets, "performUpkeepBatch", ids, "Upkeep");
+      const eligibleIds = await activeAutoStrategyIds(rows, rpcUrl);
+      const eligibleSet = new Set(eligibleIds);
+      const ids = await filterIdsNeedingRemint({
+        rpcUrl,
+        keeperAddress: pipeline.keeperAddress,
+        rows: rows
+          .filter((r) => eligibleSet.has(r.id))
+          .map((r) => ({
+            id: r.id,
+            stratAddr: r.stratAddr,
+            minIntervalSec: r.minInterval,
+            lastUpkeepSec: r.lastUpkeep,
+          })),
+        logTag: tag,
+      });
+      if (ids.length === 0) {
+        console.log(`[${tag}] Upkeep skipped — no remint needed`);
+      } else {
+        await runShardedAutoBatches(rpcUrl, pipeline, wallets, "performUpkeepBatch", ids, "Upkeep");
+      }
     } catch (e) {
       console.error(`[${tag}] Upkeep loop error:`, e instanceof Error ? e.message : e);
     }
@@ -544,7 +564,7 @@ async function startAutoKeeperPipeline(
     `[${tag}] Active strategy ids (watched.active && pool+idle≥${MIN_STRATEGY_POOL_VALUE_WEI}): [${activeIds.join(", ") || "none"}]`
   );
   console.log(
-    `[${tag}] performUpkeepBatch every ${upkeepMs / 1000}s (gas-chunked, shard id % ${shardWallets.length}, max send ${getAutoKeeperBatchMaxGas("performUpkeepBatch")})`
+    `[${tag}] performUpkeepBatch every ${upkeepMs / 1000}s after keeperCheck simulate (from=keeper; gas-chunked, shard id % ${shardWallets.length}, max send ${getAutoKeeperBatchMaxGas("performUpkeepBatch")})`
   );
   console.log(
     `[${tag}] performHarvestBatch every ${harvestMs / 3600000}h (skipIncreaseLiquidity=${skipLiq}; gas-chunked, max send ${getAutoKeeperBatchMaxGas("performHarvestBatch")})`

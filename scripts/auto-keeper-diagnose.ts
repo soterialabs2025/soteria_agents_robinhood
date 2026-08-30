@@ -150,19 +150,19 @@ async function main() {
         console.warn("strategy view reads failed:", e instanceof Error ? e.message : e);
       }
 
-      if (operator) {
-        try {
-          const sim = await client.simulateContract({
-            address: row.stratAddr,
-            abi: STRAT_ABI,
-            functionName: "keeperCheck",
-            account: operator,
-          });
-          console.log("keeperCheck (simulate):", Boolean(sim.result));
-        } catch (e) {
-          console.warn("keeperCheck simulate failed:", e instanceof Error ? e.message : e);
-        }
+      try {
+        const sim = await client.simulateContract({
+          address: row.stratAddr,
+          abi: STRAT_ABI,
+          functionName: "keeperCheck",
+          account: keeper,
+        });
+        console.log("keeperCheck (simulate, from=keeper):", Boolean(sim.result));
+      } catch (e) {
+        console.warn("keeperCheck simulate failed:", e instanceof Error ? e.message : e);
+      }
 
+      if (operator) {
         try {
           await client.simulateContract({
             address: keeper,

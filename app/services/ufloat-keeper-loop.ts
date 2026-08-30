@@ -1,6 +1,7 @@
 /**
  * UFloatKeeper RH V3 + V4 — upkeep + harvest sharded across up to 4 operator wallets.
  * changeAsset (DEFENSIVE / offensive metrics) stays on Triton wallets.
+ * Upkeep txs only after off-chain keeperCheck() (from=keeper) says remint is needed.
  *
  * Keeper addresses from docs/ADDRESSES.md ({@link rh-keeper-pipelines}).
  */
@@ -29,6 +30,7 @@ import {
   getUfloatOffensiveIntervalMs,
 } from "../config/triton-config";
 import { getDemeterTxGasHeadroomBps, getTxMinGasLimit, isTxOutOfGasError, resolveBatchTxGasLimit, resolveTxGasLimit } from "../config/demeter-tx-gas";
+import { filterIdsNeedingRemint } from "./keeper-check-simulate";
 import { filterRegisteredOperatorWallets } from "./operator-registry";
 import { groupStrategyIdsByShard } from "./operator-shard";
 import { enqueueSerializedAddressTx } from "./operator-tx-queue";
@@ -349,9 +351,23 @@ async function ufloatKeeperUpkeepLoop(
     try {
       const rows = await listUFloatWatchedRows(pipeline.keeperAddress, rpcUrl, pipeline.abi);
       const eligibleRows = await filterActiveByMinPoolValue(rows, rpcUrl, tag);
-      const ids = eligibleRows.map((r) => r.id);
-      await runShardedUfloatBatches(rpcUrl, pipeline, wallets, "performUpkeepBatch", ids, "Upkeep");
-      if (ids.length > 0) {
+      const ids = await filterIdsNeedingRemint({
+        rpcUrl,
+        keeperAddress: pipeline.keeperAddress,
+        rows: eligibleRows.map((r) => ({
+          id: r.id,
+          stratAddr: r.stratAddr,
+          minIntervalSec: r.minInterval,
+          lastUpkeepSec: r.lastAction,
+        })),
+        logTag: tag,
+      });
+      if (ids.length === 0) {
+        console.log(`[${tag}] Upkeep skipped — no remint needed`);
+      } else {
+        await runShardedUfloatBatches(rpcUrl, pipeline, wallets, "performUpkeepBatch", ids, "Upkeep");
+      }
+      if (eligibleRows.length > 0) {
         await handleUFloatDefensiveAfterUpkeep(rpcUrl, eligibleRows);
       }
     } catch (e) {
@@ -455,7 +471,7 @@ async function startUfloatKeeperPipeline(
     `[${tag}] Active strategy ids (watched.active && pool+idle≥${MIN_STRATEGY_POOL_VALUE_WEI}): [${activeIds.join(", ") || "none"}]`
   );
   console.log(
-    `[${tag}] performUpkeepBatch every ${upkeepMs / 1000}s (gas-chunked, shard id % ${shardWallets.length}, max send ${getUfloatUpkeepBatchMaxGas()})`
+    `[${tag}] performUpkeepBatch every ${upkeepMs / 1000}s after keeperCheck simulate (from=keeper; gas-chunked, shard id % ${shardWallets.length}, max send ${getUfloatUpkeepBatchMaxGas()})`
   );
   console.log(
     `[${tag}] post-upkeep DEFENSIVE default-metrics on each performUpkeepBatch (~${upkeepMs / 1000}s); mode=STABLE is upkeep-only (owner exit); changeAsset uses Triton wallets`
