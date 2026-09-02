@@ -62,7 +62,7 @@ export async function resolveAutoFactoryAddress(_rpcUrl?: string): Promise<Addre
 export const DEFAULT_AUTO_KEEPER_UPKEEP_INTERVAL_MS = 60 * 1000; // 1 min
 
 /** performHarvestBatch cadence. Override: `AUTO_KEEPER_HARVEST_INTERVAL_MS`. */
-export const DEFAULT_AUTO_KEEPER_HARVEST_INTERVAL_MS = 6 * 60 * 60 * 1000; // 6 hours
+export const DEFAULT_AUTO_KEEPER_HARVEST_INTERVAL_MS = 8 * 60 * 60 * 1000; // 8 hours
 
 /** Max projected send gas per performUpkeepBatch chunk. Override: `AUTO_KEEPER_UPKEEP_BATCH_MAX_GAS`. */
 export const DEFAULT_AUTO_KEEPER_UPKEEP_BATCH_MAX_GAS = 2_000_000n;
