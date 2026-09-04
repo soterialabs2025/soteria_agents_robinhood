@@ -31,6 +31,11 @@ import {
 } from "../config/triton-config";
 import { getDemeterTxGasHeadroomBps, getTxMinGasLimit, isTxOutOfGasError, resolveBatchTxGasLimit, resolveTxGasLimit } from "../config/demeter-tx-gas";
 import { filterIdsNeedingRemint } from "./keeper-check-simulate";
+import {
+  hasEnoughNativeForTx,
+  isInsufficientEthError,
+  rotateWalletIdsFrom,
+} from "./operator-eth-failover";
 import { filterRegisteredOperatorWallets } from "./operator-registry";
 import { groupStrategyIdsByShard } from "./operator-shard";
 import { enqueueSerializedAddressTx } from "./operator-tx-queue";
@@ -271,6 +276,7 @@ async function runUfloatKeeperBatches(
   wallet: RhOperatorWallet,
   rpcUrl: string,
   pipeline: UfloatKeeperPipeline,
+  wallets: RhOperatorWallet[],
   functionName: UfloatKeeperBatchFunction,
   ids: number[],
   label: string
@@ -292,23 +298,65 @@ async function runUfloatKeeperBatches(
     ids,
   });
 
+  const walletById = new Map(wallets.map((w) => [w.id, w]));
+  const failoverOrder = rotateWalletIdsFrom(
+    wallet.id,
+    wallets.map((w) => w.id)
+  );
+
   for (const chunk of chunks) {
-    try {
-      const hash = await submitUfloatBatchTx(
-        wallet,
-        rpcUrl,
-        pipeline.keeperAddress,
-        pipeline.abi,
-        functionName,
-        chunk
-      );
-      console.log(
-        `[${tag}] [${wallet.id}] ${functionName} ids [${chunk.join(", ")}] tx ${hash} ${explorerTxUrl(hash)}`
-      );
-    } catch (e) {
+    let sent = false;
+    let lastError: unknown;
+    for (const tryId of failoverOrder) {
+      const tryWallet = walletById.get(tryId);
+      if (!tryWallet) continue;
+      const funded = await hasEnoughNativeForTx(publicClient, tryWallet.address);
+      if (!funded) {
+        console.warn(
+          `[${tag}] [${tryId}] skip ${functionName} ids [${chunk.join(", ")}] — native balance too low`
+        );
+        continue;
+      }
+      try {
+        const hash = await submitUfloatBatchTx(
+          tryWallet,
+          rpcUrl,
+          pipeline.keeperAddress,
+          pipeline.abi,
+          functionName,
+          chunk
+        );
+        if (tryId !== wallet.id) {
+          console.log(
+            `[${tag}] [${wallet.id}→${tryId}] failover OK (insufficient ETH on primary) ${functionName} ids [${chunk.join(", ")}] tx ${hash} ${explorerTxUrl(hash)}`
+          );
+        } else {
+          console.log(
+            `[${tag}] [${tryId}] ${functionName} ids [${chunk.join(", ")}] tx ${hash} ${explorerTxUrl(hash)}`
+          );
+        }
+        sent = true;
+        break;
+      } catch (e) {
+        lastError = e;
+        if (isInsufficientEthError(e)) {
+          console.warn(
+            `[${tag}] [${tryId}] ${functionName} ids [${chunk.join(", ")}] insufficient ETH — trying next operator:`,
+            e instanceof Error ? e.message : e
+          );
+          continue;
+        }
+        console.warn(
+          `[${tag}] [${tryId}] ${functionName} ids [${chunk.join(", ")}] failed:`,
+          e instanceof Error ? e.message : e
+        );
+        break;
+      }
+    }
+    if (!sent) {
       console.warn(
-        `[${tag}] [${wallet.id}] ${functionName} ids [${chunk.join(", ")}] failed:`,
-        e instanceof Error ? e.message : e
+        `[${tag}] ${label} ids [${chunk.join(", ")}] all operators failed` +
+          (lastError instanceof Error ? `: ${lastError.message}` : "")
       );
     }
     if (chunks.length > 1) {
@@ -331,7 +379,7 @@ async function runShardedUfloatBatches(
     wallets.map(async (wallet) => {
       const shardIds = groups.get(wallet.id) ?? [];
       if (shardIds.length === 0) return;
-      await runUfloatKeeperBatches(wallet, rpcUrl, pipeline, functionName, shardIds, label);
+      await runUfloatKeeperBatches(wallet, rpcUrl, pipeline, wallets, functionName, shardIds, label);
     })
   );
 }

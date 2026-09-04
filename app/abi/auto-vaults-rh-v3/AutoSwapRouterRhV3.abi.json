@@ -5,10 +5,6 @@
     "stateMutability": "nonpayable"
   },
   {
-    "type": "receive",
-    "stateMutability": "payable"
-  },
-  {
     "type": "function",
     "name": "addAuthorizedStrategy",
     "inputs": [
@@ -20,6 +16,19 @@
     ],
     "outputs": [],
     "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "factory",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "contract IUniswapV3Factory"
+      }
+    ],
+    "stateMutability": "view"
   },
   {
     "type": "function",
@@ -42,19 +51,6 @@
   },
   {
     "type": "function",
-    "name": "maxPriceImpactBps",
-    "inputs": [],
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint16",
-        "internalType": "uint16"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
     "name": "owner",
     "inputs": [],
     "outputs": [
@@ -62,19 +58,6 @@
         "name": "",
         "type": "address",
         "internalType": "address"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "poolManager",
-    "inputs": [],
-    "outputs": [
-      {
-        "name": "",
-        "type": "address",
-        "internalType": "contract IPoolManager"
       }
     ],
     "stateMutability": "view"
@@ -124,7 +107,33 @@
   },
   {
     "type": "function",
-    "name": "setMaxPriceImpactBps",
+    "name": "router",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "contract IUniswapRouter"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "setStrategyFactory",
+    "inputs": [
+      {
+        "name": "factory_",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "setStrictStrategySlippageBps",
     "inputs": [
       {
         "name": "bps",
@@ -137,12 +146,12 @@
   },
   {
     "type": "function",
-    "name": "setStrategyFactory",
+    "name": "setTwapSeconds",
     "inputs": [
       {
-        "name": "factory",
-        "type": "address",
-        "internalType": "address"
+        "name": "secs",
+        "type": "uint32",
+        "internalType": "uint32"
       }
     ],
     "outputs": [],
@@ -163,12 +172,35 @@
   },
   {
     "type": "function",
+    "name": "strictStrategySlippageBps",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint16",
+        "internalType": "uint16"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "swapExactInputSingleStrict",
     "inputs": [
       {
-        "name": "zeroForOne",
-        "type": "bool",
-        "internalType": "bool"
+        "name": "tokenIn",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "tokenOut",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "fee",
+        "type": "uint24",
+        "internalType": "uint24"
       },
       {
         "name": "amountIn",
@@ -176,51 +208,14 @@
         "internalType": "uint128"
       },
       {
-        "name": "minAmountOut",
-        "type": "uint128",
-        "internalType": "uint128"
+        "name": "maxDevBps",
+        "type": "uint256",
+        "internalType": "uint256"
       },
       {
         "name": "deadline",
         "type": "uint256",
         "internalType": "uint256"
-      },
-      {
-        "name": "libKey",
-        "type": "tuple",
-        "internalType": "struct IAutoSwapRouterRhV4.AutoPoolKey",
-        "components": [
-          {
-            "name": "currency0",
-            "type": "address",
-            "internalType": "address"
-          },
-          {
-            "name": "currency1",
-            "type": "address",
-            "internalType": "address"
-          },
-          {
-            "name": "fee",
-            "type": "uint24",
-            "internalType": "uint24"
-          },
-          {
-            "name": "tickSpacing",
-            "type": "int24",
-            "internalType": "int24"
-          },
-          {
-            "name": "hooks",
-            "type": "address",
-            "internalType": "address"
-          }
-        ]
-      },
-      {
-        "name": "hookData",
-        "type": "bytes",
-        "internalType": "bytes"
       }
     ],
     "outputs": [
@@ -230,7 +225,7 @@
         "internalType": "uint256"
       }
     ],
-    "stateMutability": "payable"
+    "stateMutability": "nonpayable"
   },
   {
     "type": "function",
@@ -247,35 +242,16 @@
   },
   {
     "type": "function",
-    "name": "unlockCallback",
-    "inputs": [
-      {
-        "name": "data",
-        "type": "bytes",
-        "internalType": "bytes"
-      }
-    ],
+    "name": "twapSeconds",
+    "inputs": [],
     "outputs": [
       {
         "name": "",
-        "type": "bytes",
-        "internalType": "bytes"
+        "type": "uint32",
+        "internalType": "uint32"
       }
     ],
-    "stateMutability": "nonpayable"
-  },
-  {
-    "type": "event",
-    "name": "MaxPriceImpactUpdated",
-    "inputs": [
-      {
-        "name": "bps",
-        "type": "uint16",
-        "indexed": false,
-        "internalType": "uint16"
-      }
-    ],
-    "anonymous": false
+    "stateMutability": "view"
   },
   {
     "type": "event",
@@ -362,16 +338,23 @@
   },
   {
     "type": "event",
+    "name": "StrictStrategySlippageUpdated",
+    "inputs": [
+      {
+        "name": "bps",
+        "type": "uint16",
+        "indexed": false,
+        "internalType": "uint16"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
     "name": "SwapExecuted",
     "inputs": [
       {
-        "name": "caller",
-        "type": "address",
-        "indexed": true,
-        "internalType": "address"
-      },
-      {
-        "name": "recipient",
+        "name": "strategy",
         "type": "address",
         "indexed": true,
         "internalType": "address"
@@ -404,13 +387,21 @@
     "anonymous": false
   },
   {
-    "type": "error",
-    "name": "AlreadyAuthorized",
-    "inputs": []
+    "type": "event",
+    "name": "TwapSecondsUpdated",
+    "inputs": [
+      {
+        "name": "secs",
+        "type": "uint32",
+        "indexed": false,
+        "internalType": "uint32"
+      }
+    ],
+    "anonymous": false
   },
   {
     "type": "error",
-    "name": "BadSlippage",
+    "name": "AlreadyAuthorized",
     "inputs": []
   },
   {
@@ -420,12 +411,22 @@
   },
   {
     "type": "error",
-    "name": "InsufficientOutput",
+    "name": "InvalidPool",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "InvalidSlippage",
     "inputs": []
   },
   {
     "type": "error",
     "name": "NotAuthorized",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "OracleUnavailable",
     "inputs": []
   },
   {
@@ -449,6 +450,11 @@
         "internalType": "address"
       }
     ]
+  },
+  {
+    "type": "error",
+    "name": "PriceOutOfBand",
+    "inputs": []
   },
   {
     "type": "error",
@@ -479,11 +485,6 @@
   {
     "type": "error",
     "name": "ZeroAmount",
-    "inputs": []
-  },
-  {
-    "type": "error",
-    "name": "ZeroMinOut",
     "inputs": []
   }
 ]

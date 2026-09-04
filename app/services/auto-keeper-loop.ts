@@ -3,8 +3,9 @@
  * ABIs: AutoKeeperRhV3 / AutoKeeperRhV4 / AutoKeeperSv3 (identical operator surface).
  *
  * Strategy ids shard across up to 4 operator wallets (id % N). Txs serialize per address.
- * Auto strategies have no mode(); harvest uses the same active-id list as upkeep.
+ * Auto strategies have no mode(); harvest uses per-strategy TVL tiers when adaptive.
  * Upkeep txs only after off-chain keeperCheck() (from=keeper) says remint is needed.
+ * Band: Owner `setBandParams`. RhV4: refreshPriceRefBatch every ≥10m.
  */
 import type { Abi, Account, Address, PublicClient } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
@@ -17,9 +18,14 @@ import {
 import {
   getAutoKeeperBatchMaxGas,
   getAutoKeeperHarvestIntervalMs,
+  getAutoKeeperHarvestLoopSleepMs,
   getAutoKeeperHarvestSkipIncreaseLiquidity,
+  getAutoKeeperPriceRefIntervalMs,
   getAutoKeeperStrategyIdAllowlist,
   getAutoKeeperUpkeepIntervalMs,
+  isAutoAdaptiveBandEnabled,
+  isAutoAdaptiveHarvestEnabled,
+  isAutoKeeperPriceRefEnabled,
 } from "../config/auto-keeper-config";
 import {
   getEnabledAutoKeeperPipelines,
@@ -40,7 +46,18 @@ import {
   resolveRhOperatorWallets,
   type RhOperatorWallet,
 } from "./rh-operator-pool";
+import { filterAutoHarvestDueIds } from "./auto-adaptive-harvest";
+import {
+  getAutoBandLoopSleepMs,
+  recordAutoRemintHits,
+  runAutoAdaptiveBandPass,
+} from "./auto-adaptive-band";
 import { filterIdsNeedingRemint } from "./keeper-check-simulate";
+import {
+  hasEnoughNativeForTx,
+  isInsufficientEthError,
+  rotateWalletIdsFrom,
+} from "./operator-eth-failover";
 import { filterActiveByMinPoolValue, MIN_STRATEGY_POOL_VALUE_WEI } from "./strategy-pool-value-eligibility";
 
 const AUTO_KEEPER_TX_MAX_ATTEMPTS = 3;
@@ -50,7 +67,16 @@ function isNonceTooLowError(error: unknown): boolean {
   return /nonce too low|nonce provided for the transaction is lower/i.test(msg);
 }
 
-export type AutoKeeperBatchFunction = "performUpkeepBatch" | "performHarvestBatch";
+export type AutoKeeperBatchFunction =
+  | "performUpkeepBatch"
+  | "performHarvestBatch"
+  | "refreshPriceRefBatch";
+
+function pipelineSupportsRefreshPriceRef(pipeline: AutoKeeperPipeline): boolean {
+  return pipeline.abi.some(
+    (item) => item.type === "function" && "name" in item && item.name === "refreshPriceRefBatch"
+  );
+}
 
 export type AutoWatchedRow = {
   id: number;
@@ -391,6 +417,7 @@ async function runAutoKeeperBatches(
   wallet: RhOperatorWallet,
   rpcUrl: string,
   pipeline: AutoKeeperPipeline,
+  wallets: RhOperatorWallet[],
   functionName: AutoKeeperBatchFunction,
   ids: number[],
   label: string
@@ -414,24 +441,66 @@ async function runAutoKeeperBatches(
     skipIncreaseLiquidity,
   });
 
+  const walletById = new Map(wallets.map((w) => [w.id, w]));
+  const failoverOrder = rotateWalletIdsFrom(
+    wallet.id,
+    wallets.map((w) => w.id)
+  );
+
   for (const chunk of chunks) {
-    try {
-      const hash = await submitAutoBatchTx(
-        wallet.privateKey,
-        rpcUrl,
-        pipeline.keeperAddress,
-        pipeline.abi,
-        functionName,
-        chunk,
-        skipIncreaseLiquidity
-      );
-      console.log(
-        `[${tag}] [${wallet.id}] ${functionName} ids [${chunk.join(", ")}] tx ${hash} ${explorerTxUrl(hash)}`
-      );
-    } catch (e) {
+    let sent = false;
+    let lastError: unknown;
+    for (const tryId of failoverOrder) {
+      const tryWallet = walletById.get(tryId);
+      if (!tryWallet) continue;
+      const funded = await hasEnoughNativeForTx(publicClient, tryWallet.address);
+      if (!funded) {
+        console.warn(
+          `[${tag}] [${tryId}] skip ${functionName} ids [${chunk.join(", ")}] — native balance too low`
+        );
+        continue;
+      }
+      try {
+        const hash = await submitAutoBatchTx(
+          tryWallet.privateKey,
+          rpcUrl,
+          pipeline.keeperAddress,
+          pipeline.abi,
+          functionName,
+          chunk,
+          skipIncreaseLiquidity
+        );
+        if (tryId !== wallet.id) {
+          console.log(
+            `[${tag}] [${wallet.id}→${tryId}] failover OK (insufficient ETH on primary) ${functionName} ids [${chunk.join(", ")}] tx ${hash} ${explorerTxUrl(hash)}`
+          );
+        } else {
+          console.log(
+            `[${tag}] [${tryId}] ${functionName} ids [${chunk.join(", ")}] tx ${hash} ${explorerTxUrl(hash)}`
+          );
+        }
+        sent = true;
+        break;
+      } catch (e) {
+        lastError = e;
+        if (isInsufficientEthError(e)) {
+          console.warn(
+            `[${tag}] [${tryId}] ${functionName} ids [${chunk.join(", ")}] insufficient ETH — trying next operator:`,
+            e instanceof Error ? e.message : e
+          );
+          continue;
+        }
+        console.warn(
+          `[${tag}] [${tryId}] ${functionName} ids [${chunk.join(", ")}] failed:`,
+          e instanceof Error ? e.message : e
+        );
+        break;
+      }
+    }
+    if (!sent) {
       console.warn(
-        `[${tag}] [${wallet.id}] ${functionName} ids [${chunk.join(", ")}] failed:`,
-        e instanceof Error ? e.message : e
+        `[${tag}] ${label} ids [${chunk.join(", ")}] all operators failed` +
+          (lastError instanceof Error ? `: ${lastError.message}` : "")
       );
     }
     if (chunks.length > 1) {
@@ -454,7 +523,7 @@ async function runShardedAutoBatches(
     wallets.map(async (wallet) => {
       const shardIds = groups.get(wallet.id) ?? [];
       if (shardIds.length === 0) return;
-      await runAutoKeeperBatches(wallet, rpcUrl, pipeline, functionName, shardIds, label);
+      await runAutoKeeperBatches(wallet, rpcUrl, pipeline, wallets, functionName, shardIds, label);
     })
   );
 }
@@ -491,6 +560,7 @@ async function autoKeeperUpkeepLoop(
       if (ids.length === 0) {
         console.log(`[${tag}] Upkeep skipped — no remint needed`);
       } else {
+        recordAutoRemintHits(pipeline.id, ids);
         await runShardedAutoBatches(rpcUrl, pipeline, wallets, "performUpkeepBatch", ids, "Upkeep");
       }
     } catch (e) {
@@ -514,10 +584,89 @@ async function autoKeeperHarvestLoop(
     }
     try {
       const rows = await listAutoWatchedRows(pipeline.keeperAddress, rpcUrl, pipeline.abi);
-      const ids = await activeAutoStrategyIds(rows, rpcUrl);
-      await runShardedAutoBatches(rpcUrl, pipeline, wallets, "performHarvestBatch", ids, "Harvest");
+      const eligibleIds = await activeAutoStrategyIds(rows, rpcUrl);
+      const eligibleSet = new Set(eligibleIds);
+      const { dueIds } = await filterAutoHarvestDueIds(
+        rows
+          .filter((r) => eligibleSet.has(r.id))
+          .map((r) => ({
+            id: r.id,
+            stratAddr: r.stratAddr,
+            lastHarvest: r.lastHarvest,
+          })),
+        rpcUrl,
+        tag
+      );
+      if (dueIds.length === 0) {
+        console.log(`[${tag}] Harvest skipped — no strategies due`);
+      } else {
+        await runShardedAutoBatches(rpcUrl, pipeline, wallets, "performHarvestBatch", dueIds, "Harvest");
+      }
     } catch (e) {
       console.error(`[${tag}] Harvest loop error:`, e instanceof Error ? e.message : e);
+    }
+    await sleepWithStopCheck(intervalMs);
+  }
+}
+
+async function autoKeeperBandLoop(
+  rpcUrl: string,
+  pipeline: AutoKeeperPipeline,
+  wallets: RhOperatorWallet[],
+  intervalMs: number
+): Promise<never> {
+  const tag = pipeline.label;
+  void wallets;
+  for (;;) {
+    if (checkDemeterStopSignal()) {
+      console.log(`[${tag}] Stop signal — exiting band loop`);
+      return undefined as never;
+    }
+    try {
+      const rows = await listAutoWatchedRows(pipeline.keeperAddress, rpcUrl, pipeline.abi);
+      const eligibleIds = await activeAutoStrategyIds(rows, rpcUrl);
+      const eligibleSet = new Set(eligibleIds);
+      await runAutoAdaptiveBandPass({
+        rpcUrl,
+        pipelineId: pipeline.id,
+        logTag: tag,
+        rows: rows
+          .filter((r) => eligibleSet.has(r.id))
+          .map((r) => ({
+            id: r.id,
+            stratAddr: r.stratAddr,
+            lastHarvest: r.lastHarvest,
+          })),
+      });
+    } catch (e) {
+      console.error(`[${tag}] Band loop error:`, e instanceof Error ? e.message : e);
+    }
+    await sleepWithStopCheck(intervalMs);
+  }
+}
+
+async function autoKeeperPriceRefLoop(
+  rpcUrl: string,
+  pipeline: AutoKeeperPipeline,
+  wallets: RhOperatorWallet[],
+  intervalMs: number
+): Promise<never> {
+  const tag = pipeline.label;
+  for (;;) {
+    if (checkDemeterStopSignal()) {
+      console.log(`[${tag}] Stop signal — exiting price-ref loop`);
+      return undefined as never;
+    }
+    try {
+      const rows = await listAutoWatchedRows(pipeline.keeperAddress, rpcUrl, pipeline.abi);
+      const ids = await activeAutoStrategyIds(rows, rpcUrl);
+      if (ids.length === 0) {
+        console.log(`[${tag}] PriceRef skipped — no active strategies`);
+      } else {
+        await runShardedAutoBatches(rpcUrl, pipeline, wallets, "refreshPriceRefBatch", ids, "PriceRef");
+      }
+    } catch (e) {
+      console.error(`[${tag}] PriceRef loop error:`, e instanceof Error ? e.message : e);
     }
     await sleepWithStopCheck(intervalMs);
   }
@@ -547,10 +696,16 @@ async function startAutoKeeperPipeline(
   );
 
   const upkeepMs = getAutoKeeperUpkeepIntervalMs();
+  const harvestSleepMs = getAutoKeeperHarvestLoopSleepMs();
   const harvestMs = getAutoKeeperHarvestIntervalMs();
+  const bandMs = getAutoBandLoopSleepMs();
+  const priceRefMs = getAutoKeeperPriceRefIntervalMs();
   const rows = await listAutoWatchedRows(pipeline.keeperAddress, rpcUrl, pipeline.abi);
   const activeIds = await activeAutoStrategyIds(rows, rpcUrl);
   const skipLiq = getAutoKeeperHarvestSkipIncreaseLiquidity();
+  const adaptiveHarvest = isAutoAdaptiveHarvestEnabled();
+  const adaptiveBand = isAutoAdaptiveBandEnabled();
+  const priceRef = isAutoKeeperPriceRefEnabled() && pipelineSupportsRefreshPriceRef(pipeline);
 
   console.log(`[${tag}] Loop starting (sharded ×${shardWallets.length})`);
   console.log(`[${tag}] Keeper: ${pipeline.keeperAddress} (hardcoded, no manager lookup)`);
@@ -566,17 +721,43 @@ async function startAutoKeeperPipeline(
   console.log(
     `[${tag}] performUpkeepBatch every ${upkeepMs / 1000}s after keeperCheck simulate (from=keeper; gas-chunked, shard id % ${shardWallets.length}, max send ${getAutoKeeperBatchMaxGas("performUpkeepBatch")})`
   );
-  console.log(
-    `[${tag}] performHarvestBatch every ${harvestMs / 3600000}h (skipIncreaseLiquidity=${skipLiq}; gas-chunked, max send ${getAutoKeeperBatchMaxGas("performHarvestBatch")})`
-  );
+  if (adaptiveHarvest) {
+    console.log(
+      `[${tag}] performHarvestBatch adaptive TVL tiers (poll every ${harvestSleepMs / 3600000}h; dust 48h / small 24h / med 12h / large 6h; skipIncreaseLiquidity=${skipLiq})`
+    );
+  } else {
+    console.log(
+      `[${tag}] performHarvestBatch every ${harvestMs / 3600000}h (skipIncreaseLiquidity=${skipLiq}; gas-chunked, max send ${getAutoKeeperBatchMaxGas("performHarvestBatch")})`
+    );
+  }
+  if (priceRef) {
+    console.log(
+      `[${tag}] refreshPriceRefBatch every ${priceRefMs / 60000}m (swap-free truncated price ref; sharded ×${shardWallets.length}, max send ${getAutoKeeperBatchMaxGas("refreshPriceRefBatch")})`
+    );
+  }
+  if (adaptiveBand) {
+    console.log(
+      `[${tag}] adaptive band every ${bandMs / 1000}s (±1 tickSpacing; setBandParams Owner only; widen on remints / tighten when stable)`
+    );
+  } else {
+    console.log(`[${tag}] adaptive band disabled`);
+  }
   console.log(
     `[${tag}] Tx gas: ${getDemeterTxGasHeadroomBps() / 1000}× headroom (batch), min ${getTxMinGasLimit()}`
   );
 
-  await Promise.race([
+  const loops: Promise<never>[] = [
     autoKeeperUpkeepLoop(rpcUrl, pipeline, shardWallets, upkeepMs),
-    autoKeeperHarvestLoop(rpcUrl, pipeline, shardWallets, harvestMs),
-  ]);
+    autoKeeperHarvestLoop(rpcUrl, pipeline, shardWallets, harvestSleepMs),
+  ];
+  if (priceRef) {
+    loops.push(autoKeeperPriceRefLoop(rpcUrl, pipeline, shardWallets, priceRefMs));
+  }
+  if (adaptiveBand) {
+    loops.push(autoKeeperBandLoop(rpcUrl, pipeline, shardWallets, bandMs));
+  }
+
+  await Promise.race(loops);
 }
 
 /** AutoKeeper upkeep + harvest on all enabled RH pipelines. */

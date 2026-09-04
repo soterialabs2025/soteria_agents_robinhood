@@ -1,0 +1,52 @@
+{
+  "chainId": 4663,
+  "product": "sv3",
+  "profile": "rh-sushi",
+  "contracts": {
+    "AutoOperatorRegistrySv3": {
+      "address": "0x7df1120a04D82eA92EA2d5AA005e3316B37b936E",
+      "artifact": "artifacts/AutoOperatorRegistrySv3.sol/AutoOperatorRegistrySv3.json",
+      "abiEntries": 14
+    },
+    "AutoFactorySv3": {
+      "address": "0x77177AedC8a8B93EF675b612DAF2F8Ff39be66ed",
+      "artifact": "artifacts/AutoFactorySv3.sol/AutoFactorySv3.json",
+      "abiEntries": 33
+    },
+    "AutoSwapRouterSv3": {
+      "address": "0x8B47DaF1Bead45B0f77cfBD447f398969909Bb71",
+      "artifact": "artifacts/AutoSwapRouterSv3.sol/AutoSwapRouterSv3.json",
+      "abiEntries": 40
+    },
+    "AutoKeeperSv3": {
+      "address": "0xe1B5D655918b30E931110bA1E1A471C909dC715E",
+      "artifact": "artifacts/AutoKeeperSv3.sol/AutoKeeperSv3.json",
+      "abiEntries": 28
+    },
+    "AutoStrategySv3": {
+      "address": "0x3B2C886F71b5B96642FDbb7AFdd76B611A87aB65",
+      "artifact": "artifacts/AutoStrategySv3.sol/AutoStrategySv3.json",
+      "abiEntries": 72
+    },
+    "AutoVaultSv3": {
+      "address": "0xae2B57AFb7F40F95f12fCa28D7DfF9Ade08334fe",
+      "artifact": "artifacts/AutoVaultSv3.sol/AutoVaultSv3.json",
+      "abiEntries": 41
+    },
+    "AutoStrategyManagerSv3": {
+      "address": null,
+      "artifact": "artifacts/AutoStrategyManagerSv3.sol/AutoStrategyManagerSv3.json",
+      "abiEntries": 34
+    },
+    "LiquidSharesSv3": {
+      "address": "0xFe6659Eb2b4E34044dE291247938F76F1ec9e992",
+      "artifact": "artifacts/LiquidSharesSv3.sol/LiquidSharesSv3.json",
+      "abiEntries": 28
+    },
+    "ShareStakingSv3": {
+      "address": "0xBAbD5A55b4093f52175d37D560EddCD9bD8571B6",
+      "artifact": "artifacts/ShareStakingSv3.sol/ShareStakingSv3.json",
+      "abiEntries": 74
+    }
+  }
+}

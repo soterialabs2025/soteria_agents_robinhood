@@ -11,10 +11,6 @@
     "stateMutability": "nonpayable"
   },
   {
-    "type": "receive",
-    "stateMutability": "payable"
-  },
-  {
     "type": "function",
     "name": "DIVISOR",
     "inputs": [],
@@ -129,41 +125,9 @@
         "internalType": "address"
       },
       {
-        "name": "key",
-        "type": "tuple",
-        "internalType": "struct LiquidityLibraryV4.PoolKey",
-        "components": [
-          {
-            "name": "currency0",
-            "type": "address",
-            "internalType": "address"
-          },
-          {
-            "name": "currency1",
-            "type": "address",
-            "internalType": "address"
-          },
-          {
-            "name": "fee",
-            "type": "uint24",
-            "internalType": "uint24"
-          },
-          {
-            "name": "tickSpacing",
-            "type": "int24",
-            "internalType": "int24"
-          },
-          {
-            "name": "hooks",
-            "type": "address",
-            "internalType": "address"
-          }
-        ]
-      },
-      {
-        "name": "hookData_",
-        "type": "bytes",
-        "internalType": "bytes"
+        "name": "poolFee_",
+        "type": "uint24",
+        "internalType": "uint24"
       }
     ],
     "outputs": [],
@@ -393,19 +357,6 @@
   },
   {
     "type": "function",
-    "name": "hookData",
-    "inputs": [],
-    "outputs": [
-      {
-        "name": "",
-        "type": "bytes",
-        "internalType": "bytes"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
     "name": "lastGlobalCheckpoint",
     "inputs": [],
     "outputs": [
@@ -425,7 +376,7 @@
       {
         "name": "",
         "type": "address",
-        "internalType": "contract ILiquidSharesRhV4"
+        "internalType": "contract ILiquidSharesSv3"
       }
     ],
     "stateMutability": "view"
@@ -465,7 +416,7 @@
       }
     ],
     "outputs": [],
-    "stateMutability": "payable"
+    "stateMutability": "nonpayable"
   },
   {
     "type": "function",
@@ -540,33 +491,13 @@
   },
   {
     "type": "function",
-    "name": "poolKey",
+    "name": "poolFee",
     "inputs": [],
     "outputs": [
       {
-        "name": "currency0",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "currency1",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "fee",
+        "name": "",
         "type": "uint24",
         "internalType": "uint24"
-      },
-      {
-        "name": "tickSpacing",
-        "type": "int24",
-        "internalType": "int24"
-      },
-      {
-        "name": "hooks",
-        "type": "address",
-        "internalType": "address"
       }
     ],
     "stateMutability": "view"
@@ -670,7 +601,7 @@
       {
         "name": "",
         "type": "address",
-        "internalType": "contract IAutoSwapRouterRhV4"
+        "internalType": "contract IAutoSwapRouterSv3"
       }
     ],
     "stateMutability": "view"
@@ -779,6 +710,19 @@
         "name": "",
         "type": "uint256",
         "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "weth",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "contract IERC20"
       }
     ],
     "stateMutability": "view"

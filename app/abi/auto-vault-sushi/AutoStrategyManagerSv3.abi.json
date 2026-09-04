@@ -45,20 +45,7 @@
   },
   {
     "type": "function",
-    "name": "maxRefDrift",
-    "inputs": [],
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "maxSwapTickDeviation",
+    "name": "maxTwapDeviationBps",
     "inputs": [],
     "outputs": [
       {
@@ -72,19 +59,6 @@
   {
     "type": "function",
     "name": "minHarvestDelay",
-    "inputs": [],
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "minRefUpdateInterval",
     "inputs": [],
     "outputs": [
       {
@@ -169,19 +143,6 @@
   },
   {
     "type": "function",
-    "name": "secondsPerRefTick",
-    "inputs": [],
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
     "name": "setBandParams",
     "inputs": [
       {
@@ -210,36 +171,10 @@
   },
   {
     "type": "function",
-    "name": "setMaxRefDrift",
+    "name": "setMaxTwapDeviationBps",
     "inputs": [
       {
-        "name": "ticks",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
-  },
-  {
-    "type": "function",
-    "name": "setMaxSwapTickDeviation",
-    "inputs": [
-      {
-        "name": "ticks",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
-  },
-  {
-    "type": "function",
-    "name": "setMinRefUpdateInterval",
-    "inputs": [
-      {
-        "name": "interval",
+        "name": "bps",
         "type": "uint256",
         "internalType": "uint256"
       }
@@ -262,19 +197,6 @@
   },
   {
     "type": "function",
-    "name": "setSecondsPerRefTick",
-    "inputs": [
-      {
-        "name": "seconds_",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
-  },
-  {
-    "type": "function",
     "name": "setStakingShareBps",
     "inputs": [
       {
@@ -288,12 +210,12 @@
   },
   {
     "type": "function",
-    "name": "setSwapSlippageBps",
+    "name": "setTargetAssetBps",
     "inputs": [
       {
         "name": "bps",
-        "type": "uint16",
-        "internalType": "uint16"
+        "type": "uint256",
+        "internalType": "uint256"
       }
     ],
     "outputs": [],
@@ -301,12 +223,12 @@
   },
   {
     "type": "function",
-    "name": "setTargetAssetBps",
+    "name": "setTwapSeconds",
     "inputs": [
       {
-        "name": "bps",
-        "type": "uint256",
-        "internalType": "uint256"
+        "name": "seconds_",
+        "type": "uint32",
+        "internalType": "uint32"
       }
     ],
     "outputs": [],
@@ -353,19 +275,6 @@
   },
   {
     "type": "function",
-    "name": "swapSlippageBps",
-    "inputs": [],
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint16",
-        "internalType": "uint16"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
     "name": "targetAssetBps",
     "inputs": [],
     "outputs": [
@@ -402,6 +311,19 @@
     ],
     "outputs": [],
     "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "twapSeconds",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint32",
+        "internalType": "uint32"
+      }
+    ],
+    "stateMutability": "view"
   },
   {
     "type": "function",
@@ -474,17 +396,12 @@
   },
   {
     "type": "error",
-    "name": "RefConfig",
-    "inputs": []
-  },
-  {
-    "type": "error",
     "name": "StakingShareBps",
     "inputs": []
   },
   {
     "type": "error",
-    "name": "SwapSlippageBps",
+    "name": "TwapConfig",
     "inputs": []
   }
 ]

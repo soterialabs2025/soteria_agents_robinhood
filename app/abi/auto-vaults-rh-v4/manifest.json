@@ -1,63 +1,52 @@
 {
   "chainId": 4663,
-  "version": "v4",
-  "product": "autovault",
+  "product": "rhv4",
   "profile": "rh-v4",
   "contracts": {
-    "AutoOperatorRegistry": {
+    "AutoOperatorRegistryRhV4": {
       "address": "0x7df1120a04D82eA92EA2d5AA005e3316B37b936E",
-      "artifact": "artifacts/auto-vaults-rh-v3/AutoOperatorRegistry.sol/AutoOperatorRegistry.json",
+      "artifact": "artifacts/AutoOperatorRegistryRhV4.sol/AutoOperatorRegistryRhV4.json",
       "abiEntries": 14
     },
-    "AutoFactoryV2": {
-      "address": "0x43799407FB4B32625DEE5c6b5F9f7Ea5A62fc685",
-      "artifact": "artifacts/AutoFactoryV2.sol/AutoFactoryV2.json",
-      "abiEntries": 31
+    "AutoFactoryRhV4": {
+      "address": "0x33df69b3D1946bDfF3fdA881335a277718CE60e7",
+      "artifact": "artifacts/AutoFactoryRhV4.sol/AutoFactoryRhV4.json",
+      "abiEntries": 33
     },
-    "AutoSwapRouter": {
-      "address": "0x5bD973F52Fb5c6a1f5C1D214FE9d1Cd58B8C2FbF",
-      "artifact": "artifacts/AutoSwapRouter.sol/AutoSwapRouter.json",
-      "abiEntries": 29
+    "AutoSwapRouterRhV4": {
+      "address": "0xD9EF1629D493921DaB16Ee88d32658d9d6C025db",
+      "artifact": "artifacts/AutoSwapRouterRhV4.sol/AutoSwapRouterRhV4.json",
+      "abiEntries": 36
     },
-    "AutoKeeper": {
-      "address": "0xC05361895FaB7826137A0b8B3C6726A431f5aAe8",
-      "artifact": "artifacts/auto-vaults-rh-v3/AutoKeeper.sol/AutoKeeper.json",
-      "abiEntries": 28
+    "AutoKeeperRhV4": {
+      "address": "0xD9e5d7417f5139645d8A21ce2b9d6f6c7Ac84fD3",
+      "artifact": "artifacts/AutoKeeperRhV4.sol/AutoKeeperRhV4.json",
+      "abiEntries": 30
     },
-    "AutoStrategyV2": {
+    "AutoStrategyRhV4": {
+      "address": "0x0d60930178CEFbcc3bC306C5137AAad07fdD68a8",
+      "artifact": "artifacts/AutoStrategyRhV4.sol/AutoStrategyRhV4.json",
+      "abiEntries": 82
+    },
+    "AutoVaultRhV4": {
+      "address": "0x3F840c477e84752c776A2d819e294a1E29fC9B18",
+      "artifact": "artifacts/AutoVaultRhV4.sol/AutoVaultRhV4.json",
+      "abiEntries": 43
+    },
+    "AutoStrategyManagerRhV4": {
       "address": null,
-      "artifact": "artifacts/AutoStrategyV2.sol/AutoStrategyV2.json",
-      "abiEntries": 71
+      "artifact": "artifacts/AutoStrategyManagerRhV4.sol/AutoStrategyManagerRhV4.json",
+      "abiEntries": 41
     },
-    "AutoVaultV2": {
-      "address": null,
-      "artifact": "artifacts/AutoVaultV2.sol/AutoVaultV2.json",
-      "abiEntries": 44
+    "LiquidSharesRhV4": {
+      "address": "0xC697CDd3154f9918b5bF7670bDc764B30743c899",
+      "artifact": "artifacts/LiquidSharesRhV4.sol/LiquidSharesRhV4.json",
+      "abiEntries": 30
     },
-    "AutoStrategyManagerV2": {
-      "address": null,
-      "artifact": "artifacts/auto-vaults-rh-v3/AutoStrategyManagerV2.sol/AutoStrategyManagerV2.json",
-      "abiEntries": 29
-    },
-    "LiquidShares": {
-      "address": null,
-      "artifact": "artifacts/auto-vaults-rh-v3/LiquidShares.sol/LiquidShares.json",
-      "abiEntries": 28
-    },
-    "ShareStaking": {
-      "address": null,
-      "artifact": "artifacts/auto-vaults-rh-v3/ShareStaking.sol/ShareStaking.json",
-      "abiEntries": 72
-    },
-    "AutoLiquidToken": {
-      "address": null,
-      "artifact": "artifacts/AutoLiquidToken.sol/AutoLiquidToken.json",
-      "abiEntries": 28
-    },
-    "LiquidityLibraryV4": {
-      "address": null,
-      "artifact": "artifacts/LiquidityLibraryV4.sol/LiquidityLibraryV4.json",
-      "abiEntries": 7
+    "ShareStakingRhV4": {
+      "address": "0x030ccB6b6c6FaA2d1E566086C04d4ABC7D3664A2",
+      "artifact": "artifacts/ShareStakingRhV4.sol/ShareStakingRhV4.json",
+      "abiEntries": 75
     }
   }
 }
