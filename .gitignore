@@ -6,7 +6,6 @@
 .pnp.js
 .yarn/install-state.gz
 
-
 # testing
 /coverage
 
@@ -20,31 +19,52 @@
 # misc
 .DS_Store
 *.pem
+*.key
+htpasswd
+.htpasswd
 
 # debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# local env files
+# local env / secrets — never publish
 .env*
+!.env.example
+credentials.json
+**/secrets/
+wallet_data.txt
+wallet_data*.txt
 
-.demeter-stop
-
-
-
-# vercel
+# vercel / amplify local artifacts
 .vercel
+.env.production
 
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-/logs
-logs/demeter-defensive-offensive-strategy.jsonl
-*.jsonl
-/logs
-logs/demeter-defensive-offensive-strategy.jsonl
 
-# runtime/auto-tuned overrides (written by calibration + chat updateConfig; per-server, never committed)
+# runtime logs and agent state (per-server, can leak ops + addresses)
+/logs
+/logs/
+*.log
+*.jsonl
+ec2-logs/
+pm2-logs/
+*.pid
+
+# adaptive keeper snapshot (written at runtime)
+logs/auto-adaptive-band-state.json
+
+# runtime/auto-tuned overrides (calibration + chat updateConfig; per-server)
 app/config/config.overrides.json
 app/config/triton.overrides.json
+
+# stop signal
+.demeter-stop
+
+# editor / OS
+.idea/
+.vscode/
+*.swp
+Thumbs.db

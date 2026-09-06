@@ -1,7 +1,0 @@
-{
-  "scope": "held_asset",
-  "takeProfitPctFromEntry": 10,
-  "stopLossPctFromEntry": 4,
-  "peakTrailDrawdownPct": 0,
-  "updatedAtUtc": "2026-06-01T23:57:10.174Z"
-}
