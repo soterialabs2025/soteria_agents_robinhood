@@ -20,10 +20,13 @@ export type AutoKeeperPipelineId = "auto-rh-v3" | "auto-rh-v4" | "auto-sv3";
 export type UfloatKeeperPipelineId = "ufloat-rh-v3" | "ufloat-rh-v4";
 export type RhKeeperPipelineId = AutoKeeperPipelineId | UfloatKeeperPipelineId;
 
+export type AutoAmmKind = "v3" | "v4";
+
 export type AutoKeeperPipeline = {
   id: AutoKeeperPipelineId;
   label: string;
   kind: "auto";
+  amm: AutoAmmKind;
   keeperAddress: Address;
   factoryAddress: Address;
   swapRouterAddress: Address;
@@ -77,6 +80,7 @@ export function getAutoRhV3Pipeline(): AutoKeeperPipeline {
     id: "auto-rh-v3",
     label: "AutoKeeperRhV3",
     kind: "auto",
+    amm: "v3",
     keeperAddress: pickAddr("AUTO_KEEPER_RH_V3_ADDRESS", AUTO_KEEPER_RH_V3_ADDRESS),
     factoryAddress: pickAddr("AUTO_FACTORY_RH_V3_ADDRESS", AUTO_FACTORY_RH_V3_ADDRESS),
     swapRouterAddress: pickAddr("AUTO_SWAP_ROUTER_RH_V3_ADDRESS", AUTO_SWAP_ROUTER_RH_V3_ADDRESS),
@@ -90,6 +94,7 @@ export function getAutoRhV4Pipeline(): AutoKeeperPipeline {
     id: "auto-rh-v4",
     label: "AutoKeeperRhV4",
     kind: "auto",
+    amm: "v4",
     keeperAddress: pickAddr("AUTO_KEEPER_RH_V4_ADDRESS", AUTO_KEEPER_RH_V4_ADDRESS),
     factoryAddress: pickAddr("AUTO_FACTORY_RH_V4_ADDRESS", AUTO_FACTORY_RH_V4_ADDRESS),
     swapRouterAddress: pickAddr("AUTO_SWAP_ROUTER_RH_V4_ADDRESS", AUTO_SWAP_ROUTER_RH_V4_ADDRESS),
@@ -103,6 +108,7 @@ export function getAutoSv3Pipeline(): AutoKeeperPipeline {
     id: "auto-sv3",
     label: "AutoKeeperSv3",
     kind: "auto",
+    amm: "v3",
     keeperAddress: pickAddr("AUTO_KEEPER_SV3_ADDRESS", AUTO_KEEPER_SV3_ADDRESS),
     factoryAddress: pickAddr("AUTO_FACTORY_SV3_ADDRESS", AUTO_FACTORY_SV3_ADDRESS),
     swapRouterAddress: pickAddr("AUTO_SWAP_ROUTER_SV3_ADDRESS", AUTO_SWAP_ROUTER_SV3_ADDRESS),

@@ -6,7 +6,7 @@ This is the RH copy of the handoff. Full source of truth also lives in Base repo
 
 ## RH-only deltas (read first)
 
-1. **Bands:** use single Owner call `setBandParams(rangeBelow, rangeAbove, innerBelow, innerAbove)` — not Base’s two-step `setRangeParams` + `setInnerBandParams`.
+1. **Bands:** one Owner call `setBandParams(rangeBelow, rangeAbove, innerBelow, innerAbove)` on RH and Base.
 2. **Price ref:** on-chain `minRefUpdateInterval = 10 minutes` → agent loop default **10 min** (never denser).
 
 ## What to build (from Base)
@@ -17,9 +17,10 @@ Port these Base features into this RH codebase:
 |---|---------|----------------------|
 | 1 | Off-chain `keeperCheck` remint gate before `performUpkeepBatch` | `app/services/keeper-check-simulate.ts` (likely already here) |
 | 2 | Per-strategy harvest from `poolValue` TVL tiers | `auto-adaptive-harvest.ts` + `auto-keeper-config` tiers |
-| 3 | Adaptive ±1 tickSpacing bands | `auto-adaptive-band.ts` — **change apply to `setBandParams`** |
+| 3 | Adaptive ±1 tickSpacing bands | `auto-adaptive-band.ts` — one `setBandParams` (RH and Base) |
 | 4 | `refreshPriceRefBatch` loop | `auto-keeper-loop` price-ref loop — **10 min default** |
 | 5 | Operator ETH failover | `operator-eth-failover.ts` |
+| 6 | Adaptive `targetAssetBps` | `auto-adaptive-target.ts` — see [RH_AUTO_ADAPTIVE_TARGET_HANDOFF.md](./RH_AUTO_ADAPTIVE_TARGET_HANDOFF.md) |
 
 ## Band apply (RH)
 

@@ -100,6 +100,15 @@ export const DEFAULT_AUTO_BAND_OUTER_TICKS = 800;
 export const DEFAULT_AUTO_BAND_INNER_TICKS = 600;
 export const DEFAULT_AUTO_BAND_TICK_SPACING = 200;
 
+/** Adaptive targetAssetBps (Owner). Three stacks: 3000 / 5000 / 7000. */
+export const DEFAULT_AUTO_TARGET_BASE_BPS = 5000;
+export const DEFAULT_AUTO_TARGET_STEP_BPS = 2000;
+export const DEFAULT_AUTO_TARGET_MIN_BPS = 3000;
+export const DEFAULT_AUTO_TARGET_MAX_BPS = 7000;
+export const DEFAULT_AUTO_TARGET_DEADBAND_BPS = 1200;
+/** Ignore leftover smaller than ~0.001 ETH when measuring mix. */
+export const DEFAULT_AUTO_TARGET_MIN_IDLE_WEI = 10n ** 15n;
+
 function envFlagTrue(name: string): boolean {
   const raw = process.env[name]?.trim().toLowerCase();
   return raw === "true" || raw === "1" || raw === "yes";
@@ -181,13 +190,40 @@ export function getAutoBandOwnerPrivateKey(): string | null {
   return pk;
 }
 
-/** Owner EOA: derived from `AUTO_BAND_OWNER_ADDRESS` key, or that env as a 20-byte address. */
+/**
+ * Owner EOA used for `owner()` gates.
+ * Prefer the address derived from the configured Owner key so the gate and the
+ * signer cannot diverge (hardcoded deployer + operator key would revert onlyOwner).
+ */
 export function getAutoBandOwnerAddress(): Address {
-  const raw = process.env.AUTO_BAND_OWNER_ADDRESS?.trim();
-  if (raw && isPrivateKeyHex(raw)) {
-    return privateKeyToAccount(normalizePrivateKey(raw)).address;
+  const pk = autoBandOwnerKeyRaw();
+  if (pk) {
+    return privateKeyToAccount(normalizePrivateKey(pk)).address;
   }
   return pickAddr("AUTO_BAND_OWNER_ADDRESS", RH_DEPLOYER_WALLET_ADDRESS);
+}
+
+/**
+ * Owner signer for `setBandParams` / `setTargetAssetBps`.
+ * Refuses to return a key that is not `strategy.owner()`.
+ */
+export function requireAutoBandOwnerSigner(onChainOwner: Address): {
+  privateKey: string;
+  address: Address;
+} {
+  const pk = getAutoBandOwnerPrivateKey();
+  if (!pk) {
+    throw new Error(
+      "Owner key missing for Owner-only tx (AUTO_BAND_OWNER_ADDRESS as 32-byte key, or RH_DEPLOYER_KEY / AUTO_BAND_OWNER_KEY)"
+    );
+  }
+  const address = privateKeyToAccount(normalizePrivateKey(pk)).address;
+  if (address.toLowerCase() !== onChainOwner.toLowerCase()) {
+    throw new Error(
+      `Owner signer ${address} ≠ strategy.owner() ${onChainOwner} — not sending onlyOwner tx`
+    );
+  }
+  return { privateKey: pk, address };
 }
 
 /**
@@ -268,6 +304,72 @@ export function isAutoAdaptiveBandEnabled(): boolean {
   if (!autoBandOwnerKeyRaw()) return false;
   if (envFlagTrue("AUTO_ADAPTIVE_BAND")) return true;
   return true;
+}
+
+/**
+ * Owner-only targetAssetBps stepper (3000 / 5000 / 7000). Default on when an Owner key is set.
+ * Off: `AUTO_ADAPTIVE_TARGET=false`. Same key as bands.
+ */
+export function isAutoAdaptiveTargetEnabled(): boolean {
+  if (envFlagFalse("AUTO_ADAPTIVE_TARGET")) return false;
+  if (!autoBandOwnerKeyRaw()) return false;
+  if (envFlagTrue("AUTO_ADAPTIVE_TARGET")) return true;
+  return true;
+}
+
+function parseBpsEnv(name: string, fallback: number, min: number, max: number): number {
+  const raw = process.env[name]?.trim();
+  if (raw) {
+    const n = Number(raw);
+    if (Number.isFinite(n) && n >= min && n <= max) return Math.floor(n);
+  }
+  return fallback;
+}
+
+function parseWeiEnv(name: string, fallback: bigint): bigint {
+  const raw = process.env[name]?.trim();
+  if (!raw) return fallback;
+  try {
+    const n = BigInt(raw);
+    if (n >= 0n) return n;
+  } catch {
+    /* ignore */
+  }
+  return fallback;
+}
+
+export type AutoTargetBpsConfig = {
+  baseBps: number;
+  stepBps: number;
+  minBps: number;
+  maxBps: number;
+  deadbandBps: number;
+  minIdleWei: bigint;
+};
+
+export function getAutoTargetBpsConfig(): AutoTargetBpsConfig {
+  const baseBps = parseBpsEnv("AUTO_TARGET_BASE_BPS", DEFAULT_AUTO_TARGET_BASE_BPS, 1, 10_000);
+  const stepBps = parseBpsEnv("AUTO_TARGET_STEP_BPS", DEFAULT_AUTO_TARGET_STEP_BPS, 1, 10_000);
+  const minBps = parseBpsEnv("AUTO_TARGET_MIN_BPS", DEFAULT_AUTO_TARGET_MIN_BPS, 0, 10_000);
+  const maxBps = parseBpsEnv("AUTO_TARGET_MAX_BPS", DEFAULT_AUTO_TARGET_MAX_BPS, 0, 20_000);
+  return {
+    baseBps,
+    stepBps,
+    minBps: Math.min(minBps, baseBps),
+    maxBps: Math.max(maxBps, baseBps),
+    deadbandBps: parseBpsEnv(
+      "AUTO_TARGET_DEADBAND_BPS",
+      DEFAULT_AUTO_TARGET_DEADBAND_BPS,
+      0,
+      10_000
+    ),
+    minIdleWei: parseWeiEnv("AUTO_TARGET_MIN_IDLE_WEI", DEFAULT_AUTO_TARGET_MIN_IDLE_WEI),
+  };
+}
+
+/** Harvest dust TVL (WETH wei). Target writes skip at or below this. */
+export function getAutoHarvestDustTvlWei(): bigint {
+  return parseEthToWei("AUTO_HARVEST_TVL_DUST_ETH", DEFAULT_AUTO_HARVEST_TVL_DUST_ETH);
 }
 
 /**

@@ -5,7 +5,8 @@
  * Strategy ids shard across up to 4 operator wallets (id % N). Txs serialize per address.
  * Auto strategies have no mode(); harvest uses per-strategy TVL tiers when adaptive.
  * Upkeep txs only after off-chain keeperCheck() (from=keeper) says remint is needed.
- * Band: Owner `setBandParams`. RhV4: refreshPriceRefBatch every ≥10m.
+ * Band: Owner `setBandParams`. Target: Owner `setTargetAssetBps` before remint and in the band loop.
+ * Harvest never writes target. RhV4: refreshPriceRefBatch every ≥10m.
  */
 import type { Abi, Account, Address, PublicClient } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
@@ -25,6 +26,7 @@ import {
   getAutoKeeperUpkeepIntervalMs,
   isAutoAdaptiveBandEnabled,
   isAutoAdaptiveHarvestEnabled,
+  isAutoAdaptiveTargetEnabled,
   isAutoKeeperPriceRefEnabled,
 } from "../config/auto-keeper-config";
 import {
@@ -48,6 +50,7 @@ import {
 } from "./rh-operator-pool";
 import { filterAutoHarvestDueIds } from "./auto-adaptive-harvest";
 import {
+  applyAdaptiveTargetsBeforeUpkeep,
   getAutoBandLoopSleepMs,
   recordAutoRemintHits,
   runAutoAdaptiveBandPass,
@@ -561,6 +564,22 @@ async function autoKeeperUpkeepLoop(
         console.log(`[${tag}] Upkeep skipped — no remint needed`);
       } else {
         recordAutoRemintHits(pipeline.id, ids);
+        const remintRows = rows
+          .filter((r) => ids.includes(r.id))
+          .map((r) => ({
+            id: r.id,
+            stratAddr: r.stratAddr,
+            lastHarvest: r.lastHarvest,
+          }));
+        await applyAdaptiveTargetsBeforeUpkeep({
+          rpcUrl,
+          pipelineId: pipeline.id,
+          logTag: tag,
+          amm: pipeline.amm,
+          rows: remintRows,
+        });
+        // Owner target txs are awaited above (Owner queue). Operators remint next
+        // on their own queues — same queue only if Owner address is also an operator.
         await runShardedAutoBatches(rpcUrl, pipeline, wallets, "performUpkeepBatch", ids, "Upkeep");
       }
     } catch (e) {
@@ -630,6 +649,7 @@ async function autoKeeperBandLoop(
         rpcUrl,
         pipelineId: pipeline.id,
         logTag: tag,
+        amm: pipeline.amm,
         rows: rows
           .filter((r) => eligibleSet.has(r.id))
           .map((r) => ({
@@ -705,6 +725,7 @@ async function startAutoKeeperPipeline(
   const skipLiq = getAutoKeeperHarvestSkipIncreaseLiquidity();
   const adaptiveHarvest = isAutoAdaptiveHarvestEnabled();
   const adaptiveBand = isAutoAdaptiveBandEnabled();
+  const adaptiveTarget = isAutoAdaptiveTargetEnabled();
   const priceRef = isAutoKeeperPriceRefEnabled() && pipelineSupportsRefreshPriceRef(pipeline);
 
   console.log(`[${tag}] Loop starting (sharded ×${shardWallets.length})`);
@@ -742,6 +763,13 @@ async function startAutoKeeperPipeline(
   } else {
     console.log(`[${tag}] adaptive band disabled`);
   }
+  if (adaptiveTarget) {
+    console.log(
+      `[${tag}] adaptive target every ${bandMs / 1000}s + before remint (setTargetAssetBps Owner only; 3000/5000/7000; harvest never writes)`
+    );
+  } else {
+    console.log(`[${tag}] adaptive target disabled`);
+  }
   console.log(
     `[${tag}] Tx gas: ${getDemeterTxGasHeadroomBps() / 1000}× headroom (batch), min ${getTxMinGasLimit()}`
   );
@@ -753,7 +781,7 @@ async function startAutoKeeperPipeline(
   if (priceRef) {
     loops.push(autoKeeperPriceRefLoop(rpcUrl, pipeline, shardWallets, priceRefMs));
   }
-  if (adaptiveBand) {
+  if (adaptiveBand || adaptiveTarget) {
     loops.push(autoKeeperBandLoop(rpcUrl, pipeline, shardWallets, bandMs));
   }
 

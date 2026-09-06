@@ -1,7 +1,7 @@
 /**
  * AutoKeeper adaptive outer/inner bands (±1 tickSpacing).
  * Owner-only: RH deployer/owner key must equal strategy.owner().
- * Apply is one atomic `setBandParams` (not Base’s two-step setters).
+ * Apply is one atomic `setBandParams` (same on Base).
  * Remint timestamps come from upkeep keeperCheck sims.
  */
 import fs from "fs";
@@ -21,16 +21,23 @@ import {
   getAutoBandLoopIntervalMs,
   getAutoBandOwnerAddress,
   getAutoBandOwnerPrivateKey,
+  requireAutoBandOwnerSigner,
   getAutoBandWidenRemints,
   getAutoBandWidenWindowMs,
   getAutoHarvestIntervalMsForTvlWei,
   isAutoAdaptiveBandEnabled,
+  isAutoAdaptiveTargetEnabled,
 } from "../config/auto-keeper-config";
 import { resolveTxGasLimit } from "../config/demeter-tx-gas";
 import { getSoteriaRepoRoot } from "../config/soteria-runtime-paths";
 import { explorerTxUrl } from "../config/chain-config";
 import { enqueueSerializedAddressTx } from "./operator-tx-queue";
 import { readStrategyPoolValueWei } from "./strategy-pool-value-eligibility";
+import {
+  applyAdaptiveTarget,
+  type TargetOffset,
+} from "./auto-adaptive-target";
+import type { AutoAmmKind } from "../config/rh-keeper-pipelines";
 
 export const AUTO_STRATEGY_BAND_ABI = [
   {
@@ -93,6 +100,8 @@ type BandOffset = -1 | 0 | 1;
 
 type BandStrategyState = {
   bandOffset: BandOffset;
+  targetOffset: TargetOffset;
+  lastTargetWriteMs: number;
   baselineOuterBelow: number;
   baselineOuterAbove: number;
   baselineInnerBelow: number;
@@ -131,6 +140,14 @@ function loadState(): void {
     const raw = JSON.parse(fs.readFileSync(p, "utf8")) as BandPersisted;
     if (raw?.version === 1 && raw.byKey && typeof raw.byKey === "object") {
       memoryState = raw;
+      for (const st of Object.values(memoryState.byKey)) {
+        if (st.targetOffset !== -1 && st.targetOffset !== 0 && st.targetOffset !== 1) {
+          st.targetOffset = 0;
+        }
+        if (typeof st.lastTargetWriteMs !== "number") {
+          st.lastTargetWriteMs = 0;
+        }
+      }
     }
   } catch (e) {
     console.warn("[AutoBand] failed to load state:", e instanceof Error ? e.message : e);
@@ -157,7 +174,12 @@ export function recordAutoRemintHits(
   strategyIds: readonly number[],
   nowMs = Date.now()
 ): void {
-  if (!isAutoAdaptiveBandEnabled() || strategyIds.length === 0) return;
+  if (
+    (!isAutoAdaptiveBandEnabled() && !isAutoAdaptiveTargetEnabled()) ||
+    strategyIds.length === 0
+  ) {
+    return;
+  }
   loadState();
   const windowMs = getAutoBandWidenWindowMs();
   for (const id of strategyIds) {
@@ -201,6 +223,8 @@ function getOrCreateState(
   if (!existing) {
     existing = {
       bandOffset: 0,
+      targetOffset: 0,
+      lastTargetWriteMs: 0,
       baselineOuterBelow: baselines.outerBelow,
       baselineOuterAbove: baselines.outerAbove,
       baselineInnerBelow: baselines.innerBelow,
@@ -224,8 +248,112 @@ function getOrCreateState(
     existing.baselinesLocked = true;
   }
   existing.tickSpacing = baselines.tickSpacing || existing.tickSpacing;
+  if (existing.targetOffset !== -1 && existing.targetOffset !== 0 && existing.targetOffset !== 1) {
+    existing.targetOffset = 0;
+  }
+  if (typeof existing.lastTargetWriteMs !== "number") {
+    existing.lastTargetWriteMs = 0;
+  }
   mergePendingRemints(key, existing, nowMs);
   return existing;
+}
+
+function emptyAdaptiveState(nowMs: number): BandStrategyState {
+  return {
+    bandOffset: 0,
+    targetOffset: 0,
+    lastTargetWriteMs: 0,
+    baselineOuterBelow: DEFAULT_AUTO_BAND_OUTER_TICKS,
+    baselineOuterAbove: DEFAULT_AUTO_BAND_OUTER_TICKS,
+    baselineInnerBelow: DEFAULT_AUTO_BAND_INNER_TICKS,
+    baselineInnerAbove: DEFAULT_AUTO_BAND_INNER_TICKS,
+    tickSpacing: DEFAULT_AUTO_BAND_TICK_SPACING,
+    remintAtMs: [],
+    lastTightenCheckMs: nowMs,
+    baselinesLocked: false,
+  };
+}
+
+function ensureAdaptiveState(
+  pipelineId: string,
+  strategyId: number,
+  nowMs: number
+): BandStrategyState {
+  loadState();
+  const key = stateKey(pipelineId, strategyId);
+  let st = memoryState.byKey[key];
+  if (!st) {
+    st = emptyAdaptiveState(nowMs);
+    memoryState.byKey[key] = st;
+    mergePendingRemints(key, st, nowMs);
+    saveState();
+    return st;
+  }
+  if (st.targetOffset !== -1 && st.targetOffset !== 0 && st.targetOffset !== 1) {
+    st.targetOffset = 0;
+  }
+  if (typeof st.lastTargetWriteMs !== "number") {
+    st.lastTargetWriteMs = 0;
+  }
+  mergePendingRemints(key, st, nowMs);
+  return st;
+}
+
+function latestRemintMs(st: BandStrategyState): number {
+  if (st.remintAtMs.length === 0) return 0;
+  return Math.max(...st.remintAtMs);
+}
+
+async function runTargetForRow(params: {
+  rpcUrl: string;
+  pipelineId: string;
+  logTag: string;
+  amm: AutoAmmKind;
+  row: AutoBandRow;
+  trigger: "remint" | "band";
+  nowMs: number;
+}): Promise<void> {
+  if (!isAutoAdaptiveTargetEnabled()) return;
+
+  const st = ensureAdaptiveState(params.pipelineId, params.row.id, params.nowMs);
+  if (
+    params.trigger === "band" &&
+    st.lastTargetWriteMs > 0 &&
+    params.nowMs - st.lastTargetWriteMs < 60_000
+  ) {
+    return;
+  }
+  const lastRemint = latestRemintMs(st);
+  const remintsSinceWrite = lastRemint > 0 && lastRemint > st.lastTargetWriteMs;
+
+  try {
+    const result = await applyAdaptiveTarget({
+      rpcUrl: params.rpcUrl,
+      logTag: params.logTag,
+      strategyId: params.row.id,
+      stratAddr: params.row.stratAddr,
+      amm: params.amm,
+      trigger: params.trigger,
+      persistedOffset: st.targetOffset,
+      remintsSinceWrite,
+      lastRemintMs: lastRemint,
+      nowMs: params.nowMs,
+    });
+    if (result.wrote) {
+      st.targetOffset = result.wrote.offset;
+      st.lastTargetWriteMs = params.nowMs;
+      saveState();
+    } else if (result.skipped && params.trigger === "remint") {
+      console.log(
+        `[${params.logTag}] Target skip id=${params.row.id} (before remint): ${result.skipped} — operator remint will use on-chain target`
+      );
+    }
+  } catch (e) {
+    console.warn(
+      `[${params.logTag}] Target pass id=${params.row.id} failed:`,
+      e instanceof Error ? e.message : e
+    );
+  }
 }
 
 function targetBands(st: BandStrategyState): {
@@ -252,7 +380,7 @@ function normalizePk(pk: string): `0x${string}` {
 async function applyBandParams(
   rpcUrl: string,
   stratAddr: Address,
-  privateKey: string,
+  onChainOwner: Address,
   target: {
     outerBelow: number;
     outerAbove: number;
@@ -262,6 +390,7 @@ async function applyBandParams(
   logTag: string,
   strategyId: number
 ): Promise<void> {
+  const { privateKey } = requireAutoBandOwnerSigner(onChainOwner);
   const account = privateKeyToAccount(normalizePk(privateKey));
   const wallet = createTritonWalletClient(privateKey, rpcUrl);
   const publicClient = createTritonPublicClient(rpcUrl);
@@ -306,14 +435,40 @@ export type AutoBandRow = {
   lastHarvest: number;
 };
 
+/** Write-before-upkeep: one target step per remint-true id, then caller remints. */
+export async function applyAdaptiveTargetsBeforeUpkeep(params: {
+  rpcUrl: string;
+  pipelineId: string;
+  logTag: string;
+  amm: AutoAmmKind;
+  rows: readonly AutoBandRow[];
+}): Promise<void> {
+  if (!isAutoAdaptiveTargetEnabled() || params.rows.length === 0) return;
+  const nowMs = Date.now();
+  for (const row of params.rows) {
+    await runTargetForRow({
+      rpcUrl: params.rpcUrl,
+      pipelineId: params.pipelineId,
+      logTag: params.logTag,
+      amm: params.amm,
+      row,
+      trigger: "remint",
+      nowMs,
+    });
+  }
+}
+
 /** One band-controller pass for active Auto strategies in a pipeline. */
 export async function runAutoAdaptiveBandPass(params: {
   rpcUrl: string;
   pipelineId: string;
   logTag: string;
+  amm: AutoAmmKind;
   rows: readonly AutoBandRow[];
 }): Promise<void> {
-  if (!isAutoAdaptiveBandEnabled()) return;
+  const bandOn = isAutoAdaptiveBandEnabled();
+  const targetOn = isAutoAdaptiveTargetEnabled();
+  if (!bandOn && !targetOn) return;
 
   const privateKey = getAutoBandOwnerPrivateKey();
   if (!privateKey) return;
@@ -338,18 +493,8 @@ export async function runAutoAdaptiveBandPass(params: {
         const key = stateKey(params.pipelineId, row.id);
         let st = memoryState.byKey[key];
         if (!st) {
-          st = {
-            bandOffset: 0,
-            baselineOuterBelow: DEFAULT_AUTO_BAND_OUTER_TICKS,
-            baselineOuterAbove: DEFAULT_AUTO_BAND_OUTER_TICKS,
-            baselineInnerBelow: DEFAULT_AUTO_BAND_INNER_TICKS,
-            baselineInnerAbove: DEFAULT_AUTO_BAND_INNER_TICKS,
-            tickSpacing: DEFAULT_AUTO_BAND_TICK_SPACING,
-            remintAtMs: [],
-            lastTightenCheckMs: nowMs,
-            ownerSkipLogged: true,
-            baselinesLocked: false,
-          };
+          st = emptyAdaptiveState(nowMs);
+          st.ownerSkipLogged = true;
           memoryState.byKey[key] = st;
           saveState();
           console.log(
@@ -365,102 +510,112 @@ export async function runAutoAdaptiveBandPass(params: {
         continue;
       }
 
-      const [tickSpacingRaw, rangeBelow, rangeAbove, innerBelow, innerAbove] = await Promise.all([
-        client.readContract({
-          address: row.stratAddr,
-          abi: AUTO_STRATEGY_BAND_ABI,
-          functionName: "tickSpacing",
-        }),
-        client.readContract({
-          address: row.stratAddr,
-          abi: AUTO_STRATEGY_BAND_ABI,
-          functionName: "rangeBelowTicks",
-        }),
-        client.readContract({
-          address: row.stratAddr,
-          abi: AUTO_STRATEGY_BAND_ABI,
-          functionName: "rangeAboveTicks",
-        }),
-        client.readContract({
-          address: row.stratAddr,
-          abi: AUTO_STRATEGY_BAND_ABI,
-          functionName: "innerBelowTicks",
-        }),
-        client.readContract({
-          address: row.stratAddr,
-          abi: AUTO_STRATEGY_BAND_ABI,
-          functionName: "innerAboveTicks",
-        }),
-      ]);
+      if (bandOn) {
+        const [tickSpacingRaw, rangeBelow, rangeAbove, innerBelow, innerAbove] = await Promise.all([
+          client.readContract({
+            address: row.stratAddr,
+            abi: AUTO_STRATEGY_BAND_ABI,
+            functionName: "tickSpacing",
+          }),
+          client.readContract({
+            address: row.stratAddr,
+            abi: AUTO_STRATEGY_BAND_ABI,
+            functionName: "rangeBelowTicks",
+          }),
+          client.readContract({
+            address: row.stratAddr,
+            abi: AUTO_STRATEGY_BAND_ABI,
+            functionName: "rangeAboveTicks",
+          }),
+          client.readContract({
+            address: row.stratAddr,
+            abi: AUTO_STRATEGY_BAND_ABI,
+            functionName: "innerBelowTicks",
+          }),
+          client.readContract({
+            address: row.stratAddr,
+            abi: AUTO_STRATEGY_BAND_ABI,
+            functionName: "innerAboveTicks",
+          }),
+        ]);
 
-      const tickSpacing = Math.abs(Number(tickSpacingRaw)) || DEFAULT_AUTO_BAND_TICK_SPACING;
-      const st = getOrCreateState(
-        params.pipelineId,
-        row.id,
-        {
-          outerBelow: Number(rangeBelow) || DEFAULT_AUTO_BAND_OUTER_TICKS,
-          outerAbove: Number(rangeAbove) || DEFAULT_AUTO_BAND_OUTER_TICKS,
-          innerBelow: Number(innerBelow) || DEFAULT_AUTO_BAND_INNER_TICKS,
-          innerAbove: Number(innerAbove) || DEFAULT_AUTO_BAND_INNER_TICKS,
-          tickSpacing,
-        },
-        nowMs
-      );
-
-      st.remintAtMs = pruneRemints(st.remintAtMs, nowMs, widenWindowMs);
-      const remintsInWindow = st.remintAtMs.filter((t) => nowMs - t <= widenWindowMs).length;
-
-      let nextOffset: BandOffset = st.bandOffset;
-
-      if (st.bandOffset < 0 && remintsInWindow > 0) {
-        nextOffset = 0;
-        console.log(
-          `[${params.logTag}] Band restore id=${row.id}: remint while tightened → offset 0`
+        const tickSpacing = Math.abs(Number(tickSpacingRaw)) || DEFAULT_AUTO_BAND_TICK_SPACING;
+        const st = getOrCreateState(
+          params.pipelineId,
+          row.id,
+          {
+            outerBelow: Number(rangeBelow) || DEFAULT_AUTO_BAND_OUTER_TICKS,
+            outerAbove: Number(rangeAbove) || DEFAULT_AUTO_BAND_OUTER_TICKS,
+            innerBelow: Number(innerBelow) || DEFAULT_AUTO_BAND_INNER_TICKS,
+            innerAbove: Number(innerAbove) || DEFAULT_AUTO_BAND_INNER_TICKS,
+            tickSpacing,
+          },
+          nowMs
         );
-      } else if (remintsInWindow >= widenNeed && st.bandOffset < 1) {
-        nextOffset = 1;
-        console.log(
-          `[${params.logTag}] Band widen id=${row.id}: ${remintsInWindow} remints in ${widenWindowMs / 60000}m → offset +1`
-        );
-      } else {
-        const tvl = (await readStrategyPoolValueWei(row.stratAddr, params.rpcUrl)) ?? 0n;
-        const harvestMs = getAutoHarvestIntervalMsForTvlWei(tvl);
-        const quiet =
-          remintsInWindow === 0 &&
-          nowMs - st.lastTightenCheckMs >= harvestMs &&
-          (row.lastHarvest === 0 || nowSec - row.lastHarvest >= Math.floor(harvestMs / 1000));
-        if (quiet && st.bandOffset > -1) {
-          nextOffset = (st.bandOffset - 1) as BandOffset;
-          st.lastTightenCheckMs = nowMs;
+
+        st.remintAtMs = pruneRemints(st.remintAtMs, nowMs, widenWindowMs);
+        const remintsInWindow = st.remintAtMs.filter((t) => nowMs - t <= widenWindowMs).length;
+
+        let nextOffset: BandOffset = st.bandOffset;
+
+        if (st.bandOffset < 0 && remintsInWindow > 0) {
+          nextOffset = 0;
           console.log(
-            `[${params.logTag}] Band tighten id=${row.id}: stable ≥${harvestMs / 3600000}h → offset ${nextOffset}`
+            `[${params.logTag}] Band restore id=${row.id}: remint while tightened → offset 0`
+          );
+        } else if (remintsInWindow >= widenNeed && st.bandOffset < 1) {
+          nextOffset = 1;
+          console.log(
+            `[${params.logTag}] Band widen id=${row.id}: ${remintsInWindow} remints in ${widenWindowMs / 60000}m → offset +1`
+          );
+        } else {
+          const tvl = (await readStrategyPoolValueWei(row.stratAddr, params.rpcUrl)) ?? 0n;
+          const harvestMs = getAutoHarvestIntervalMsForTvlWei(tvl);
+          const quiet =
+            remintsInWindow === 0 &&
+            nowMs - st.lastTightenCheckMs >= harvestMs &&
+            (row.lastHarvest === 0 || nowSec - row.lastHarvest >= Math.floor(harvestMs / 1000));
+          if (quiet && st.bandOffset > -1) {
+            nextOffset = (st.bandOffset - 1) as BandOffset;
+            st.lastTightenCheckMs = nowMs;
+            console.log(
+              `[${params.logTag}] Band tighten id=${row.id}: stable ≥${harvestMs / 3600000}h → offset ${nextOffset}`
+            );
+          }
+        }
+
+        if (nextOffset !== st.bandOffset) {
+          st.bandOffset = nextOffset;
+          saveState();
+        }
+
+        const target = targetBands(st);
+        if (
+          Number(rangeBelow) !== target.outerBelow ||
+          Number(rangeAbove) !== target.outerAbove ||
+          Number(innerBelow) !== target.innerBelow ||
+          Number(innerAbove) !== target.innerAbove
+        ) {
+          await applyBandParams(
+            params.rpcUrl,
+            row.stratAddr,
+            owner,
+            target,
+            params.logTag,
+            row.id
           );
         }
       }
 
-      if (nextOffset !== st.bandOffset) {
-        st.bandOffset = nextOffset;
-        saveState();
-      }
-
-      const target = targetBands(st);
-      if (
-        Number(rangeBelow) === target.outerBelow &&
-        Number(rangeAbove) === target.outerAbove &&
-        Number(innerBelow) === target.innerBelow &&
-        Number(innerAbove) === target.innerAbove
-      ) {
-        continue;
-      }
-
-      await applyBandParams(
-        params.rpcUrl,
-        row.stratAddr,
-        privateKey,
-        target,
-        params.logTag,
-        row.id
-      );
+      await runTargetForRow({
+        rpcUrl: params.rpcUrl,
+        pipelineId: params.pipelineId,
+        logTag: params.logTag,
+        amm: params.amm,
+        row,
+        trigger: "band",
+        nowMs,
+      });
     } catch (e) {
       console.warn(
         `[${params.logTag}] Band pass id=${row.id} failed:`,
