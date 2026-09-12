@@ -1,10 +1,10 @@
 {
   "name": "AutoSwapRouterRhV4",
-  "address": "0xD9EF1629D493921DaB16Ee88d32658d9d6C025db",
+  "address": "0x971a72aB8BC3C0a5727E675D84E3f05Ae0d94Af9",
   "chainId": 4663,
   "product": "rhv4",
   "profile": "rh-v4",
-  "timestamp": 1788497330559,
+  "timestamp": 1789190907879,
   "abi": [
     {
       "type": "constructor",

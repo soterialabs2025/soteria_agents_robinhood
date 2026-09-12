@@ -1,10 +1,10 @@
 {
   "name": "AutoSwapRouterRhV3",
-  "address": "0xc7DaC278098AA1A0084cdC0Cb7Ff62f050CA4E3f",
+  "address": "0x7312D86cAb731CaA6B7d53AF19F96E57d8f4c510",
   "chainId": 4663,
   "product": "rhv3",
   "profile": "rh-v3",
-  "timestamp": 1788496154989,
+  "timestamp": 1789191120751,
   "abi": [
     {
       "type": "constructor",
@@ -23,19 +23,6 @@
       ],
       "outputs": [],
       "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
-      "name": "factory",
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "",
-          "type": "address",
-          "internalType": "contract IUniswapV3Factory"
-        }
-      ],
-      "stateMutability": "view"
     },
     {
       "type": "function",
@@ -140,32 +127,6 @@
     },
     {
       "type": "function",
-      "name": "setStrictStrategySlippageBps",
-      "inputs": [
-        {
-          "name": "bps",
-          "type": "uint16",
-          "internalType": "uint16"
-        }
-      ],
-      "outputs": [],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
-      "name": "setTwapSeconds",
-      "inputs": [
-        {
-          "name": "secs",
-          "type": "uint32",
-          "internalType": "uint32"
-        }
-      ],
-      "outputs": [],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
       "name": "strategyFactory",
       "inputs": [],
       "outputs": [
@@ -173,19 +134,6 @@
           "name": "",
           "type": "address",
           "internalType": "address"
-        }
-      ],
-      "stateMutability": "view"
-    },
-    {
-      "type": "function",
-      "name": "strictStrategySlippageBps",
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "",
-          "type": "uint16",
-          "internalType": "uint16"
         }
       ],
       "stateMutability": "view"
@@ -215,7 +163,7 @@
           "internalType": "uint128"
         },
         {
-          "name": "maxDevBps",
+          "name": "minAmountOut",
           "type": "uint256",
           "internalType": "uint256"
         },
@@ -246,19 +194,6 @@
       ],
       "outputs": [],
       "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
-      "name": "twapSeconds",
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "",
-          "type": "uint32",
-          "internalType": "uint32"
-        }
-      ],
-      "stateMutability": "view"
     },
     {
       "type": "event",
@@ -345,19 +280,6 @@
     },
     {
       "type": "event",
-      "name": "StrictStrategySlippageUpdated",
-      "inputs": [
-        {
-          "name": "bps",
-          "type": "uint16",
-          "indexed": false,
-          "internalType": "uint16"
-        }
-      ],
-      "anonymous": false
-    },
-    {
-      "type": "event",
       "name": "SwapExecuted",
       "inputs": [
         {
@@ -394,19 +316,6 @@
       "anonymous": false
     },
     {
-      "type": "event",
-      "name": "TwapSecondsUpdated",
-      "inputs": [
-        {
-          "name": "secs",
-          "type": "uint32",
-          "indexed": false,
-          "internalType": "uint32"
-        }
-      ],
-      "anonymous": false
-    },
-    {
       "type": "error",
       "name": "AlreadyAuthorized",
       "inputs": []
@@ -418,22 +327,7 @@
     },
     {
       "type": "error",
-      "name": "InvalidPool",
-      "inputs": []
-    },
-    {
-      "type": "error",
-      "name": "InvalidSlippage",
-      "inputs": []
-    },
-    {
-      "type": "error",
       "name": "NotAuthorized",
-      "inputs": []
-    },
-    {
-      "type": "error",
-      "name": "OracleUnavailable",
       "inputs": []
     },
     {
@@ -457,11 +351,6 @@
           "internalType": "address"
         }
       ]
-    },
-    {
-      "type": "error",
-      "name": "PriceOutOfBand",
-      "inputs": []
     },
     {
       "type": "error",
@@ -492,6 +381,11 @@
     {
       "type": "error",
       "name": "ZeroAmount",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "ZeroMinOut",
       "inputs": []
     }
   ]

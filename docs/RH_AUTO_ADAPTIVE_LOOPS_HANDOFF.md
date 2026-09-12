@@ -6,7 +6,7 @@ This is the RH copy of the handoff. Full source of truth also lives in Base repo
 
 ## RH-only deltas (read first)
 
-1. **Bands:** one Owner call `setBandParams(rangeBelow, rangeAbove, innerBelow, innerAbove)` on RH and Base.
+1. **Bands:** one `setBandParams(rangeBelow, rangeAbove, innerBelow, innerAbove)` from a registered operator (Owner still allowed).
 2. **Price ref:** on-chain `minRefUpdateInterval = 10 minutes` → agent loop default **10 min** (never denser).
 
 ## What to build (from Base)
@@ -25,7 +25,7 @@ Port these Base features into this RH codebase:
 ## Band apply (RH)
 
 ```ts
-// One atomic owner tx — do not split outer/inner
+// One atomic tx — do not split outer/inner
 await writeContract({
   address: strategy,
   abi: STRATEGY_BAND_ABI,
@@ -36,7 +36,7 @@ await writeContract({
     BigInt(innerBelow),
     BigInt(innerAbove),
   ],
-  account: ownerAccount, // must equal strategy.owner()
+  account: operatorAccount, // OperatorRegistry.isOperator or owner()
 });
 ```
 
@@ -52,8 +52,9 @@ DEFAULT_AUTO_KEEPER_PRICE_REF_INTERVAL_MS = 10 * 60 * 1000; // match minRefUpdat
 ```bash
 AUTO_ADAPTIVE_HARVEST=true
 AUTO_ADAPTIVE_BAND=true
-# Owner key deriving package Owner from docs/ADDRESSES.md (0x prefix OK)
-BASE_DEPLOYER_KEY=0x...   # or RH-named equivalent
+# Operators sign setBandParams / setTargetAssetBps (Owner key is optional fallback)
+DEMETER_PRIVATE_KEY=0x...
+# AUTO_BAND_OWNER_ADDRESS=0x...   # only if no operator keys
 
 AUTO_KEEPER_PRICE_REF_ENABLED=true
 AUTO_KEEPER_PRICE_REF_INTERVAL_MS=600000   # 10 minutes
@@ -63,9 +64,9 @@ AUTO_KEEPER_PRICE_REF_INTERVAL_MS=600000   # 10 minutes
 
 1. ABI has `setBandParams` + `refreshPriceRefBatch`.
 2. Harvest due filter + TVL tiers.
-3. Band state machine → single `setBandParams`; skip if `owner() ≠` configured Owner EOA.
+3. Band state machine → single `setBandParams` from an operator (Owner fallback if no operator keys).
 4. Price-ref loop ≥ 10m, ABI-gated.
 5. ETH failover on batch txs.
-6. Smoke remint simulate; confirm band skip logs when Owner key missing/mismatched.
+6. Smoke remint simulate; confirm band/target send from a registered operator.
 
 See Base handoff for full tier tables, remint rules, and log shapes.

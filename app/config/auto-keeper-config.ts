@@ -173,7 +173,7 @@ function autoBandOwnerKeyRaw(): string | null {
 }
 
 /**
- * Package Owner key for `setBandParams`.
+ * Optional Owner key fallback for `setBandParams` / `setTargetAssetBps` when no operator keys are set.
  * Prefer `AUTO_BAND_OWNER_ADDRESS` as a 32-byte key (`0x` OK). Also accepts
  * `RH_DEPLOYER_KEY` / `AUTO_BAND_OWNER_KEY` / `BASE_DEPLOYER_KEY`.
  */
@@ -201,29 +201,6 @@ export function getAutoBandOwnerAddress(): Address {
     return privateKeyToAccount(normalizePrivateKey(pk)).address;
   }
   return pickAddr("AUTO_BAND_OWNER_ADDRESS", RH_DEPLOYER_WALLET_ADDRESS);
-}
-
-/**
- * Owner signer for `setBandParams` / `setTargetAssetBps`.
- * Refuses to return a key that is not `strategy.owner()`.
- */
-export function requireAutoBandOwnerSigner(onChainOwner: Address): {
-  privateKey: string;
-  address: Address;
-} {
-  const pk = getAutoBandOwnerPrivateKey();
-  if (!pk) {
-    throw new Error(
-      "Owner key missing for Owner-only tx (AUTO_BAND_OWNER_ADDRESS as 32-byte key, or RH_DEPLOYER_KEY / AUTO_BAND_OWNER_KEY)"
-    );
-  }
-  const address = privateKeyToAccount(normalizePrivateKey(pk)).address;
-  if (address.toLowerCase() !== onChainOwner.toLowerCase()) {
-    throw new Error(
-      `Owner signer ${address} ≠ strategy.owner() ${onChainOwner} — not sending onlyOwner tx`
-    );
-  }
-  return { privateKey: pk, address };
 }
 
 /**
@@ -295,24 +272,49 @@ export function isAutoAdaptiveHarvestEnabled(): boolean {
   return true;
 }
 
+function hasAutoOperatorKeys(): boolean {
+  return Boolean(
+    process.env.DEMETER_PRIVATE_KEY?.trim() ||
+      process.env.DEMETER_TWO_PRIVATE_KEY?.trim() ||
+      process.env.TRITON_PRIVATE_KEY?.trim() ||
+      process.env.TRITON_TWO_PRIVATE_KEY?.trim()
+  );
+}
+
+/** Operator keys (preferred) or Owner key — enough to sign setBandParams / setTargetAssetBps. */
+export function hasAutoBandTargetSigner(): boolean {
+  return hasAutoOperatorKeys() || Boolean(autoBandOwnerKeyRaw());
+}
+
+/** Owner as a last-resort signer when no operator wallets were passed in. */
+export function getAutoBandOwnerSignerFallback(): {
+  id: "owner";
+  privateKey: string;
+  address: Address;
+} | null {
+  const pk = getAutoBandOwnerPrivateKey();
+  if (!pk) return null;
+  return { id: "owner", privateKey: pk, address: getAutoBandOwnerAddress() };
+}
+
 /**
- * Owner-only ±1 tickSpacing band loop. Default on when an Owner key is set.
+ * Adaptive ±1 tickSpacing band loop. Default on when an operator or Owner key is set.
  * Off: `AUTO_ADAPTIVE_BAND=false`.
  */
 export function isAutoAdaptiveBandEnabled(): boolean {
   if (envFlagFalse("AUTO_ADAPTIVE_BAND")) return false;
-  if (!autoBandOwnerKeyRaw()) return false;
+  if (!hasAutoBandTargetSigner()) return false;
   if (envFlagTrue("AUTO_ADAPTIVE_BAND")) return true;
   return true;
 }
 
 /**
- * Owner-only targetAssetBps stepper (3000 / 5000 / 7000). Default on when an Owner key is set.
- * Off: `AUTO_ADAPTIVE_TARGET=false`. Same key as bands.
+ * Adaptive targetAssetBps stepper (3000 / 5000 / 7000). Default on when an operator or Owner key is set.
+ * Off: `AUTO_ADAPTIVE_TARGET=false`.
  */
 export function isAutoAdaptiveTargetEnabled(): boolean {
   if (envFlagFalse("AUTO_ADAPTIVE_TARGET")) return false;
-  if (!autoBandOwnerKeyRaw()) return false;
+  if (!hasAutoBandTargetSigner()) return false;
   if (envFlagTrue("AUTO_ADAPTIVE_TARGET")) return true;
   return true;
 }

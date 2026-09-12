@@ -2,7 +2,7 @@
 
 Copy this into the Base (or other-chain) agent. RH source of truth:
 
-- `app/services/auto-adaptive-target.ts` — mix, step, Owner write
+- `app/services/auto-adaptive-target.ts` — mix, step, operator write
 - `app/services/auto-adaptive-band.ts` — `targetOffset` in the same JSON as `bandOffset`; write-before-upkeep
 - `app/config/auto-keeper-config.ts` — `AUTO_ADAPTIVE_TARGET` + `AUTO_TARGET_*`
 - `app/services/auto-keeper-loop.ts` — remint path writes target **before** `performUpkeepBatch`
@@ -25,20 +25,20 @@ That is token-order safe. V4 leftover ETH → mix &lt; 5000 → 3000. V3 leftove
 ## Contract (all Auto stacks)
 
 ```text
-strategy.setTargetAssetBps(uint256 bps)   // onlyOwner, no cap, no event
+strategy.setTargetAssetBps(uint256 bps)   // operator or owner; no cap, no event
 strategy.targetAssetBps() view
 ```
 
 Clamp in the agent. The setter accepts `0` (all WETH) or `>10000` (all ASSET). Read `targetAssetBps()` after send — there is no event.
 
-Same Owner gate as bands: `strategy.owner() === ownerKey`, else log skip.
+Signed by a registered operator (same shard pool as remint). Owner still works. Do not skip because `strategy.owner()` is a different EOA.
 
 **Do not change `reserveBps`.** Empty V4 reserve is remints consuming inventory.
 
 ## Env
 
 ```bash
-AUTO_ADAPTIVE_TARGET=true          # default on when Owner key is present; false to disable
+AUTO_ADAPTIVE_TARGET=true          # default on when an operator or Owner key is present
 AUTO_TARGET_BASE_BPS=5000
 AUTO_TARGET_STEP_BPS=2000          # stacks: 3000 / 5000 / 7000
 AUTO_TARGET_MIN_BPS=3000
@@ -47,7 +47,7 @@ AUTO_TARGET_DEADBAND_BPS=1200
 AUTO_TARGET_MIN_IDLE_WEI=1000000000000000   # 1e15; ignore dust leftover
 ```
 
-Owner key is the same as bands (`AUTO_BAND_OWNER_ADDRESS` as 32-byte key, or `RH_DEPLOYER_KEY` / `AUTO_BAND_OWNER_KEY`).
+Prefer the keeper operator keys (`DEMETER_*` / `TRITON_*`). Owner key (`AUTO_BAND_OWNER_ADDRESS` as a 32-byte key, or `RH_DEPLOYER_KEY` / `AUTO_BAND_OWNER_KEY`) is fallback only.
 
 ## Persist
 
@@ -81,7 +81,7 @@ Optional side check (`lastBandBaseTick` + inner widths + V4 `refTick` / V3 pool 
 
 ## Skip / fail-closed
 
-- `owner() != agent`
+- no registered operator (and no Owner key fallback)
 - `hasBandBase == false` (no mint yet)
 - V3 `poolValueTwap() == 0` (spot off TWAP; remint would skip the swap)
 - `poolValue` below harvest dust tier (default 0.05 ETH)
@@ -94,8 +94,8 @@ Optional side check (`lastBandBaseTick` + inner widths + V4 `refTick` / V3 pool 
 upkeep tick
   → simulate keeperCheck
   → remint ring buffer
-  → if remint-true AND owner:
-        maybe setTargetAssetBps     // FIRST (await confirm)
+  → if remint-true:
+        maybe setTargetAssetBps     // FIRST (operator, await confirm)
         then performUpkeepBatch     // remint sees new target
 
 band loop (5 min)
@@ -110,7 +110,7 @@ harvest loop
 
 Do **not** change target on every 5 min wake. Restore to 5000 when there has been **no remint for one harvest interval** and `|mix − 5000| < deadband` — same quiet clock as band tighten.
 
-If Owner and operator are different keys, await the Owner tx before the operator remint. If they are the same address, both go through `enqueueSerializedAddressTx` on that address (target then upkeep).
+Target and remint use the same shard operator address queue: `setTargetAssetBps` then `performUpkeep`. Owner is only a fallback if no operator keys are configured.
 
 ## Couple to bands, lightly
 
@@ -122,7 +122,7 @@ Same pass is fine; do not require both to move.
 
 ## RH vs Base
 
-Both chains use one Owner `setBandParams` (Base no longer uses two-step range/inner setters). Copy RH target + band apply as-is.
+Both chains use one `setBandParams` signed by a registered operator (Owner still allowed). Copy RH target + band apply as-is.
 
 | Item | Robinhood (this repo) | Base / other |
 |------|------------------------|--------------|
@@ -138,5 +138,5 @@ Both chains use one Owner `setBandParams` (Base no longer uses two-step range/in
 2. Persist `targetOffset` next to `bandOffset`.
 3. Write in band loop + immediately before remint. Harvest untouched.
 4. Clamp to 3000/5000/7000. Read back after send.
-5. `AUTO_ADAPTIVE_TARGET` default on when Owner key is present.
+5. `AUTO_ADAPTIVE_TARGET` default on when an operator or Owner key is present.
 6. Restart PM2 after env/code change.

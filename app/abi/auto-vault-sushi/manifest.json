@@ -9,44 +9,44 @@
       "abiEntries": 14
     },
     "AutoFactorySv3": {
-      "address": "0x77177AedC8a8B93EF675b612DAF2F8Ff39be66ed",
+      "address": "0x5C04D0223B2Ae85CA0f3A348F9328A1Ed7B04767",
       "artifact": "artifacts/AutoFactorySv3.sol/AutoFactorySv3.json",
       "abiEntries": 33
     },
     "AutoSwapRouterSv3": {
-      "address": "0x8B47DaF1Bead45B0f77cfBD447f398969909Bb71",
+      "address": "0xF4b6Ef45Ab65910DB8A2Fdbb7ff7F4cF146a8f54",
       "artifact": "artifacts/AutoSwapRouterSv3.sol/AutoSwapRouterSv3.json",
-      "abiEntries": 40
+      "abiEntries": 32
     },
     "AutoKeeperSv3": {
-      "address": "0xe1B5D655918b30E931110bA1E1A471C909dC715E",
+      "address": "0x3d1eea48CC1081D0C6222FEB5F6864F0269356Dd",
       "artifact": "artifacts/AutoKeeperSv3.sol/AutoKeeperSv3.json",
       "abiEntries": 28
     },
     "AutoStrategySv3": {
-      "address": "0x3B2C886F71b5B96642FDbb7AFdd76B611A87aB65",
+      "address": "0x1b584A43833C8dE5fA0FC4a490aB774E5F2Ae52d",
       "artifact": "artifacts/AutoStrategySv3.sol/AutoStrategySv3.json",
-      "abiEntries": 72
+      "abiEntries": 81
     },
     "AutoVaultSv3": {
-      "address": "0xae2B57AFb7F40F95f12fCa28D7DfF9Ade08334fe",
+      "address": "0x0AA023493EC320eB681fFCEF9489963d4923D052",
       "artifact": "artifacts/AutoVaultSv3.sol/AutoVaultSv3.json",
-      "abiEntries": 41
+      "abiEntries": 42
     },
     "AutoStrategyManagerSv3": {
       "address": null,
       "artifact": "artifacts/AutoStrategyManagerSv3.sol/AutoStrategyManagerSv3.json",
-      "abiEntries": 34
+      "abiEntries": 39
     },
     "LiquidSharesSv3": {
-      "address": "0xFe6659Eb2b4E34044dE291247938F76F1ec9e992",
+      "address": "0xADb3e91286748D3e25B0DbB203aDD8FD04325958",
       "artifact": "artifacts/LiquidSharesSv3.sol/LiquidSharesSv3.json",
       "abiEntries": 28
     },
     "ShareStakingSv3": {
-      "address": "0xBAbD5A55b4093f52175d37D560EddCD9bD8571B6",
+      "address": null,
       "artifact": "artifacts/ShareStakingSv3.sol/ShareStakingSv3.json",
-      "abiEntries": 74
+      "abiEntries": 83
     }
   }
 }

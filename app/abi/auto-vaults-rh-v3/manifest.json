@@ -9,49 +9,44 @@
       "abiEntries": 14
     },
     "AutoFactoryRhV3": {
-      "address": "0x5A503B68B612354Aa854F485FB2B79022265f7a9",
+      "address": "0x391C84d903f4d002B7EEbDf4a41e285dEc46198C",
       "artifact": "artifacts/AutoFactoryRhV3.sol/AutoFactoryRhV3.json",
       "abiEntries": 33
     },
     "AutoSwapRouterRhV3": {
-      "address": "0xc7DaC278098AA1A0084cdC0Cb7Ff62f050CA4E3f",
+      "address": "0x7312D86cAb731CaA6B7d53AF19F96E57d8f4c510",
       "artifact": "artifacts/AutoSwapRouterRhV3.sol/AutoSwapRouterRhV3.json",
-      "abiEntries": 39
+      "abiEntries": 29
     },
     "AutoKeeperRhV3": {
-      "address": "0x75a574643966aCF2b656Fbd18f6d7c52D7B9E60F",
+      "address": "0xaC7F4f1d319357Cc038C1dE263d31894bBbaE267",
       "artifact": "artifacts/AutoKeeperRhV3.sol/AutoKeeperRhV3.json",
       "abiEntries": 28
     },
-    "SoteriaFeeManagerRhV3": {
-      "address": "0xEc57538d5C129e1e985d81b7Ef05BBb63375D8BE",
-      "artifact": "artifacts/SoteriaFeeManagerRhV3.sol/SoteriaFeeManagerRhV3.json",
-      "abiEntries": 52
-    },
     "AutoStrategyRhV3": {
-      "address": "0xD73a0305673920eA2f60bEA914226F0f31E1d684",
+      "address": "0x824820f61b09d746Bee79D2a5e3b77C3BE51De93",
       "artifact": "artifacts/AutoStrategyRhV3.sol/AutoStrategyRhV3.json",
-      "abiEntries": 72
+      "abiEntries": 81
     },
     "AutoVaultRhV3": {
-      "address": "0x536be0f29Dd417A6948f4EA789698E381b1Fb1d9",
+      "address": "0x0D8193c9387E61a5E76C25112815004f2631dA94",
       "artifact": "artifacts/AutoVaultRhV3.sol/AutoVaultRhV3.json",
-      "abiEntries": 41
+      "abiEntries": 42
     },
     "AutoStrategyManagerRhV3": {
       "address": null,
       "artifact": "artifacts/AutoStrategyManagerRhV3.sol/AutoStrategyManagerRhV3.json",
-      "abiEntries": 34
+      "abiEntries": 39
     },
     "LiquidSharesRhV3": {
-      "address": "0x6782e8e875C2F740d048EEf81C4e9D1e3303443E",
+      "address": "0x0999B8650B661485451B782881cc11830AEE7a86",
       "artifact": "artifacts/LiquidSharesRhV3.sol/LiquidSharesRhV3.json",
       "abiEntries": 28
     },
     "ShareStakingRhV3": {
-      "address": "0x0F791Bf9078d993500411658eC4Dbfa5fC153274",
+      "address": null,
       "artifact": "artifacts/ShareStakingRhV3.sol/ShareStakingRhV3.json",
-      "abiEntries": 74
+      "abiEntries": 83
     }
   }
 }

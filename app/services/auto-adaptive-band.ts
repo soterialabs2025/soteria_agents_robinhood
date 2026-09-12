@@ -1,7 +1,6 @@
 /**
  * AutoKeeper adaptive outer/inner bands (±1 tickSpacing).
- * Owner-only: RH deployer/owner key must equal strategy.owner().
- * Apply is one atomic `setBandParams` (same on Base).
+ * Operator-signed (Owner still works): one atomic `setBandParams`.
  * Remint timestamps come from upkeep keeperCheck sims.
  */
 import fs from "fs";
@@ -19,9 +18,7 @@ import {
   DEFAULT_AUTO_BAND_OUTER_TICKS,
   DEFAULT_AUTO_BAND_TICK_SPACING,
   getAutoBandLoopIntervalMs,
-  getAutoBandOwnerAddress,
-  getAutoBandOwnerPrivateKey,
-  requireAutoBandOwnerSigner,
+  getAutoBandOwnerSignerFallback,
   getAutoBandWidenRemints,
   getAutoBandWidenWindowMs,
   getAutoHarvestIntervalMsForTvlWei,
@@ -32,6 +29,10 @@ import { resolveTxGasLimit } from "../config/demeter-tx-gas";
 import { getSoteriaRepoRoot } from "../config/soteria-runtime-paths";
 import { explorerTxUrl } from "../config/chain-config";
 import { enqueueSerializedAddressTx } from "./operator-tx-queue";
+import {
+  sendWithOperatorFailover,
+  type OperatorSigner,
+} from "./operator-eth-failover";
 import { readStrategyPoolValueWei } from "./strategy-pool-value-eligibility";
 import {
   applyAdaptiveTarget,
@@ -312,6 +313,7 @@ async function runTargetForRow(params: {
   row: AutoBandRow;
   trigger: "remint" | "band";
   nowMs: number;
+  wallets: readonly OperatorSigner[];
 }): Promise<void> {
   if (!isAutoAdaptiveTargetEnabled()) return;
 
@@ -338,6 +340,7 @@ async function runTargetForRow(params: {
       remintsSinceWrite,
       lastRemintMs: lastRemint,
       nowMs: params.nowMs,
+      wallets: params.wallets,
     });
     if (result.wrote) {
       st.targetOffset = result.wrote.offset;
@@ -377,10 +380,16 @@ function normalizePk(pk: string): `0x${string}` {
   return (trimmed.startsWith("0x") ? trimmed : `0x${trimmed}`) as `0x${string}`;
 }
 
+function resolveBandTargetSigners(operators: readonly OperatorSigner[]): OperatorSigner[] {
+  if (operators.length > 0) return [...operators];
+  const owner = getAutoBandOwnerSignerFallback();
+  return owner ? [owner] : [];
+}
+
 async function applyBandParams(
   rpcUrl: string,
   stratAddr: Address,
-  onChainOwner: Address,
+  wallets: readonly OperatorSigner[],
   target: {
     outerBelow: number;
     outerAbove: number;
@@ -390,9 +399,6 @@ async function applyBandParams(
   logTag: string,
   strategyId: number
 ): Promise<void> {
-  const { privateKey } = requireAutoBandOwnerSigner(onChainOwner);
-  const account = privateKeyToAccount(normalizePk(privateKey));
-  const wallet = createTritonWalletClient(privateKey, rpcUrl);
   const publicClient = createTritonPublicClient(rpcUrl);
   const args = [
     BigInt(target.outerBelow),
@@ -401,31 +407,42 @@ async function applyBandParams(
     BigInt(target.innerAbove),
   ] as const;
 
-  await enqueueSerializedAddressTx(account.address, async () => {
-    const gasEst = await publicClient.estimateContractGas({
-      address: stratAddr,
-      abi: AUTO_STRATEGY_BAND_ABI,
-      functionName: "setBandParams",
-      args,
-      account,
-    });
-    const gas = resolveTxGasLimit(gasEst);
-    const hash = await wallet.writeContract({
-      address: stratAddr,
-      abi: AUTO_STRATEGY_BAND_ABI,
-      functionName: "setBandParams",
-      args,
-      gas,
-      account,
-      chain: wallet.chain,
-    });
-    const receipt = await publicClient.waitForTransactionReceipt({ hash });
-    if (receipt.status === "reverted") {
-      throw new Error(`setBandParams reverted: ${hash}`);
-    }
-    console.log(
-      `[${logTag}] band setBandParams id=${strategyId} outer=${target.outerBelow}/${target.outerAbove} inner=${target.innerBelow}/${target.innerAbove} tx ${hash} ${explorerTxUrl(hash)}`
-    );
+  await sendWithOperatorFailover({
+    wallets,
+    strategyId,
+    rpcUrl,
+    logTag,
+    action: "setBandParams",
+    fn: async (signer) => {
+      const account = privateKeyToAccount(normalizePk(signer.privateKey));
+      const wallet = createTritonWalletClient(signer.privateKey, rpcUrl);
+      await enqueueSerializedAddressTx(signer.address, async () => {
+        const gasEst = await publicClient.estimateContractGas({
+          address: stratAddr,
+          abi: AUTO_STRATEGY_BAND_ABI,
+          functionName: "setBandParams",
+          args,
+          account,
+        });
+        const gas = resolveTxGasLimit(gasEst);
+        const hash = await wallet.writeContract({
+          address: stratAddr,
+          abi: AUTO_STRATEGY_BAND_ABI,
+          functionName: "setBandParams",
+          args,
+          gas,
+          account,
+          chain: wallet.chain,
+        });
+        const receipt = await publicClient.waitForTransactionReceipt({ hash });
+        if (receipt.status === "reverted") {
+          throw new Error(`setBandParams reverted: ${hash}`);
+        }
+        console.log(
+          `[${logTag}] band setBandParams id=${strategyId} signer=${signer.id} ${signer.address} outer=${target.outerBelow}/${target.outerAbove} inner=${target.innerBelow}/${target.innerAbove} tx ${hash} ${explorerTxUrl(hash)}`
+        );
+      });
+    },
   });
 }
 
@@ -442,8 +459,14 @@ export async function applyAdaptiveTargetsBeforeUpkeep(params: {
   logTag: string;
   amm: AutoAmmKind;
   rows: readonly AutoBandRow[];
+  wallets: readonly OperatorSigner[];
 }): Promise<void> {
   if (!isAutoAdaptiveTargetEnabled() || params.rows.length === 0) return;
+  const wallets = resolveBandTargetSigners(params.wallets);
+  if (wallets.length === 0) {
+    console.warn(`[${params.logTag}] Target before remint skipped — no operator/Owner signer`);
+    return;
+  }
   const nowMs = Date.now();
   for (const row of params.rows) {
     await runTargetForRow({
@@ -454,6 +477,7 @@ export async function applyAdaptiveTargetsBeforeUpkeep(params: {
       row,
       trigger: "remint",
       nowMs,
+      wallets,
     });
   }
 }
@@ -465,15 +489,18 @@ export async function runAutoAdaptiveBandPass(params: {
   logTag: string;
   amm: AutoAmmKind;
   rows: readonly AutoBandRow[];
+  wallets: readonly OperatorSigner[];
 }): Promise<void> {
   const bandOn = isAutoAdaptiveBandEnabled();
   const targetOn = isAutoAdaptiveTargetEnabled();
   if (!bandOn && !targetOn) return;
 
-  const privateKey = getAutoBandOwnerPrivateKey();
-  if (!privateKey) return;
+  const wallets = resolveBandTargetSigners(params.wallets);
+  if (wallets.length === 0) {
+    console.warn(`[${params.logTag}] Band pass skipped — no operator/Owner signer`);
+    return;
+  }
 
-  const ownerSigner = getAutoBandOwnerAddress();
   const client = createTritonPublicClient(params.rpcUrl);
   const widenNeed = getAutoBandWidenRemints();
   const widenWindowMs = getAutoBandWidenWindowMs();
@@ -482,34 +509,6 @@ export async function runAutoAdaptiveBandPass(params: {
 
   for (const row of params.rows) {
     try {
-      const owner = (await client.readContract({
-        address: row.stratAddr,
-        abi: AUTO_STRATEGY_BAND_ABI,
-        functionName: "owner",
-      })) as Address;
-
-      if (owner.toLowerCase() !== ownerSigner.toLowerCase()) {
-        loadState();
-        const key = stateKey(params.pipelineId, row.id);
-        let st = memoryState.byKey[key];
-        if (!st) {
-          st = emptyAdaptiveState(nowMs);
-          st.ownerSkipLogged = true;
-          memoryState.byKey[key] = st;
-          saveState();
-          console.log(
-            `[${params.logTag}] Band skip id=${row.id}: owner ${owner} ≠ Deployer ${ownerSigner}`
-          );
-        } else if (!st.ownerSkipLogged) {
-          st.ownerSkipLogged = true;
-          saveState();
-          console.log(
-            `[${params.logTag}] Band skip id=${row.id}: owner ${owner} ≠ Deployer ${ownerSigner}`
-          );
-        }
-        continue;
-      }
-
       if (bandOn) {
         const [tickSpacingRaw, rangeBelow, rangeAbove, innerBelow, innerAbove] = await Promise.all([
           client.readContract({
@@ -599,7 +598,7 @@ export async function runAutoAdaptiveBandPass(params: {
           await applyBandParams(
             params.rpcUrl,
             row.stratAddr,
-            owner,
+            wallets,
             target,
             params.logTag,
             row.id
@@ -615,6 +614,7 @@ export async function runAutoAdaptiveBandPass(params: {
         row,
         trigger: "band",
         nowMs,
+        wallets,
       });
     } catch (e) {
       console.warn(

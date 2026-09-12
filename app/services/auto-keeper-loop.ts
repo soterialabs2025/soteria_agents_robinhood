@@ -5,7 +5,7 @@
  * Strategy ids shard across up to 4 operator wallets (id % N). Txs serialize per address.
  * Auto strategies have no mode(); harvest uses per-strategy TVL tiers when adaptive.
  * Upkeep txs only after off-chain keeperCheck() (from=keeper) says remint is needed.
- * Band: Owner `setBandParams`. Target: Owner `setTargetAssetBps` before remint and in the band loop.
+ * Band/target: operator `setBandParams` / `setTargetAssetBps` (Owner still allowed).
  * Harvest never writes target. RhV4: refreshPriceRefBatch every ≥10m.
  */
 import type { Abi, Account, Address, PublicClient } from "viem";
@@ -577,9 +577,9 @@ async function autoKeeperUpkeepLoop(
           logTag: tag,
           amm: pipeline.amm,
           rows: remintRows,
+          wallets,
         });
-        // Owner target txs are awaited above (Owner queue). Operators remint next
-        // on their own queues — same queue only if Owner address is also an operator.
+        // Target then remint: same shard operator serializes both on that address queue.
         await runShardedAutoBatches(rpcUrl, pipeline, wallets, "performUpkeepBatch", ids, "Upkeep");
       }
     } catch (e) {
@@ -635,7 +635,6 @@ async function autoKeeperBandLoop(
   intervalMs: number
 ): Promise<never> {
   const tag = pipeline.label;
-  void wallets;
   for (;;) {
     if (checkDemeterStopSignal()) {
       console.log(`[${tag}] Stop signal — exiting band loop`);
@@ -650,6 +649,7 @@ async function autoKeeperBandLoop(
         pipelineId: pipeline.id,
         logTag: tag,
         amm: pipeline.amm,
+        wallets,
         rows: rows
           .filter((r) => eligibleSet.has(r.id))
           .map((r) => ({
@@ -758,14 +758,14 @@ async function startAutoKeeperPipeline(
   }
   if (adaptiveBand) {
     console.log(
-      `[${tag}] adaptive band every ${bandMs / 1000}s (±1 tickSpacing; setBandParams Owner only; widen on remints / tighten when stable)`
+      `[${tag}] adaptive band every ${bandMs / 1000}s (±1 tickSpacing; setBandParams operator; widen on remints / tighten when stable)`
     );
   } else {
     console.log(`[${tag}] adaptive band disabled`);
   }
   if (adaptiveTarget) {
     console.log(
-      `[${tag}] adaptive target every ${bandMs / 1000}s + before remint (setTargetAssetBps Owner only; 3000/5000/7000; harvest never writes)`
+      `[${tag}] adaptive target every ${bandMs / 1000}s + before remint (setTargetAssetBps operator; 3000/5000/7000; harvest never writes)`
     );
   } else {
     console.log(`[${tag}] adaptive target disabled`);

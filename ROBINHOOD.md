@@ -74,7 +74,7 @@ Shared helpers: `app/config/chain-config.ts`. Keeper checks (upkeep/harvest) sha
 
 RhV3 / RhV4 / Sv3 AutoKeeper operator surfaces are identical (`performUpkeepBatch`, `performHarvestBatch(ids, skipIncreaseLiquidity)`, `watched` with `lastHarvest`). UFloat keepers omit `lastHarvest` on `watched` and name snapshots `snapshotPoolValue`.
 
-Auto strategies have no `mode()`. Harvest uses per-strategy TVL tiers (or `AUTO_KEEPER_HARVEST_INTERVAL_MS` to pin one interval). Upkeep only after off-chain `keeperCheck`. Owner band control is one `setBandParams` tx. Owner `setTargetAssetBps` steps 3000/5000/7000 toward remint leftover mix (band loop + write-before-upkeep; harvest never writes). RhV4 also runs `refreshPriceRefBatch` at ≥10 min. UFloat still has mode and still skips `STABLE` on harvest.
+Auto strategies have no `mode()`. Harvest uses per-strategy TVL tiers (or `AUTO_KEEPER_HARVEST_INTERVAL_MS` to pin one interval). Upkeep only after off-chain `keeperCheck`. Band control is one `setBandParams` tx (any operator). `setTargetAssetBps` steps 3000/5000/7000 toward remint leftover mix (band loop + write-before-upkeep; harvest never writes). RhV4 also runs `refreshPriceRefBatch` at ≥10 min. UFloat still has mode and still skips `STABLE` on harvest.
 
 Enable Auto pipelines with `AUTO_KEEPER_ENABLED=true`. Disable one with `AUTO_KEEPER_RH_V3_ENABLED=false` (or `RH_V4` / `SV3`). UFloat RH V3+V4 run when Triton keys are set; disable with `UFLOAT_KEEPER_RH_V3_ENABLED=false` / `UFLOAT_KEEPER_RH_V4_ENABLED=false`.
 

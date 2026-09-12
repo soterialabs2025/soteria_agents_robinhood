@@ -2,6 +2,7 @@
  * Owner-only adaptive `targetAssetBps`.
  * Measures the mix remint would flatten and steps 3000 / 5000 / 7000 toward that mix.
  * Writes belong in the band loop and immediately before remint — never harvest.
+ * Signed by a registered operator (Owner still works).
  */
 import type { Abi, Address, PublicClient } from "viem";
 import { erc20Abi } from "viem";
@@ -12,8 +13,6 @@ import {
   createTritonWalletClient,
 } from "../action-providers/liquid-strat-min-v4-action-provider";
 import {
-  getAutoBandOwnerAddress,
-  requireAutoBandOwnerSigner,
   getAutoHarvestDustTvlWei,
   getAutoHarvestIntervalMsForTvlWei,
   getAutoTargetBpsConfig,
@@ -24,6 +23,10 @@ import { getWethAddress, explorerTxUrl } from "../config/chain-config";
 import { resolveTxGasLimit } from "../config/demeter-tx-gas";
 import type { AutoAmmKind } from "../config/rh-keeper-pipelines";
 import { enqueueSerializedAddressTx } from "./operator-tx-queue";
+import {
+  sendWithOperatorFailover,
+  type OperatorSigner,
+} from "./operator-eth-failover";
 
 export const AUTO_STRATEGY_TARGET_ABI = [
   {
@@ -423,15 +426,11 @@ export async function readTargetSnapshot(
   const cfg = getAutoTargetBpsConfig();
   const dust = getAutoHarvestDustTvlWei();
 
-  const ownerSigner = getAutoBandOwnerAddress();
   const owner = (await client.readContract({
     address: stratAddr,
     abi: AUTO_STRATEGY_TARGET_ABI,
     functionName: "owner",
   })) as Address;
-  if (owner.toLowerCase() !== ownerSigner.toLowerCase()) {
-    return { skip: `owner ${owner} ≠ ${ownerSigner}` };
-  }
 
   const hasBandBase = (await client.readContract({
     address: stratAddr,
@@ -571,48 +570,56 @@ export async function readTargetSnapshot(
 async function applyTargetAssetBps(
   rpcUrl: string,
   stratAddr: Address,
-  onChainOwner: Address,
+  wallets: readonly OperatorSigner[],
   bps: number,
   logTag: string,
   strategyId: number,
   reason: string
 ): Promise<void> {
-  const { privateKey, address: ownerAddr } = requireAutoBandOwnerSigner(onChainOwner);
-  const account = privateKeyToAccount(normalizePk(privateKey));
-  const wallet = createTritonWalletClient(privateKey, rpcUrl);
   const publicClient = createTritonPublicClient(rpcUrl);
   const args = [BigInt(bps)] as const;
 
-  await enqueueSerializedAddressTx(ownerAddr, async () => {
-    const gasEst = await publicClient.estimateContractGas({
-      address: stratAddr,
-      abi: AUTO_STRATEGY_TARGET_ABI,
-      functionName: "setTargetAssetBps",
-      args,
-      account,
-    });
-    const gas = resolveTxGasLimit(gasEst);
-    const hash = await wallet.writeContract({
-      address: stratAddr,
-      abi: AUTO_STRATEGY_TARGET_ABI,
-      functionName: "setTargetAssetBps",
-      args,
-      gas,
-      account,
-      chain: wallet.chain,
-    });
-    const receipt = await publicClient.waitForTransactionReceipt({ hash });
-    if (receipt.status === "reverted") {
-      throw new Error(`setTargetAssetBps reverted: ${hash}`);
-    }
-    const readback = (await publicClient.readContract({
-      address: stratAddr,
-      abi: AUTO_STRATEGY_TARGET_ABI,
-      functionName: "targetAssetBps",
-    })) as bigint;
-    console.log(
-      `[${logTag}] target setTargetAssetBps id=${strategyId} owner=${ownerAddr} bps=${bps} readback=${readback} ${reason} tx ${hash} ${explorerTxUrl(hash)}`
-    );
+  await sendWithOperatorFailover({
+    wallets,
+    strategyId,
+    rpcUrl,
+    logTag,
+    action: "setTargetAssetBps",
+    fn: async (signer) => {
+      const account = privateKeyToAccount(normalizePk(signer.privateKey));
+      const wallet = createTritonWalletClient(signer.privateKey, rpcUrl);
+      await enqueueSerializedAddressTx(signer.address, async () => {
+        const gasEst = await publicClient.estimateContractGas({
+          address: stratAddr,
+          abi: AUTO_STRATEGY_TARGET_ABI,
+          functionName: "setTargetAssetBps",
+          args,
+          account,
+        });
+        const gas = resolveTxGasLimit(gasEst);
+        const hash = await wallet.writeContract({
+          address: stratAddr,
+          abi: AUTO_STRATEGY_TARGET_ABI,
+          functionName: "setTargetAssetBps",
+          args,
+          gas,
+          account,
+          chain: wallet.chain,
+        });
+        const receipt = await publicClient.waitForTransactionReceipt({ hash });
+        if (receipt.status === "reverted") {
+          throw new Error(`setTargetAssetBps reverted: ${hash}`);
+        }
+        const readback = (await publicClient.readContract({
+          address: stratAddr,
+          abi: AUTO_STRATEGY_TARGET_ABI,
+          functionName: "targetAssetBps",
+        })) as bigint;
+        console.log(
+          `[${logTag}] target setTargetAssetBps id=${strategyId} signer=${signer.id} ${signer.address} bps=${bps} readback=${readback} ${reason} tx ${hash} ${explorerTxUrl(hash)}`
+        );
+      });
+    },
   });
 }
 
@@ -627,6 +634,7 @@ export type TargetApplyInput = {
   remintsSinceWrite: boolean;
   lastRemintMs: number;
   nowMs: number;
+  wallets: readonly OperatorSigner[];
 };
 
 export type TargetApplyResult = {
@@ -688,7 +696,7 @@ export async function applyAdaptiveTarget(input: TargetApplyInput): Promise<Targ
   await applyTargetAssetBps(
     input.rpcUrl,
     input.stratAddr,
-    snap.ok.onChainOwner,
+    input.wallets,
     decision.bps,
     input.logTag,
     input.strategyId,
