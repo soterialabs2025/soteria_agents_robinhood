@@ -3,11 +3,7 @@
  */
 import type { Address } from "viem";
 
-import { pickAddrAny } from "./env-address";
-
-/** Deployed OperatorRegistry on Robinhood. Override: `OPERATOR_REGISTRY_ADDRESS` or `AUTO_OPERATOR_REGISTRY_ADDRESS`. */
-export const DEFAULT_OPERATOR_REGISTRY_ADDRESS =
-  "0x7df1120a04D82eA92EA2d5AA005e3316B37b936E" as const;
+import { requireAddrAny } from "./env-address";
 
 /** Expected address for TRITON_TWO_PRIVATE_KEY (operator shard 2). */
 export const TRITON_TWO_WALLET_ADDRESS =
@@ -17,9 +13,7 @@ export const TRITON_TWO_WALLET_ADDRESS =
 export const DEMETER_TWO_WALLET_ADDRESS =
   "0xa16c8cc08674F7c120A64d94f432377D427901a0" as const;
 
+/** Env: `OPERATOR_REGISTRY_ADDRESS` or `AUTO_OPERATOR_REGISTRY_ADDRESS`. */
 export function getOperatorRegistryAddress(): Address {
-  return pickAddrAny(
-    ["OPERATOR_REGISTRY_ADDRESS", "AUTO_OPERATOR_REGISTRY_ADDRESS"],
-    DEFAULT_OPERATOR_REGISTRY_ADDRESS
-  );
+  return requireAddrAny(["OPERATOR_REGISTRY_ADDRESS", "AUTO_OPERATOR_REGISTRY_ADDRESS"]);
 }

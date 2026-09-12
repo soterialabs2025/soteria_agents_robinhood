@@ -3,7 +3,7 @@
  * changeAsset (DEFENSIVE / offensive metrics) stays on Triton wallets.
  * Upkeep txs only after off-chain keeperCheck() (from=keeper) says remint is needed.
  *
- * Keeper addresses from docs/ADDRESSES.md ({@link rh-keeper-pipelines}).
+ * Keeper addresses from env ({@link rh-keeper-pipelines}).
  */
 import type { Abi, Address } from "viem";
 import { getRpcUrl, explorerTxUrl } from "../config/chain-config";
@@ -12,6 +12,7 @@ import {
   createTritonPublicClient,
   createTritonWalletClient,
 } from "../action-providers/liquid-strat-min-v4-action-provider";
+import ufloatKeeperV4Abi from "../abi/ustrategy-rh-v4/UFloatKeeper.abi.json";
 import {
   getEnabledUfloatKeeperPipelines,
   getUfloatRhV4Pipeline,
@@ -76,7 +77,7 @@ export function resolveUFloatKeeperAddress(_rpcUrl?: string): Address {
 export async function readUFloatKeeperOperatorRegistry(
   keeperAddress: Address,
   rpcUrl: string,
-  abi: Abi = getUfloatRhV4Pipeline().abi
+  abi: Abi = ufloatKeeperV4Abi as Abi
 ): Promise<Address> {
   const client = createTritonPublicClient(rpcUrl);
   return (await client.readContract({
@@ -98,7 +99,7 @@ export async function readUFloatKeeperTritonAddr(
 export async function listUFloatWatchedRows(
   keeperAddress: Address,
   rpcUrl: string,
-  abi: Abi = getUfloatRhV4Pipeline().abi
+  abi: Abi = ufloatKeeperV4Abi as Abi
 ): Promise<UfloatWatchedRow[]> {
   const client = createTritonPublicClient(rpcUrl);
   const len = Number(

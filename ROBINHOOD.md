@@ -25,26 +25,9 @@ Prefer **`ROBINHOOD_MAIN_RPC_URL`**. `getRpcUrl()` / `getRpcUrlOptional()` in `a
 | Uniswap V3 factory | `0x1f7d7550B1b028f7571E69A784071F0205FD2EfA` |
 | Uniswap V4 PoolManager | `0x8366a39CC670B4001A1121B8F6A443A643e40951` |
 | STABLE USDG/WETH pool (Demeter) | `0x52e65B17fB6E5BA00Ed806f37Afcd2DaA50271Ca` |
-| AutoOperatorRegistry (shared) | `0x7df1120a04D82eA92EA2d5AA005e3316B37b936E` |
-| AutoKeeperRhV3 | `0xD35CE6610AcB37D545bb5ec4192fC50505Dd26Ad` |
-| AutoFactoryRhV3 | `0xB3E65742e90af23f30527A9745B63F90DAA48B78` |
-| AutoSwapRouterRhV3 | `0x8A8c18445792e04e8512D5c6CD680331F9575a3F` |
-| AutoKeeperRhV4 | `0x79F9ea39E7e5304791DF8cfEe835F6592c35e022` |
-| AutoFactoryRhV4 | `0x3D19ecDb90B06626f8EC860F7aec9A378E760E8D` |
-| AutoSwapRouterRhV4 | `0x724265D83E2Ea8296Bd61177d7B86a92Ba7e2520` |
-| AutoKeeperSv3 | `0x3Cb0A8c25356BF5764C4510A79458e73a6639372` |
-| AutoFactorySv3 | `0x0bb7e7A4a57ad938a253d2302604D1256067785A` |
-| AutoSwapRouterSv3 | `0x568dCA271e5F7edb9769f5eA6076e2DA8D4014e8` |
-| UFloatKeeperV3 | `0xe2E744063446E372B9E28e4BB38aaBFcc6D43eE8` |
-| UFloatStrategyFactoryV3 | `0xA8966d59f38e7bE263C533Ccda87F36eaf5FFefE` |
-| UFloatSwapRouterV3 | `0x932f208D180dB8e375E17f88e86A9C1a81d7ACa8` |
-| UFloatKeeper (V4) | `0x2cF7c9aB33a8248B07435d58cc7754eB1EaB8d12` |
-| UFloatStrategyFactoryV4 | `0xBDE2231aC15DdbACa7A24837875e6F7DF0a855D9` |
-| UFloatSwapRouter (V4) | `0x562cfd3C373A649932597AD5D7a7c1CEa8402A76` |
+| AutoOperatorRegistry (shared) | set `OPERATOR_REGISTRY_ADDRESS` |
 
-Full addresses: [docs/ADDRESSES.md](./docs/ADDRESSES.md). Pipeline config: `app/config/rh-keeper-pipelines.ts`.
-
-Table values above are **code fallbacks**. Set the same names in `.env` to change them without a commit (restart Demeter / PM2 after edit).
+Keeper / factory / swap-router addresses are **env-only** (`app/config/rh-keeper-pipelines.ts`). There are no code fallbacks — missing vars throw. Restart Demeter / PM2 after `.env` edits. Snapshot of last known deploys: [docs/ADDRESSES.md](./docs/ADDRESSES.md) (not read at runtime).
 
 | Env | Used for |
 |-----|----------|

@@ -2,15 +2,14 @@
  * AutoKeeper shared settings (intervals, gas, harvest flags).
  * Per-DEX RH keepers (Uni V3 / Uni V4 / Sushi V3) live in {@link rh-keeper-pipelines}.
  * Operator wallets: up to 4 keys via {@link resolveRhOperatorWallets}.
- * Legacy getters below default to AutoKeeperRhV3 (docs/ADDRESSES.md).
+ * Contract addresses come from env only — no code fallbacks.
  */
 
 import type { Address } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 
-import { envAddress, pickAddr } from "./env-address";
+import { envAddress, pickAddr, requireAddrAny } from "./env-address";
 import {
-  DEFAULT_OPERATOR_REGISTRY_ADDRESS,
   DEMETER_TWO_WALLET_ADDRESS,
   getOperatorRegistryAddress,
 } from "./operator-registry-config";
@@ -19,39 +18,24 @@ import {
 export const RH_DEPLOYER_WALLET_ADDRESS =
   "0xf99faA74aF8cb06479bFCb62495F0404089EDc83" as const;
 
-/** AutoOperatorRegistry on Robinhood Chain. Prefer {@link getOperatorRegistryAddress}. */
-export const AUTO_OPERATOR_REGISTRY_ADDRESS = DEFAULT_OPERATOR_REGISTRY_ADDRESS;
-
-/** AutoFactoryRhV3 on Robinhood Chain (legacy alias). */
-export const AUTO_FACTORY_V3_RH_ADDRESS =
-  "0xB3E65742e90af23f30527A9745B63F90DAA48B78" as const;
-
-/** AutoSwapRouterRhV3 on Robinhood Chain (legacy alias). */
-export const AUTO_SWAP_ROUTER_V3_RH_ADDRESS =
-  "0x8A8c18445792e04e8512D5c6CD680331F9575a3F" as const;
-
-/** AutoKeeperRhV3 on Robinhood Chain (legacy alias). */
-export const AUTO_KEEPER_V3_RH_ADDRESS =
-  "0xD35CE6610AcB37D545bb5ec4192fC50505Dd26Ad" as const;
-
-/** AutoKeeperV3Rh: env `AUTO_KEEPER_ADDRESS` or {@link AUTO_KEEPER_V3_RH_ADDRESS}. */
+/** AutoKeeperRhV3: `AUTO_KEEPER_RH_V3_ADDRESS` or legacy `AUTO_KEEPER_ADDRESS`. */
 export function getAutoKeeperAddress(): Address {
-  return envAddress("AUTO_KEEPER_ADDRESS") ?? AUTO_KEEPER_V3_RH_ADDRESS;
+  return requireAddrAny(["AUTO_KEEPER_RH_V3_ADDRESS", "AUTO_KEEPER_ADDRESS"]);
 }
 
-/** AutoFactoryV3Rh: env `AUTO_FACTORY_ADDRESS` or {@link AUTO_FACTORY_V3_RH_ADDRESS}. */
+/** AutoFactoryRhV3: `AUTO_FACTORY_RH_V3_ADDRESS` or legacy `AUTO_FACTORY_ADDRESS`. */
 export function getAutoFactoryAddress(): Address {
-  return envAddress("AUTO_FACTORY_ADDRESS") ?? AUTO_FACTORY_V3_RH_ADDRESS;
+  return requireAddrAny(["AUTO_FACTORY_RH_V3_ADDRESS", "AUTO_FACTORY_ADDRESS"]);
 }
 
-/** AutoOperatorRegistry: `OPERATOR_REGISTRY_ADDRESS` / `AUTO_OPERATOR_REGISTRY_ADDRESS` or default. */
+/** AutoOperatorRegistry: `OPERATOR_REGISTRY_ADDRESS` or `AUTO_OPERATOR_REGISTRY_ADDRESS`. */
 export function getAutoOperatorRegistryAddress(): Address {
   return getOperatorRegistryAddress();
 }
 
-/** AutoSwapRouterV3Rh: env `AUTO_SWAP_ROUTER_ADDRESS` or {@link AUTO_SWAP_ROUTER_V3_RH_ADDRESS}. */
+/** AutoSwapRouterRhV3: `AUTO_SWAP_ROUTER_RH_V3_ADDRESS` or legacy `AUTO_SWAP_ROUTER_ADDRESS`. */
 export function getAutoSwapRouterAddress(): Address {
-  return envAddress("AUTO_SWAP_ROUTER_ADDRESS") ?? AUTO_SWAP_ROUTER_V3_RH_ADDRESS;
+  return requireAddrAny(["AUTO_SWAP_ROUTER_RH_V3_ADDRESS", "AUTO_SWAP_ROUTER_ADDRESS"]);
 }
 
 export async function resolveAutoKeeperAddress(_rpcUrl?: string): Promise<Address> {

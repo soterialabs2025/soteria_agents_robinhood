@@ -20,3 +20,22 @@ export function pickAddrAny(envNames: readonly string[], fallback: Address): Add
   }
   return fallback;
 }
+
+/** Required `0x` address. Throws if unset or malformed — no hardcoded fallback. */
+export function requireAddr(envName: string): Address {
+  const v = envAddress(envName);
+  if (!v) {
+    throw new Error(`${envName} must be a 20-byte 0x address in the environment`);
+  }
+  return v;
+}
+
+export function requireAddrAny(envNames: readonly string[]): Address {
+  for (const name of envNames) {
+    const v = envAddress(name);
+    if (v) return v;
+  }
+  throw new Error(
+    `${envNames.join(" or ")} must be a 20-byte 0x address in the environment`
+  );
+}
